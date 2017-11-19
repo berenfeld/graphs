@@ -40,6 +40,7 @@ public class Utils {
     }
     
     public static String vertexName(int index) {
-        return String.format("v%3s", index);
+        return String.format("v%s", index);
     }
+        
 }

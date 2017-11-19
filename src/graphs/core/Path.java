@@ -5,9 +5,8 @@
  */
 package graphs.core;
 
-import com.sun.org.apache.xerces.internal.util.DOMUtil;
 import graphs.core.*;
-import graphs.utils.Utils;
+import graphs.utils.*;
 import java.util.*;
 
 /**
