@@ -12,6 +12,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyVetoException;
 import javax.swing.*;
+import javax.swing.UIManager.LookAndFeelInfo;
 
 /**
  *
@@ -60,25 +61,24 @@ public class MainWindow extends JFrame implements ActionListener {
         GraphFrame graphFrame = new GraphFrame(g);
 
         _desktopPane.add(graphFrame);
-        try {
-            graphFrame.setMaximum(true);
-        } catch (PropertyVetoException ex) {
+        addGraphFrame(g);
 
-        }
     }
 
     private void newRandomGraph() {
         int vertices = Integer.parseInt(JOptionPane.showInputDialog("How manyu vertice ?"));
         Graph g = Factory.buildRandomGraph(vertices, 0.2);
+        addGraphFrame(g);
+    }
+
+    private void addGraphFrame(Graph g) {
         GraphFrame graphFrame = new GraphFrame(g);
 
         _desktopPane.add(graphFrame);
-        try {
-            graphFrame.setMaximum(true);
-        } catch (PropertyVetoException ex) {
-
-        }
+        graphFrame.setSize(_desktopPane.getSize());
+        graphFrame.setLocation(0, 0);
     }
+
     private JDesktopPane _desktopPane = new JDesktopPane();
     private JMenuBar _menuBar = new JMenuBar();
     private JMenu _graphsMenu = new JMenu("Graphs");
@@ -87,8 +87,25 @@ public class MainWindow extends JFrame implements ActionListener {
     private JMenuItem _newEmptyGraph = new JMenuItem("Empty Graph");
     private JMenuItem _newRandomGraph = new JMenuItem("Random Graph");
 
+    private static void setLookAndFeel(String lookAndFeel)
+    {
+        try {
+            for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+                
+                if (lookAndFeel.equals(info.getName())) {
+                    UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            // If Nimbus is not available, you can set the GUI to another look and feel.
+        }
+        
+    }
     public static void main(String[] args) {
-        MainWindow window = new MainWindow();
+
+        setLookAndFeel( "Nimbus" );
+        new MainWindow();
 
     }
 }

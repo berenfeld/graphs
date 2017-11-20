@@ -3,15 +3,7 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/me/NetBeansProjects/graphs/test/graphs/core/GraphTest.java</file>
-            <file>file:/home/me/NetBeansProjects/graphs/test/graphs/algorithms/BFSTest.java</file>
-            <file>file:/home/me/NetBeansProjects/graphs/src/graphs/algorithms/Factory.java</file>
-            <file>file:/home/me/NetBeansProjects/graphs/src/graphs/test/Main.java</file>
-            <file>file:/home/me/NetBeansProjects/graphs/src/graphs/core/Graph.java</file>
-            <file>file:/home/me/NetBeansProjects/graphs/src/graphs/core/BaseElement.java</file>
-            <file>file:/home/me/NetBeansProjects/graphs/src/graphs/core/Vertex.java</file>
-            <file>file:/home/me/NetBeansProjects/graphs/src/graphs/core/Edge.java</file>
-            <file>file:/home/me/NetBeansProjects/graphs/src/graphs/algorithms/BFS.java</file>
+            <file>file:/C:/Users/ranb/Documents/personal/graphs/src/graphs/gui/MainWindow.java</file>
         </group>
     </open-files>
 </project-private>
