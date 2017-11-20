@@ -21,7 +21,7 @@ import java.util.logging.Logger;
 public class Factory {
 
     public static Graph buildEmptyGraph(int vertices) {
-        Graph graph = new Graph("");
+        Graph graph = new Graph("Empty (" + vertices + ")");
         try {
             for (int i = 1; i <= vertices; i++) {
                 graph.addVertex(Utils.vertexName(i));
@@ -49,8 +49,8 @@ public class Factory {
 
     public static Graph buildRandomGraph(int vertices, double density) {
         Graph graph = buildEmptyGraph(vertices);
-        Random rand = new Random();
-        graph.setName("Random Graph on V=" + vertices);
+        graph.setName("Random (" + vertices + ")");
+        Random rand = new Random();        
         try {
             for (int i = 1; i <= vertices; i++) {
                 for (int j = i + 1; j <= vertices; j++) {

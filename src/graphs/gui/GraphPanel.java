@@ -8,6 +8,8 @@ package graphs.gui;
 import graphs.core.*;
 import java.awt.BorderLayout;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.geom.Ellipse2D;
 import java.beans.PropertyVetoException;
 import javax.swing.JInternalFrame;
 import javax.swing.JPanel;
@@ -24,14 +26,24 @@ public class GraphPanel extends JPanel {
 
     }
 
+    private Graph _graph;
+    private int _verticesSize = 5;
+    
+    public void setVerticesSize(int size) {
+        _verticesSize = size;
+        repaint();
+    }
     @Override
     protected void paintComponent(Graphics g) {
+        
         layoutVertices(g);
 
     }
 
     private void layoutVertices(Graphics g) {
 
+        Graphics2D g2 = (Graphics2D) g;
+        
         double panelWidth = getSize().getWidth();
         double panelHeight = getSize().getHeight();
 
@@ -53,7 +65,8 @@ public class GraphPanel extends JPanel {
             v.setAttribute("panel-x", vertexX);
             v.setAttribute("panel-y", vertexY);
             g.drawString(v.getName(), vertexX, vertexY );
-            g.fillRoundRect(vertexX, vertexY, 5, 5, 5, 5 );
+            g2.fill(new Ellipse2D.Double(vertexX, vertexY, _verticesSize, _verticesSize ) );
+                             
             i++;
         }
 
@@ -69,6 +82,6 @@ public class GraphPanel extends JPanel {
             g.drawLine(fromX, fromY, toX, toY);
         }
     }
-    private Graph _graph;
+    
 
 }
