@@ -62,8 +62,10 @@ public class GraphFrame extends JInternalFrame implements MouseListener, ActionL
         _vertexNameMenu.setEnabled(false);
         _vertexMenu.add(_vertexNameMenu);
         _vertexMenu.addSeparator();
-        _vertexMenu.add(_changeVertexNameMenu);
+        _vertexMenu.add(_changeVertexNameMenu);        
         _changeVertexNameMenu.addActionListener(this);
+        _vertexMenu.add(_removeVertexMenu);
+        _removeVertexMenu.addActionListener(this);
         
     }
 
@@ -75,6 +77,7 @@ public class GraphFrame extends JInternalFrame implements MouseListener, ActionL
     private Vertex _selectedVertex;
     private JMenuItem _changeGraphNameMenu = new JMenuItem("Change Name");
     private JMenuItem _changeVertexNameMenu = new JMenuItem("Change Name");
+    private JMenuItem _removeVertexMenu = new JMenuItem("Remove");
     private JMenu _verticesSizeMenu = new JMenu("Vertices Size");
     private JMenu _verticesLayoutMenu = new JMenu("Vertices Layout");
     private JMenuItem _verticesLayoutGridMenu = new JMenuItem("Grid");
@@ -125,12 +128,29 @@ public class GraphFrame extends JInternalFrame implements MouseListener, ActionL
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        try {
+            handleEvent(e);
+        } catch (Exception ex ) {
+            
+        }
+    }
+    
+    private void  handleEvent(ActionEvent e) throws Exception 
+    {
         Object source = e.getSource();
         if (source.equals(_changeVertexNameMenu)) {
             String newName = JOptionPane.showInputDialog("Replace Name '" + _selectedVertex.getName() + "' With :");
             _graph.setVertexName(_selectedVertex, newName);
             setTitle(newName);
             repaint();
+            return;
+        } 
+         if (source.equals(_removeVertexMenu)) {
+            if ( JOptionPane.YES_NO_OPTION == JOptionPane.showConfirmDialog(null, "Remove vertex " + _selectedVertex.getName() + "?", "Confirm", JOptionPane.YES_NO_OPTION ) )
+            {
+                _graph.removeVertex(_selectedVertex);       
+                repaint();
+            }
             return;
         } 
         if (source.equals(_changeGraphNameMenu)) {
