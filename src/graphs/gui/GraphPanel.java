@@ -25,40 +25,46 @@ public class GraphPanel extends JPanel implements ComponentListener {
     public GraphPanel(Graph graph) {
         super();
         _graph = graph;
-        addComponentListener(this);
-
+        addComponentListener(this);        
     }
 
-    private enum VerticesLayout {
+    public enum VerticesLayout {
         None,
-        Grid
+        Grid,
+        Circle
     };
         
     private Graph _graph;
     private int _verticesSize = 5;
     private VerticesLayout _currentLayout = VerticesLayout.None;
     
-    private static final String VERTEX_X = "Vertex-X";
-    private static final String VERTEX_Y = "Vertex-Y";
+    public static final String VERTEX_X = "Vertex-X";
+    public static final String VERTEX_Y = "Vertex-Y";
+    
+    public void setVerticesLayout( VerticesLayout layout ) {
+        switch (layout) {
+            case Grid:    
+                layoutVerticesGrid();
+            break;
+            case Circle:    
+                layoutVerticesCircle();
+            break;
+        }
+        repaint();
+    }
     
     public void setVerticesSize(int size) {
         _verticesSize = size;
         repaint();
     }
     
-    @Override
-    protected void paintComponent(Graphics g) {
-        switch (_currentLayout) {
-            case None:
-                layoutVerticesGrid(); 
-            case Grid:                
-        }
-        repaintGraph(g);
-    }
-
     private void layoutVerticesGrid() {
         double panelWidth = getSize().getWidth();
         double panelHeight = getSize().getHeight();
+        if ( ( panelWidth == 0 ) || ( panelHeight == 0 ) ) {
+            return;
+        }
+    
 
         double ratio = panelWidth / panelHeight;
         double vertices = _graph.getNumberOfVertices();
@@ -84,9 +90,27 @@ public class GraphPanel extends JPanel implements ComponentListener {
         _currentLayout = VerticesLayout.Grid;
     }
     
+    private void layoutVerticesCircle() {
+        int i = 0;
+        int vertices = _graph.getNumberOfVertices();
+        
+        for (Vertex v : _graph.getVertices()) {
+            double vertexX = 0.5 + 0.4 * Math.sin((i * Math.PI * 2) / vertices);
+            double vertexY = 0.5 - 0.4 * Math.cos((i * Math.PI * 2) / vertices);
+            
+            v.setAttribute(VERTEX_X, vertexX );
+            v.setAttribute(VERTEX_Y, vertexY );
+            i++;
+        }
+        _currentLayout = VerticesLayout.Circle;
+        
+    }
+    
     private void repaintGraph(Graphics g) {
 
-        
+        if ( _currentLayout == VerticesLayout.None) {
+            layoutVerticesGrid();             
+        }
         Graphics2D g2 = (Graphics2D) g;
         
         double panelWidth = getSize().getWidth();
@@ -124,11 +148,18 @@ public class GraphPanel extends JPanel implements ComponentListener {
     }
     
     @Override
+    protected void paintComponent(Graphics g)
+    {
+        repaintGraph(g);
+    }
+    
+    @Override
     public void componentResized(ComponentEvent e)
     {
         switch (_currentLayout) {
             case Grid:
                 layoutVerticesGrid();             
+            break;
         }
     }
 

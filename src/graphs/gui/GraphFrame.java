@@ -5,7 +5,7 @@
  */
 package graphs.gui;
 
-import graphs.core.Graph;
+import graphs.core.*;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -39,12 +39,13 @@ public class GraphFrame extends JInternalFrame implements MouseListener, ActionL
 
 
     private void initMenus() {
+        _graphNameMenu.setEnabled(false);
         _graphNameMenu.setText(_graph.getName());
         _graphNameMenu.setEnabled(false);
         _graphMenu.add(_graphNameMenu);
         _graphMenu.addSeparator();
-        _graphMenu.add(_changeNameMenu);
-        _changeNameMenu.addActionListener(this);
+        _graphMenu.add(_changeGraphNameMenu);
+        _changeGraphNameMenu.addActionListener(this);
         _graphMenu.add(_verticesSizeMenu);
         for (int i = 3; i < 10; i++) {
             JMenuItem verticesSizeMenuItem = new JMenuItem(i + " Points");
@@ -52,14 +53,32 @@ public class GraphFrame extends JInternalFrame implements MouseListener, ActionL
             verticesSizeMenuItem.addActionListener(this);
             _verticesSizeMenu.add(verticesSizeMenuItem);
         }
+        _verticesLayoutMenu.add(_verticesLayoutGridMenu);
+        _verticesLayoutGridMenu.addActionListener(this);
+        _verticesLayoutMenu.add(_verticesLayoutCircleMenu);
+        _verticesLayoutCircleMenu.addActionListener(this);
+        _graphMenu.add(_verticesLayoutMenu);
 
+        _vertexNameMenu.setEnabled(false);
+        _vertexMenu.add(_vertexNameMenu);
+        _vertexMenu.addSeparator();
+        _vertexMenu.add(_changeVertexNameMenu);
+        _changeVertexNameMenu.addActionListener(this);
+        
     }
 
     private Graph _graph;
     private JPopupMenu _graphMenu = new JPopupMenu();
+    private JPopupMenu _vertexMenu = new JPopupMenu();
     private JMenuItem _graphNameMenu = new JMenuItem();
-    private JMenuItem _changeNameMenu = new JMenuItem("Change Name");
+    private JMenuItem _vertexNameMenu = new JMenuItem();
+    private Vertex _selectedVertex;
+    private JMenuItem _changeGraphNameMenu = new JMenuItem("Change Name");
+    private JMenuItem _changeVertexNameMenu = new JMenuItem("Change Name");
     private JMenu _verticesSizeMenu = new JMenu("Vertices Size");
+    private JMenu _verticesLayoutMenu = new JMenu("Vertices Layout");
+    private JMenuItem _verticesLayoutGridMenu = new JMenuItem("Grid");
+    private JMenuItem _verticesLayoutCircleMenu = new JMenuItem("Circle");
     private List<JMenuItem> _verticesSizeMenus = new ArrayList<JMenuItem>();
 
     private GraphPanel _canvas;
@@ -68,6 +87,22 @@ public class GraphFrame extends JInternalFrame implements MouseListener, ActionL
     public void mouseClicked(MouseEvent e) {
         Object source = e.getSource();
         if (source.equals(_canvas)) {
+            double panelWidth = _canvas.getSize().getWidth();
+            double panelHeight = _canvas.getSize().getHeight();
+            for (Vertex v : _graph.getVertices()) {
+                int vertexX = (int)((double) v.getAttribute(GraphPanel.VERTEX_X) * panelWidth);
+                int vertexY = (int)((double) v.getAttribute(GraphPanel.VERTEX_Y) * panelHeight);
+                
+                // System.out.println(e.getX() + "," + e.getY() + "," + vertexX + "," + vertexY);
+                if (    ( Math.abs(vertexX - e.getX()) < 10 ) &&
+                        ( Math.abs(vertexY - e.getY()) < 10 ) ) {
+                    _vertexNameMenu.setText(v.getName());
+                    _vertexMenu.show(_canvas, e.getX(), e.getY());
+                    _selectedVertex = v;
+                    return;
+                }
+                
+            }
             _graphMenu.show(_canvas, e.getX(), e.getY());
         }
     }
@@ -91,18 +126,34 @@ public class GraphFrame extends JInternalFrame implements MouseListener, ActionL
     @Override
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
-        if (source.equals(_changeNameMenu)) {
+        if (source.equals(_changeVertexNameMenu)) {
+            String newName = JOptionPane.showInputDialog("Replace Name '" + _selectedVertex.getName() + "' With :");
+            _graph.setVertexName(_selectedVertex, newName);
+            setTitle(newName);
+            repaint();
+            return;
+        } 
+        if (source.equals(_changeGraphNameMenu)) {
             String newName = JOptionPane.showInputDialog("Replace Name '" + _graph.getName() + "' With :");
             _graph.setName(newName);
             setTitle(newName);
-        } else {
-            for (JMenuItem verticesSizeMenuItem : _verticesSizeMenus) {
-                if (source.equals(verticesSizeMenuItem)) {
-                    int pointSize = new Scanner(new StringReader(verticesSizeMenuItem.getText())).nextInt();
-                    _canvas.setVerticesSize(pointSize);
-                    break;
-                }
+            return;
+        } 
+        if (source.equals(_verticesLayoutGridMenu)) {
+            _canvas.setVerticesLayout(GraphPanel.VerticesLayout.Grid);
+            return;
+        }
+        if (source.equals(_verticesLayoutCircleMenu)) {
+            _canvas.setVerticesLayout(GraphPanel.VerticesLayout.Circle);
+            return;
+        }
+        for (JMenuItem verticesSizeMenuItem : _verticesSizeMenus) {
+            if (source.equals(verticesSizeMenuItem)) {
+                int pointSize = new Scanner(new StringReader(verticesSizeMenuItem.getText())).nextInt();
+                _canvas.setVerticesSize(pointSize);
+                return;
             }
         }
+         
     }
 }

@@ -22,6 +22,7 @@ public class Graph extends BaseElement {
     private String _name;
 
     // structure
+    private int _vertexIndex = 0;
     private final Map<String, Vertex> _vertices = new TreeMap<String, Vertex>();
     private final Map<String, Edge> _edges = new TreeMap<String, Edge>();
     private final ArrayList<String> _vertexNames = new ArrayList<String>();
@@ -55,6 +56,13 @@ public class Graph extends BaseElement {
         return _vertices.size();
     }
 
+    public void setVertexName(Vertex v, String newName) {
+        setVertexName(v.getName(), newName);
+    }
+    
+    public void setVertexName(String oldName, String newName) {
+        _vertices.get(oldName).setName(newName);        
+    }
     public Set<Vertex> getVertices() {
         return new TreeSet<>( _vertices.values());
     }
@@ -89,7 +97,8 @@ public class Graph extends BaseElement {
         if (_vertices.containsKey(name)) {
             throw new Exception("Vertex '" + name + "' already exists");
         }
-        Vertex newVertex = new Vertex(this, name);
+        ++ _vertexIndex;
+        Vertex newVertex = new Vertex(this, name, _vertexIndex);
         _vertices.put(name, newVertex);
         _vertexNames.add(name);
         _connectivityCalculated = false;

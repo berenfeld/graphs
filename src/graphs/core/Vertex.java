@@ -14,9 +14,10 @@ import java.util.*;
  */
 public class Vertex extends BaseElement implements Comparable {
 
-    public Vertex(Graph graph, String name) {
+    public Vertex(Graph graph, String name, int index) {
         _graph = graph;
         _name = name;
+        _index = index;
     }
 
     public static String VERTEX_ATTRIBUTE_COLOR = "Color";
@@ -27,6 +28,7 @@ public class Vertex extends BaseElement implements Comparable {
     
     private Graph _graph;
     private String _name;
+    private int _index;
     private Map<String, Vertex> _neighbors = new HashMap<String, Vertex>();
     private Map<String, Edge> _adjacentEdges = new HashMap<String, Edge>();
 
@@ -37,6 +39,10 @@ public class Vertex extends BaseElement implements Comparable {
 
     public String getName() {
         return _name;
+    }
+    
+    void setName( String name) {
+        _name = name;
     }
 
     void connectTo(Vertex other, Edge byEdge) throws Exception {
@@ -115,12 +121,16 @@ public class Vertex extends BaseElement implements Comparable {
             return 1;
         }
         Vertex other = (Vertex) o;
-        return _name.compareTo(other._name);
+        return _index - other._index;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        return (obj != null) && (_name.equals(((Vertex) obj)._name));
+    public boolean equals(Object o) {
+        if (o == null) {
+            return false;
+        }
+        Vertex other = (Vertex) o;
+        return ( (other != null) && (_index == other._index ) );
     }
 
     @Override
