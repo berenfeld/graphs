@@ -38,8 +38,12 @@ public class MainWindow extends JFrame implements ActionListener {
         _newGraphMenu.add(_newEmptyGraph);
         _newGraphMenu.add(_newRandomGraph);
         _graphsMenu.add(_newGraphMenu);
+        
+        _algorithms.add(_colorGraphAlgorithm);
+        _colorGraphAlgorithm.addActionListener(this);
+        
         _menuBar.add(_graphsMenu);
-
+        _menuBar.add(_algorithms);
         setJMenuBar(_menuBar);
     }
 
@@ -48,10 +52,18 @@ public class MainWindow extends JFrame implements ActionListener {
         Object source = e.getSource();
         if (source.equals(_newEmptyGraph)) {
             newEmptyGraph();
-
-        } else if (source.equals(_newRandomGraph)) {
+            return;
+        } 
+        if (source.equals(_newRandomGraph)) {
             newRandomGraph();
-
+            return;
+        }
+        if (source.equals(_colorGraphAlgorithm)) {
+            if (_currentGraph == null) {
+                JOptionPane.showMessageDialog(this, "Please select a graph" );
+                return;
+            }
+            Coloring.colorGraph_Greedy(_currentGraph);
         }
     }
 
@@ -77,16 +89,24 @@ public class MainWindow extends JFrame implements ActionListener {
         _desktopPane.add(graphFrame);
         graphFrame.setSize(_desktopPane.getSize());
         graphFrame.setLocation(0, 0);
+        
+        _currentGraph = g;
     }
 
+    private Graph _currentGraph;
+    
     private JDesktopPane _desktopPane = new JDesktopPane();
     private JMenuBar _menuBar = new JMenuBar();
     private JMenu _graphsMenu = new JMenu("Graphs");
+    
 
     private JMenu _newGraphMenu = new JMenu("New Graph");
     private JMenuItem _newEmptyGraph = new JMenuItem("Empty Graph");
     private JMenuItem _newRandomGraph = new JMenuItem("Random Graph");
 
+    private JMenu _algorithms = new JMenu("Algorithms");
+    private JMenuItem _colorGraphAlgorithm = new JMenuItem("Color Graph");
+    
     private static void setLookAndFeel(String lookAndFeel)
     {
         try {

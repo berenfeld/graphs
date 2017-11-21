@@ -88,6 +88,10 @@ public class Vertex extends BaseElement implements Comparable {
         return new TreeSet(_adjacentEdges.values());
     }
     
+    public int getDegree() {
+        return _neighbors.size();
+    }
+    
     public boolean connectedTo(String to) {
         return _neighbors.containsKey(to);
     }

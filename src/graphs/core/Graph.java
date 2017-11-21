@@ -235,6 +235,14 @@ public class Graph extends BaseElement {
         return sum;
     }
     
+    public int getMaximumDegree() {
+        int maximum = 0;
+        for (Vertex v : _vertices.values()) {
+            maximum = Math.max(maximum, v.getDegree());
+        }
+        return maximum;
+    }
+    
     private void calculateConnectivity() {
         if (_connectivityCalculated) {
             return;
