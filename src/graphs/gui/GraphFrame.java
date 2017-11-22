@@ -42,8 +42,6 @@ public class GraphFrame extends JInternalFrame implements MouseListener, ActionL
         initMenus();
     }
 
-
-
     private void initMenus() {
         _graphNameMenu.setEnabled(false);
         _graphNameMenu.setText(_graph.getName());

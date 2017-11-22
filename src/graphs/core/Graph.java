@@ -7,13 +7,14 @@ package graphs.core;
 
 import graphs.algorithms.BFS;
 import graphs.utils.Utils;
+import java.io.Serializable;
 import java.util.*;
 
 /**
  *
  * @author me
  */
-public class Graph extends BaseElement {
+public class Graph extends BaseElement implements Serializable {
 
     public Graph(String name) {
         _name = name;
@@ -23,11 +24,11 @@ public class Graph extends BaseElement {
 
     // structure
     private int _vertexIndex = 1;
-    private final Map<String, Vertex> _vertices = new TreeMap<String, Vertex>();
-    private final Map<String, Edge> _edges = new TreeMap<String, Edge>();
-    private final ArrayList<String> _vertexNames = new ArrayList<String>();    
+    private final Map<String, Vertex> _vertices = new TreeMap<>();
+    private final Map<String, Edge> _edges = new TreeMap<>();
+    private final ArrayList<String> _vertexNames = new ArrayList<>();    
     
-    private final ArrayList<String> _edgeNames = new ArrayList<String>();
+    private final ArrayList<String> _edgeNames = new ArrayList<>();
 
     private final Random rand = new Random();
 
@@ -259,13 +260,13 @@ public class Graph extends BaseElement {
         }
         _connectedComponents.clear();
         _numberOfConnectedComponents = 0;
-        ArrayList<String> leftVertices = new ArrayList<String>(_vertexNames);
+        ArrayList<String> leftVertices = new ArrayList<>(_vertexNames);
         while (!leftVertices.isEmpty()) {
             Vertex v = getVertex(leftVertices.get(0));
             Graph bfs = BFS.bfs(this, v);
             Vertex bfsRoot = bfs.getVertex(v.getName());
 
-            Map<String, Vertex> connectedComponent = new TreeMap<String, Vertex>();
+            Map<String, Vertex> connectedComponent = new TreeMap<>();
             for (String vertexName : bfs.getVerticesNames()) {
                 connectedComponent.put(vertexName, getVertex(vertexName));
                 leftVertices.remove(vertexName);
@@ -327,8 +328,8 @@ public class Graph extends BaseElement {
         }
     }
 
-    public Vector<Integer> gradeSequence() {
-        Vector<Integer> result = new Vector<Integer>(_vertices.size());
+    public ArrayList<Integer> gradeSequence() {
+        ArrayList<Integer> result = new ArrayList<>(_vertices.size());
         for (Vertex v : _vertices.values()) {
             result.add(v.grade());
 

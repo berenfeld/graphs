@@ -11,6 +11,9 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyVetoException;
+import java.io.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.*;
 import javax.swing.UIManager.LookAndFeelInfo;
 
@@ -39,6 +42,11 @@ public class MainWindow extends JFrame implements ActionListener {
         _newGraphMenu.add(_newRandomGraph);
         _graphsMenu.add(_newGraphMenu);
         
+        _graphsMenu.add(_saveGraphMenu);
+        _saveGraphMenu.addActionListener(this);
+        _graphsMenu.add(_loadGraphMenu);
+        _loadGraphMenu.addActionListener(this);
+        
         _algorithms.add(_colorGraphAlgorithm);
         _colorGraphAlgorithm.addActionListener(this);
         
@@ -66,6 +74,51 @@ public class MainWindow extends JFrame implements ActionListener {
             }
             Coloring.colorGraph_Greedy(graphFrame.getGraph());
             graphFrame.repaint();
+            return;
+        }
+        if (source.equals(_saveGraphMenu)) {
+            GraphFrame graphFrame = (GraphFrame) _desktopPane.getSelectedFrame();
+            if (graphFrame == null) {
+                JOptionPane.showMessageDialog(this, "Please select a graph" );
+                return;
+            }
+            final JFileChooser fc = new JFileChooser("/home/me/new_site/graphs");
+            int returnVal = fc.showSaveDialog(this);
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                File file = fc.getSelectedFile();
+                try {
+                    FileOutputStream fos = new FileOutputStream(file);
+                    ObjectOutputStream oos = new ObjectOutputStream(fos);
+                    oos.writeObject(graphFrame.getGraph());
+                    oos.close();
+                } catch (Exception ex) {
+                    Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+                    JOptionPane.showMessageDialog(this, "Graph Save Failed" );
+                    return;
+                }			
+            }
+            return;
+        }
+        if (source.equals(_loadGraphMenu)) {
+            
+            final JFileChooser fc = new JFileChooser("/home/me/new_site/graphs");
+            int returnVal = fc.showOpenDialog(this);
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                File file = fc.getSelectedFile();
+                Graph graph = null;
+                try {
+                    FileInputStream fis = new FileInputStream(fc.getSelectedFile());
+                    ObjectInputStream ois = new ObjectInputStream(fis);
+                    graph = (Graph) ois.readObject();
+                    ois.close();                    
+                } catch (Exception ex) {
+                    Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+                    JOptionPane.showMessageDialog(this, "Graph Open Failed" );
+                    return;
+                }
+                addGraphFrame(graph);
+            }
+            return;
         }
     }
 
@@ -107,11 +160,13 @@ public class MainWindow extends JFrame implements ActionListener {
     private JMenuBar _menuBar = new JMenuBar();
     private JMenu _graphsMenu = new JMenu("Graphs");
     
-
     private JMenu _newGraphMenu = new JMenu("New Graph");
     private JMenuItem _newEmptyGraph = new JMenuItem("Empty Graph");
     private JMenuItem _newRandomGraph = new JMenuItem("Random Graph");
 
+    private JMenuItem _saveGraphMenu = new JMenuItem("Save To File");
+    private JMenuItem _loadGraphMenu = new JMenuItem("Load From File");
+    
     private JMenu _algorithms = new JMenu("Algorithms");
     private JMenuItem _colorGraphAlgorithm = new JMenuItem("Color Graph");
     

@@ -7,6 +7,7 @@ package graphs.core;
 
 import graphs.core.*;
 import graphs.utils.*;
+import java.io.Serializable;
 import java.util.*;
 
 /**

@@ -6,13 +6,14 @@
 package graphs.core;
 
 import graphs.utils.Utils;
+import java.io.Serializable;
 import java.util.*;
 
 /**
  *
  * @author me
  */
-public class Vertex extends BaseElement implements Comparable {
+public class Vertex extends BaseElement implements Comparable, Serializable {
 
     public Vertex(Graph graph, String name, int index) {
         _graph = graph;

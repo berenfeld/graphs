@@ -6,19 +6,13 @@
 package graphs.gui;
 
 import graphs.core.*;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.geom.Ellipse2D;
-import java.beans.PropertyVetoException;
 import java.util.Map;
 import java.util.TreeMap;
-import javax.swing.JInternalFrame;
-import javax.swing.JPanel;
+import javax.swing.*;
 
 /**
  *
@@ -40,10 +34,11 @@ public class GraphPanel extends JPanel implements ComponentListener {
         
     private Graph _graph;
     private int _verticesSize = 5;
-    private VerticesLayout _currentLayout = VerticesLayout.None;
     
-    public static final String VERTEX_X = "Vertex-X";
-    public static final String VERTEX_Y = "Vertex-Y";
+    
+    public static final String GUI_LAYOUT = "GUI-Vertices-Layout";
+    public static final String VERTEX_X = "GUI-Vertex-X";
+    public static final String VERTEX_Y = "GUI-Vertex-Y";
     
     
     public void setVerticesLayout( VerticesLayout layout ) {
@@ -56,6 +51,7 @@ public class GraphPanel extends JPanel implements ComponentListener {
             break;
         }
         repaint();
+        _graph.setAttribute(GUI_LAYOUT, layout);
     }
     
     public void setVerticesSize(int size) {
@@ -91,9 +87,14 @@ public class GraphPanel extends JPanel implements ComponentListener {
             i++;
         }
         
-        _currentLayout = VerticesLayout.Grid;
+        _graph.setAttribute(GUI_LAYOUT, VerticesLayout.Grid );
     }
     
+    public VerticesLayout getVerticesLayout() {
+        return (VerticesLayout) _graph.getAttribute(GUI_LAYOUT, VerticesLayout.None);
+    }
+   
+
     private void layoutVerticesCircle() {
         int i = 0;
         int vertices = _graph.getNumberOfVertices();
@@ -106,11 +107,11 @@ public class GraphPanel extends JPanel implements ComponentListener {
             v.setAttribute(VERTEX_Y, vertexY );
             i++;
         }
-        _currentLayout = VerticesLayout.Circle;
+        _graph.setAttribute(GUI_LAYOUT, VerticesLayout.Circle );
         
     }
     
-    public static Map<Integer, Color> VERTEX_COLORS = new TreeMap<>();
+    public static final Map<Integer, Color> VERTEX_COLORS = new TreeMap<>();
     static {
         VERTEX_COLORS.put(0, Color.BLACK);
         VERTEX_COLORS.put(1, Color.RED);
@@ -128,7 +129,7 @@ public class GraphPanel extends JPanel implements ComponentListener {
 
         g.setFont(new Font("Arial", Font.PLAIN, 16 ) );
         
-        if ( _currentLayout == VerticesLayout.None) {
+        if ( getVerticesLayout() == VerticesLayout.None) {
             layoutVerticesGrid();
         }
         Graphics2D g2 = (Graphics2D) g;
@@ -178,7 +179,7 @@ public class GraphPanel extends JPanel implements ComponentListener {
     @Override
     public void componentResized(ComponentEvent e)
     {
-        switch (_currentLayout) {
+        switch (getVerticesLayout()) {
             case Grid:
                 layoutVerticesGrid();             
             break;

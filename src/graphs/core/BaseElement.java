@@ -5,6 +5,7 @@
  */
 package graphs.core;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,7 +13,7 @@ import java.util.Map;
  *
  * @author me
  */
-public class BaseElement {
+public class BaseElement implements Serializable {
     // attribtes
     protected Map<String, Object> _attributes = new HashMap<String, Object>();
     

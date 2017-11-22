@@ -6,13 +6,14 @@
 package graphs.core;
 
 import graphs.utils.Utils;
+import java.io.Serializable;
 import java.util.*;
 
 /**
  *
  * @author me
  */
-public class Edge extends BaseElement implements Comparable {
+public class Edge extends BaseElement implements Comparable, Serializable {
 
     public Edge(Graph graph, Vertex v1, Vertex v2)  {
         _graph = graph;
