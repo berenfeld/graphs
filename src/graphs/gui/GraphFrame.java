@@ -7,11 +7,13 @@ package graphs.gui;
 
 import graphs.algorithms.Factory;
 import graphs.core.*;
+import graphs.utils.Utils;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.beans.PropertyVetoException;
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -25,7 +27,7 @@ import javax.swing.*;
  *
  * @author me
  */
-public class GraphFrame extends JInternalFrame implements MouseListener, ActionListener {
+public class GraphFrame extends JInternalFrame implements MouseListener, ActionListener, MouseMotionListener {
 
     public GraphFrame(Graph graph) {
         super(graph.getName(), true, true, true, true);
@@ -36,6 +38,7 @@ public class GraphFrame extends JInternalFrame implements MouseListener, ActionL
         getContentPane().add(_canvas, BorderLayout.CENTER);
 
         _canvas.addMouseListener(this);
+        _canvas.addMouseMotionListener(this);
         initMenus();
     }
 
@@ -95,6 +98,8 @@ public class GraphFrame extends JInternalFrame implements MouseListener, ActionL
 
     private GraphPanel _canvas;
     private int _clickX, _clickY;
+    private Vertex _draggedVertex;
+    
     @Override
     public void mouseClicked(MouseEvent e) {
         if (! SwingUtilities.isRightMouseButton(e) ) {
@@ -112,26 +117,24 @@ public class GraphFrame extends JInternalFrame implements MouseListener, ActionL
     private void handleMouseClicked(MouseEvent e ) throws Exception 
     {
         Object source = e.getSource();
-        double panelWidth = _canvas.getSize().getWidth();
-        double panelHeight = _canvas.getSize().getHeight();
+        
         if (source.equals(_canvas)) {
+            
+            double panelWidth = _canvas.getSize().getWidth();
+            double panelHeight = _canvas.getSize().getHeight();
             
             for (Vertex v : _graph.getVertices()) {
                 int vertexX = (int)((double) v.getAttribute(GraphPanel.VERTEX_X) * panelWidth);
                 int vertexY = (int)((double) v.getAttribute(GraphPanel.VERTEX_Y) * panelHeight);
-                
-                // System.out.println(e.getX() + "," + e.getY() + "," + vertexX + "," + vertexY);
-                if (    ( Math.abs(vertexX - e.getX()) < 10 ) &&
-                        ( Math.abs(vertexY - e.getY()) < 10 ) ) {
+                                
+                if ( Utils.distance( vertexX, vertexY, _clickX, _clickY ) < 5 ) {
                     _vertexNameMenu.setText(v.getName());
                     _vertexMenu.show(_canvas, e.getX(), e.getY());
                     _selectedVertex = v;
                     return;
                 }
                 
-            }
-            
-            
+            }                        
             _graphMenu.show(_canvas, e.getX(), e.getY());
             return;
         }
@@ -140,10 +143,28 @@ public class GraphFrame extends JInternalFrame implements MouseListener, ActionL
 
     @Override
     public void mousePressed(MouseEvent e) {
+        Object source = e.getSource();
+        double panelWidth = _canvas.getSize().getWidth();
+        double panelHeight = _canvas.getSize().getHeight();
+        if (source.equals(_canvas)) {            
+            for (Vertex v : _graph.getVertices()) {
+                int vertexX = (int)((double) v.getAttribute(GraphPanel.VERTEX_X) * panelWidth);
+                int vertexY = (int)((double) v.getAttribute(GraphPanel.VERTEX_Y) * panelHeight);
+                
+                if (    ( Math.abs(vertexX - e.getX()) < 10 ) &&
+                        ( Math.abs(vertexY - e.getY()) < 10 ) ) {
+                    _draggedVertex = v;
+                    return;
+                }
+                
+            }
+            return;
+        }
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
+        _draggedVertex = null;
     }
 
     @Override
@@ -162,6 +183,30 @@ public class GraphFrame extends JInternalFrame implements MouseListener, ActionL
             
         }
     }
+    
+    @Override
+    public void mouseDragged(MouseEvent e)
+    {    
+        if ( _draggedVertex != null) {
+            double panelWidth = _canvas.getSize().getWidth();
+            double panelHeight = _canvas.getSize().getHeight();
+            
+            double fromX = (double) _draggedVertex.getAttribute(GraphPanel.VERTEX_X) * panelWidth;
+            double fromY = (double) _draggedVertex.getAttribute(GraphPanel.VERTEX_Y) * panelHeight;
+            
+            double toX = (double)e.getX() / panelWidth;
+            double toY = (double)e.getY() / panelHeight ;
+            
+            _draggedVertex.setAttribute( GraphPanel.VERTEX_X, toX ) ;
+            _draggedVertex.setAttribute( GraphPanel.VERTEX_Y, toY ) ;
+            repaint();
+        }
+        
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e)
+    {}
     
     private void  handleEvent(ActionEvent e) throws Exception 
     {

@@ -70,7 +70,6 @@ public class GraphPanel extends JPanel implements ComponentListener {
             return;
         }
     
-
         double ratio = panelWidth / panelHeight;
         double vertices = _graph.getNumberOfVertices();
         int gridWidth = (int) Math.ceil(Math.sqrt( vertices) * ratio);
@@ -130,7 +129,7 @@ public class GraphPanel extends JPanel implements ComponentListener {
         g.setFont(new Font("Arial", Font.PLAIN, 16 ) );
         
         if ( _currentLayout == VerticesLayout.None) {
-            layoutVerticesGrid();             
+            layoutVerticesGrid();
         }
         Graphics2D g2 = (Graphics2D) g;
         

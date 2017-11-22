@@ -39,6 +39,8 @@ public class Utils {
         return from.compareTo(to) < 0 ? (from + "-" + to) : (to + "-" + from);
     }
     
-    
+    public static double distance(double fromX, double fromY, double toX, double toY) {
+        return Math.sqrt(Math.pow(toY - fromY,2 ) + Math.pow(toX - fromX, 2));
+    }
         
 }
