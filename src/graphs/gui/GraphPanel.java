@@ -7,12 +7,16 @@ package graphs.gui;
 
 import graphs.core.*;
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.geom.Ellipse2D;
 import java.beans.PropertyVetoException;
+import java.util.Map;
+import java.util.TreeMap;
 import javax.swing.JInternalFrame;
 import javax.swing.JPanel;
 
@@ -40,6 +44,7 @@ public class GraphPanel extends JPanel implements ComponentListener {
     
     public static final String VERTEX_X = "Vertex-X";
     public static final String VERTEX_Y = "Vertex-Y";
+    
     
     public void setVerticesLayout( VerticesLayout layout ) {
         switch (layout) {
@@ -106,8 +111,24 @@ public class GraphPanel extends JPanel implements ComponentListener {
         
     }
     
+    public static Map<Integer, Color> VERTEX_COLORS = new TreeMap<>();
+    static {
+        VERTEX_COLORS.put(0, Color.BLACK);
+        VERTEX_COLORS.put(1, Color.RED);
+        VERTEX_COLORS.put(2, Color.BLUE);
+        VERTEX_COLORS.put(3, Color.GREEN);        
+        VERTEX_COLORS.put(4, Color.GRAY);
+        VERTEX_COLORS.put(5, Color.ORANGE);
+        VERTEX_COLORS.put(6, Color.WHITE);
+        VERTEX_COLORS.put(7, Color.MAGENTA);
+        VERTEX_COLORS.put(8, Color.CYAN);
+        VERTEX_COLORS.put(9, Color.YELLOW);
+    }
+    
     private void repaintGraph(Graphics g) {
 
+        g.setFont(new Font("Arial", Font.PLAIN, 16 ) );
+        
         if ( _currentLayout == VerticesLayout.None) {
             layoutVerticesGrid();             
         }
@@ -128,12 +149,14 @@ public class GraphPanel extends JPanel implements ComponentListener {
             int vertexX = (int)((double)v.getAttribute(VERTEX_X ) * panelWidth );
             int vertexY = (int)((double)v.getAttribute(VERTEX_Y ) * panelHeight );
             
+            g.setColor(VERTEX_COLORS.get(v.getColor() ));
             g.drawString(v.getName(), vertexX, vertexY );
             g2.fill(new Ellipse2D.Double(vertexX, vertexY, _verticesSize, _verticesSize ) );
                              
             i++;
         }
 
+        g.setColor(Color.BLACK);
         for (Edge e : _graph.getEdges()) {
             Vertex from = e.getFromVertex();
             Vertex to = e.getToVertex();

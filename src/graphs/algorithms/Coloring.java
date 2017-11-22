@@ -15,7 +15,7 @@ import graphs.core.Vertex;
 public class Coloring {
     
     public static void colorGraph_Greedy(Graph g) {
-        int colors = g.getMaximumDegree();
+        
         
         for(Vertex v : g.getVertices()) {
             v.setColor(0);

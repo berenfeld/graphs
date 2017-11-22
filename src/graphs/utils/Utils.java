@@ -39,8 +39,6 @@ public class Utils {
         return from.compareTo(to) < 0 ? (from + "-" + to) : (to + "-" + from);
     }
     
-    public static String vertexName(int index) {
-        return String.format("v%s", index);
-    }
+    
         
 }

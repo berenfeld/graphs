@@ -59,11 +59,13 @@ public class MainWindow extends JFrame implements ActionListener {
             return;
         }
         if (source.equals(_colorGraphAlgorithm)) {
-            if (_currentGraph == null) {
+            GraphFrame graphFrame = (GraphFrame) _desktopPane.getSelectedFrame();
+            if (graphFrame == null) {
                 JOptionPane.showMessageDialog(this, "Please select a graph" );
                 return;
             }
-            Coloring.colorGraph_Greedy(_currentGraph);
+            Coloring.colorGraph_Greedy(graphFrame.getGraph());
+            graphFrame.repaint();
         }
     }
 
@@ -78,7 +80,17 @@ public class MainWindow extends JFrame implements ActionListener {
     }
 
     private void newRandomGraph() {
-        int vertices = Integer.parseInt(JOptionPane.showInputDialog("How manyu vertice ?"));
+        int vertices;
+        try {
+            vertices = Integer.parseInt(JOptionPane.showInputDialog("How manyu vertice ?"));
+        } catch (NumberFormatException ex ) {
+            JOptionPane.showMessageDialog(this, "Illegal number of vertices");
+            return;
+        }
+        if ( vertices < 0 ) {
+            JOptionPane.showMessageDialog(this, "Illegal number of vertices");
+            return;
+        }
         Graph g = Factory.buildRandomGraph(vertices, 0.2);
         addGraphFrame(g);
     }
@@ -88,12 +100,8 @@ public class MainWindow extends JFrame implements ActionListener {
 
         _desktopPane.add(graphFrame);
         graphFrame.setSize(_desktopPane.getSize());
-        graphFrame.setLocation(0, 0);
-        
-        _currentGraph = g;
-    }
-
-    private Graph _currentGraph;
+        graphFrame.setLocation(0, 0);                
+    }    
     
     private JDesktopPane _desktopPane = new JDesktopPane();
     private JMenuBar _menuBar = new JMenuBar();

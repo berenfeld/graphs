@@ -22,10 +22,11 @@ public class Graph extends BaseElement {
     private String _name;
 
     // structure
-    private int _vertexIndex = 0;
+    private int _vertexIndex = 1;
     private final Map<String, Vertex> _vertices = new TreeMap<String, Vertex>();
     private final Map<String, Edge> _edges = new TreeMap<String, Edge>();
-    private final ArrayList<String> _vertexNames = new ArrayList<String>();
+    private final ArrayList<String> _vertexNames = new ArrayList<String>();    
+    
     private final ArrayList<String> _edgeNames = new ArrayList<String>();
 
     private final Random rand = new Random();
@@ -84,25 +85,34 @@ public class Graph extends BaseElement {
     }
 
     public Vertex getVertex(int index) {
-        return _vertices.get(_vertexNames.get(index));
+        return getVertex(_vertexNames.get(index - 1));
     }
 
+    public Vertex getFirstVertex() {
+        return getVertex(1);
+    }
+    
     public Vertex getRandomVertex() {
-        int index = rand.nextInt(_vertexNames.size());
-        return getVertex(index);
+        int index = rand.nextInt(_vertices.size()) + 1;
+        return getVertex(_vertexNames.get(index));
     }
 
+    public Vertex addVertex() throws Exception {
+        String name = "v" + _vertexIndex;
+        return addVertex(name);
+    }
+    
     public Vertex addVertex(String name) throws Exception {
-        // structure
         if (_vertices.containsKey(name)) {
             throw new Exception("Vertex '" + name + "' already exists");
-        }
-        ++ _vertexIndex;
+        }        
         Vertex newVertex = new Vertex(this, name, _vertexIndex);
+        
         _vertices.put(name, newVertex);
         _vertexNames.add(name);
         _connectivityCalculated = false;
         _diameterCalculated = false;
+        ++ _vertexIndex;
         return newVertex;
     }
 

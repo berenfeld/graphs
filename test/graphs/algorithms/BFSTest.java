@@ -42,8 +42,8 @@ public class BFSTest {
     @Test
     public void test_BFS_randomGraph() {
         Graph g = Factory.buildRandomGraph(100, 0.8);
-        Graph b1 = BFS.bfs(g, g.getVertex(0));
-        Graph b2 = BFS.bfs(g, g.getVertex(0));
+        Graph b1 = BFS.bfs(g, g.getVertex(1));
+        Graph b2 = BFS.bfs(g, g.getVertex(1));
         assertEquals(b1, b2);
     }
 
@@ -114,7 +114,7 @@ public class BFSTest {
             assertEquals(v.getName(), (String) bfs.getAttribute(BFS.BFS_INITIAL_VERTEX));
         }
 
-        Vertex start = g.getVertex(0);
+        Vertex start = g.getFirstVertex();
         Graph bfs = BFS.bfs(g, start);
         assertEquals(50, (int) bfs.getVertex(start.getName()).getAttribute(BFS.BFS_MAXIMUM_DEPTH));
     }
@@ -123,7 +123,7 @@ public class BFSTest {
     public void test_BFS_lineGraph() {
 
         Graph g = Factory.buildLineGraph(100);
-        Vertex start = g.getVertex(0);
+        Vertex start = g.getFirstVertex();
         Graph bfs = BFS.bfs(g, start);
         assertEquals(bfs.getNumberOfVertices(), 100);
         assertEquals(bfs.getNumberOfEdges(), 99);

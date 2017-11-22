@@ -39,15 +39,15 @@ public class PrimTest {
     @Test
     public void test_Prim_completeGraph() throws Exception {
         Graph g = Factory.buildCompleteGraph(100);
-        for (int i = 0; i < 100; i++) {
-            for (int j = i + 1; j < 100; j++) {
-                g.getEdge(g.getVertex(i), g.getVertex(j)).setWeight(i + j);
+        for (int i = 1; i <= 100; i++) {
+            for (int j = i + 1; j <= 100; j++) {
+                g.getEdge(g.getVertex(i), g.getVertex(j)).setWeight(i + j - 1);
             }
         }
-        Graph prim = Prim.minimumWeightSpanningTree(g, g.getVertex(0));
+        Graph prim = Prim.minimumWeightSpanningTree(g, g.getFirstVertex());
         assertEquals(prim.getNumberOfVertices(), 100);
         assertEquals(prim.getNumberOfEdges(), 99);
-        assertEquals(prim.getSumOfWeightsOfEdges(), 100 * 99 / 2);
+        assertEquals((100 * 101 / 2) - 1, prim.getSumOfWeightsOfEdges() );
     }
 
     @Test

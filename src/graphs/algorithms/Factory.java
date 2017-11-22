@@ -8,7 +8,6 @@ package graphs.algorithms;
 import graphs.core.Edge;
 import graphs.core.Graph;
 import graphs.core.Vertex;
-import graphs.test.Main;
 import graphs.utils.Utils;
 import java.util.*;
 import java.util.logging.Level;
@@ -24,7 +23,7 @@ public class Factory {
         Graph graph = new Graph("Empty (" + vertices + ")");
         try {
             for (int i = 1; i <= vertices; i++) {
-                graph.addVertex(Utils.vertexName(i));
+                graph.addVertex();
             }
         } catch (Exception ex) {
             Logger.getLogger(Factory.class.getName()).log(Level.SEVERE, null, ex);
@@ -38,7 +37,7 @@ public class Factory {
         try {
             for (int i = 1; i <= vertices; i++) {
                 for (int j = i + 1; j <= vertices; j++) {
-                    graph.addEdge(Utils.vertexName(i), Utils.vertexName(j));
+                    graph.addEdge(graph.getVertex(i), graph.getVertex(j));
                 }
             }
         } catch (Exception ex) {
@@ -55,7 +54,7 @@ public class Factory {
             for (int i = 1; i <= vertices; i++) {
                 for (int j = i + 1; j <= vertices; j++) {
                     if (rand.nextDouble() < density) {
-                        graph.addEdge(Utils.vertexName(i), Utils.vertexName(j));
+                        graph.addEdge(graph.getVertex(i), graph.getVertex(j));
                     }
                 }
             }
@@ -70,7 +69,7 @@ public class Factory {
         graph.setName("C" + vertices);
         try {
             if (vertices > 2) {
-                graph.addEdge(Utils.vertexName(vertices), Utils.vertexName(1));
+                graph.addEdge(graph.getVertex(vertices), graph.getVertex(1));
             }
         } catch (Exception ex) {
             return null;
@@ -83,7 +82,7 @@ public class Factory {
         graph.setName("L" + vertices);
         try {
             for (int i = 1; i < vertices; i++) {
-                graph.addEdge(Utils.vertexName(i), Utils.vertexName(i + 1));
+                graph.addEdge(graph.getVertex(i), graph.getVertex(i+1));
             }
         } catch (Exception ex) {
             return null;
@@ -97,7 +96,7 @@ public class Factory {
         try {
             for (int i = 1; i <= leftVertices; i++) {
                 for (int j = 1; j <= rightVertices; j++) {
-                    graph.addEdge(Utils.vertexName(i), Utils.vertexName(rightVertices + j));
+                    graph.addEdge(graph.getVertex(i), graph.getVertex(rightVertices + j));
                 }
 
             }
@@ -149,7 +148,7 @@ public class Factory {
 
             }
         } catch (Exception ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Factory.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         }
         return result;

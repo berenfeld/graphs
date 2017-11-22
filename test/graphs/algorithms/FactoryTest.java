@@ -6,6 +6,7 @@
 package graphs.algorithms;
 
 import graphs.core.Graph;
+import graphs.core.Vertex;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -54,7 +55,11 @@ public class FactoryTest {
         Graph g = Factory.buildCompleteGraph(100);
         assertEquals(100, g.getNumberOfVertices());
         assertEquals(100 * 99 / 2, g.getNumberOfEdges());
-        
+        int i = 1;
+        for (Vertex v : g.getVertices()) {
+            assertEquals("v"+i, v.getName());
+            i++;
+        }        
     }
 
     @Test

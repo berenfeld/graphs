@@ -37,6 +37,10 @@ public class Vertex extends BaseElement implements Comparable {
         return _graph;
     }
 
+    public int getIndex() {
+        return _index;
+    }
+    
     public String getName() {
         return _name;
     }
@@ -104,7 +108,7 @@ public class Vertex extends BaseElement implements Comparable {
     }
 
     public int getColor() {
-        return (int) getAttribute(VERTEX_ATTRIBUTE_COLOR);
+        return (int) getAttribute(VERTEX_ATTRIBUTE_COLOR, 0);
     }
 
     public void setColor(int color) {

@@ -5,6 +5,7 @@
  */
 package graphs.gui;
 
+import graphs.algorithms.Factory;
 import graphs.core.*;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -16,6 +17,8 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.*;
 
 /**
@@ -46,6 +49,8 @@ public class GraphFrame extends JInternalFrame implements MouseListener, ActionL
         _graphMenu.addSeparator();
         _graphMenu.add(_changeGraphNameMenu);
         _changeGraphNameMenu.addActionListener(this);
+        _graphMenu.add(_addVertexMenu);
+        _addVertexMenu.addActionListener(this);        
         _graphMenu.add(_verticesSizeMenu);
         for (int i = 3; i < 10; i++) {
             JMenuItem verticesSizeMenuItem = new JMenuItem(i + " Points");
@@ -69,6 +74,9 @@ public class GraphFrame extends JInternalFrame implements MouseListener, ActionL
         
     }
 
+    public Graph getGraph() {
+        return _graph;
+    }
     private Graph _graph;
     private JPopupMenu _graphMenu = new JPopupMenu();
     private JPopupMenu _vertexMenu = new JPopupMenu();
@@ -76,6 +84,7 @@ public class GraphFrame extends JInternalFrame implements MouseListener, ActionL
     private JMenuItem _vertexNameMenu = new JMenuItem();
     private Vertex _selectedVertex;
     private JMenuItem _changeGraphNameMenu = new JMenuItem("Change Name");
+    private JMenuItem _addVertexMenu = new JMenuItem("Add Vertex");
     private JMenuItem _changeVertexNameMenu = new JMenuItem("Change Name");
     private JMenuItem _removeVertexMenu = new JMenuItem("Remove");
     private JMenu _verticesSizeMenu = new JMenu("Vertices Size");
@@ -85,13 +94,28 @@ public class GraphFrame extends JInternalFrame implements MouseListener, ActionL
     private List<JMenuItem> _verticesSizeMenus = new ArrayList<JMenuItem>();
 
     private GraphPanel _canvas;
-
+    private int _clickX, _clickY;
     @Override
     public void mouseClicked(MouseEvent e) {
+        if (! SwingUtilities.isRightMouseButton(e) ) {
+            return;
+        }
+        _clickX = e.getX();
+        _clickY = e.getY();
+        try {
+            handleMouseClicked(e);
+        } catch (Exception ex ) {
+            Logger.getLogger(GraphFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private void handleMouseClicked(MouseEvent e ) throws Exception 
+    {
         Object source = e.getSource();
+        double panelWidth = _canvas.getSize().getWidth();
+        double panelHeight = _canvas.getSize().getHeight();
         if (source.equals(_canvas)) {
-            double panelWidth = _canvas.getSize().getWidth();
-            double panelHeight = _canvas.getSize().getHeight();
+            
             for (Vertex v : _graph.getVertices()) {
                 int vertexX = (int)((double) v.getAttribute(GraphPanel.VERTEX_X) * panelWidth);
                 int vertexY = (int)((double) v.getAttribute(GraphPanel.VERTEX_Y) * panelHeight);
@@ -106,8 +130,12 @@ public class GraphFrame extends JInternalFrame implements MouseListener, ActionL
                 }
                 
             }
+            
+            
             _graphMenu.show(_canvas, e.getX(), e.getY());
+            return;
         }
+         
     }
 
     @Override
@@ -137,6 +165,8 @@ public class GraphFrame extends JInternalFrame implements MouseListener, ActionL
     
     private void  handleEvent(ActionEvent e) throws Exception 
     {
+        double panelWidth = _canvas.getSize().getWidth();
+        double panelHeight = _canvas.getSize().getHeight();
         Object source = e.getSource();
         if (source.equals(_changeVertexNameMenu)) {
             String newName = JOptionPane.showInputDialog("Replace Name '" + _selectedVertex.getName() + "' With :");
@@ -159,6 +189,14 @@ public class GraphFrame extends JInternalFrame implements MouseListener, ActionL
             setTitle(newName);
             return;
         } 
+        if (source.equals(_addVertexMenu)) {                        
+            Vertex newVertex = _graph.addVertex();
+            newVertex.setAttribute(GraphPanel.VERTEX_X, (double)_clickX / panelWidth);
+            newVertex.setAttribute(GraphPanel.VERTEX_Y, (double)_clickY / panelHeight );
+            
+            repaint();
+            return;
+        }
         if (source.equals(_verticesLayoutGridMenu)) {
             _canvas.setVerticesLayout(GraphPanel.VerticesLayout.Grid);
             return;

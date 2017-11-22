@@ -16,8 +16,14 @@ public class BaseElement {
     // attribtes
     protected Map<String, Object> _attributes = new HashMap<String, Object>();
     
-        // attribtes            
-    public Object getAttribute(String name) {
+    public Object getAttribute(String name) {        
+        return getAttribute(name, null);
+    }
+    
+    public Object getAttribute(String name, Object defautValue) {
+        if ( ! _attributes.containsKey(name)) {
+            return defautValue;
+        }
         return _attributes.get(name);
     }
 
