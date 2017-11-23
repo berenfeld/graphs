@@ -5,6 +5,7 @@
  */
 package graphs.gui;
 
+import com.sun.java.accessibility.util.SwingEventMonitor;
 import graphs.algorithms.*;
 import graphs.core.*;
 import java.awt.Dimension;
@@ -12,16 +13,21 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyVetoException;
 import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
 import javax.swing.UIManager.LookAndFeelInfo;
+import javax.swing.event.InternalFrameEvent;
+import javax.swing.event.InternalFrameListener;
 
 /**
  *
  * @author ranb
  */
-public class MainWindow extends JFrame implements ActionListener {
+public class MainWindow extends JFrame implements ActionListener, InternalFrameListener {
 
     public MainWindow() {
         super("Graphs Theory");
@@ -33,6 +39,7 @@ public class MainWindow extends JFrame implements ActionListener {
         setContentPane(_desktopPane);
 
         setVisible(true);
+        _desktopPane.setDragMode(JDesktopPane.OUTLINE_DRAG_MODE);
     }
 
     private void initMenu() {
@@ -52,8 +59,11 @@ public class MainWindow extends JFrame implements ActionListener {
         _algorithms.add(_bfsAlgorithm);
         _bfsAlgorithm.addActionListener(this);
         
+        _windowsMenu.add(_cascadeWindows);
+        _cascadeWindows.addActionListener(this);
         _menuBar.add(_graphsMenu);
         _menuBar.add(_algorithms);
+        _menuBar.add(_windowsMenu);
         setJMenuBar(_menuBar);
     }
 
@@ -143,14 +153,40 @@ public class MainWindow extends JFrame implements ActionListener {
             }
             return;
         }
+        if (source.equals(_cascadeWindows)) {
+            cascadeWindows();
+            return;
+        }
+        if ( _windowGraphMenus.values().contains(source)) {
+            try {
+                
+            }
+        }
     }
 
+    private void cascadeWindows() {
+        JInternalFrame[] internalFrames = _desktopPane.getAllFrames();        
+        int numberOfFrames = internalFrames.length;
+        if ( numberOfFrames == 0 ) {
+            return;
+        }
+        final int FRAMES_SEPERATION = 30;        
+        final Dimension FRAME_SIZE = new Dimension(_desktopPane.getWidth() - FRAMES_SEPERATION * numberOfFrames,
+                 _desktopPane.getHeight() - FRAMES_SEPERATION * numberOfFrames );
+        int i = 0;
+        for (JInternalFrame internalFrame : internalFrames) {
+            
+            internalFrame.setSize( FRAME_SIZE );
+            internalFrame.setLocation(i * FRAMES_SEPERATION, i * FRAMES_SEPERATION );   
+            i ++;
+        }
+        repaint();
+    }
     private void newEmptyGraph() {
         int vertices = Integer.parseInt(JOptionPane.showInputDialog("How manyu vertice ?"));
         Graph g = Factory.buildEmptyGraph(vertices);
-        GraphFrame graphFrame = new GraphFrame(g);
 
-        _desktopPane.add(graphFrame);
+        
         addGraphFrame(g);
 
     }
@@ -173,11 +209,16 @@ public class MainWindow extends JFrame implements ActionListener {
 
     private void addGraphFrame(Graph g) {
         GraphFrame graphFrame = new GraphFrame(g);
-
-        _desktopPane.add(graphFrame);
         graphFrame.setSize(_desktopPane.getSize());
-        graphFrame.setLocation(0, 0);                
-        _desktopPane.setSelectedFrame(graphFrame);
+        graphFrame.setLocation(0, 0);        
+        graphFrame.show();
+        
+        graphFrame.addInternalFrameListener(this);
+        _desktopPane.add(graphFrame);                        
+        try {
+            graphFrame.setSelected(true);
+        } catch (java.beans.PropertyVetoException e) {
+        }
     }    
     
     private JDesktopPane _desktopPane = new JDesktopPane();
@@ -194,6 +235,10 @@ public class MainWindow extends JFrame implements ActionListener {
     private JMenu _algorithms = new JMenu("Algorithms");
     private JMenuItem _colorGraphAlgorithm = new JMenuItem("Color Graph");
     private JMenuItem _bfsAlgorithm = new JMenuItem("BFS");
+    
+    private JMenu _windowsMenu = new JMenu("Windows");
+    private JMenuItem _cascadeWindows = new JMenuItem("Cascade");
+    private Map<GraphFrame, JMenuItem> _windowGraphMenus = new HashMap<>();
     
     private static void setLookAndFeel(String lookAndFeel)
     {
@@ -215,5 +260,77 @@ public class MainWindow extends JFrame implements ActionListener {
         setLookAndFeel( "Nimbus" );
         new MainWindow();
 
+    }
+    
+    /**
+     * Invoked when a internal frame has been opened.
+     * @see javax.swing.JInternalFrame#show
+     */
+    public void internalFrameOpened(InternalFrameEvent e)
+    {
+        
+    }
+
+    /**
+     * Invoked when an internal frame is in the process of being closed.
+     * The close operation can be overridden at this point.
+     * @see javax.swing.JInternalFrame#setDefaultCloseOperation
+     */
+    public void internalFrameClosing(InternalFrameEvent e)
+    {
+        
+    }
+
+    /**
+     * Invoked when an internal frame has been closed.
+     * @see javax.swing.JInternalFrame#setClosed
+     */
+    public void internalFrameClosed(InternalFrameEvent e)
+    {
+        GraphFrame graphFrame = (GraphFrame) e.getSource();        
+        JMenuItem windowMenuItem = _windowGraphMenus.get(graphFrame);
+        _windowsMenu.remove(windowMenuItem);        
+    }
+
+    /**
+     * Invoked when an internal frame is iconified.
+     * @see javax.swing.JInternalFrame#setIcon
+     */
+    public void internalFrameIconified(InternalFrameEvent e)
+    {
+        
+    }
+
+    /**
+     * Invoked when an internal frame is de-iconified.
+     * @see javax.swing.JInternalFrame#setIcon
+     */
+    public void internalFrameDeiconified(InternalFrameEvent e)
+    {
+    }
+
+    /**
+     * Invoked when an internal frame is activated.
+     * @see javax.swing.JInternalFrame#setSelected
+     */
+    public void internalFrameActivated(InternalFrameEvent e)
+    {
+        
+        GraphFrame graphFrame = (GraphFrame) e.getSource();
+        if (! _windowGraphMenus.containsKey(graphFrame)) {
+            JMenuItem windowMenuItem = new JMenuItem(graphFrame.getGraph().getName());        
+            _windowsMenu.add(windowMenuItem);
+            _windowGraphMenus.put(graphFrame, windowMenuItem );
+            windowMenuItem.addActionListener(this);
+        }
+    }
+
+    /**
+     * Invoked when an internal frame is de-activated.
+     * @see javax.swing.JInternalFrame#setSelected
+     */
+    public void internalFrameDeactivated(InternalFrameEvent e)
+    {
+        
     }
 }
