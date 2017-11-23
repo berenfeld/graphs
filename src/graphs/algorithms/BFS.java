@@ -26,27 +26,31 @@ public class BFS {
     public static final String BFS_MAXIMUM_DEPTH = "BFS-Maximum-Depth";
     public static final String BFS_VERTEX_DEPTH = "BFS-Vertex-Depth";
     public static final String BFS_PATH_FROM_ROOT = "BFS-Path-From-Root";
+    public static final int BFS_COLOR_NOT_VISITED = 0;
+    public static final int BFS_COLOR_VISITING = 1;
+    public static final int BFS_COLOR_VISITED = 2;
+    
+    public static final int EDGE_COLOR_NOT_TRAVERESED = 0;
+    public static final int EDGE_COLOR_TRAVERESED = 1;
     
     public static Graph bfs(Graph g, Vertex initial) {
         Graph bfsGraph = Factory.copyOf(g);
-        try {
-            bfsGraph.setName("BFS on " + g.getName());
-
-            for (Vertex vertex : bfsGraph.getVertices() ) {
-                vertex.setColor(Vertex.VERTEX_COLOR_BLACK);
+        try {            
+            for (Vertex vertex : g.getVertices() ) {
+                vertex.setColor(BFS_COLOR_NOT_VISITED);
 
             }
-            for (Edge edge : bfsGraph.getEdges() ) {
-                edge.setColor(Edge.EDGE_COLOR_BLACK);
+            for (Edge edge : g.getEdges() ) {
+                edge.setColor(EDGE_COLOR_NOT_TRAVERESED);
             }
 
-            Vertex start = bfsGraph.getVertex(initial.getName());
+            Vertex start = g.getVertex(initial.getName());
             start.setAttribute(BFS_VERTEX_DEPTH, 0);
 
-            bfsGraph.setAttribute(BFS_INITIAL_VERTEX, start.getName());
+            g.setAttribute(BFS_INITIAL_VERTEX, start.getName());
 
-            start.setColor(Vertex.VERTEX_COLOR_GRAY);
-            Path path = new Path(bfsGraph);            
+            start.setColor(BFS_COLOR_VISITING);
+            Path path = new Path(g);            
             start.setAttribute(BFS_PATH_FROM_ROOT, path);
 
             Queue<Vertex> queue = new LinkedList<>();
@@ -56,8 +60,7 @@ public class BFS {
             while (!queue.isEmpty()) {
 
                 Vertex current = queue.poll();
-                current.setColor(Vertex.VERTEX_COLOR_WHITE);
-
+                
                 int bfsDepth = (int) current.getAttribute(BFS_VERTEX_DEPTH);
 
                 maxDepth = Math.max(maxDepth, bfsDepth);
@@ -65,28 +68,32 @@ public class BFS {
                 for (Edge adjacentEdge : current.getAdjacentEdges()) {
                     Vertex adjacent = adjacentEdge.getOtherVertex(current);
                                          
-                    if (adjacent.getColor() == Vertex.VERTEX_COLOR_BLACK) {      
+                    if (adjacent.getColor() == BFS_COLOR_NOT_VISITED) {      
                     
                         path = new Path((Path)current.getAttribute(BFS_PATH_FROM_ROOT));                    
                         path.add(adjacentEdge);
                         
                         adjacent.setAttribute(BFS_PATH_FROM_ROOT, path);
-                        adjacent.setColor(Vertex.VERTEX_COLOR_GRAY);
+                        adjacent.setColor(BFS_COLOR_VISITING);
                         adjacent.setAttribute(BFS_VERTEX_DEPTH, bfsDepth + 1);
-                        adjacentEdge.setColor(Edge.EDGE_COLOR_WHITE);
+                        adjacentEdge.setColor(EDGE_COLOR_TRAVERESED);
                         queue.add(adjacent);
                     } 
                 }
+                
+                current.setColor(BFS_COLOR_VISITED);
             }
 
-            for (Vertex vertex :bfsGraph.getVertices() ) {
-                if (vertex.getColor() != Vertex.VERTEX_COLOR_WHITE) {
+            bfsGraph.setName("BFS on " + g.getName());
+            
+            for (Vertex vertex : g.getVertices() ) {
+                if (vertex.getColor() != BFS_COLOR_VISITED) {
                     bfsGraph.removeVertex(vertex);
                 }
             }
 
-            for (Edge edge : bfsGraph.getEdges()) {
-                if (edge.getColor() != Edge.EDGE_COLOR_WHITE) {
+            for (Edge edge : g.getEdges()) {
+                if ( ( bfsGraph.hasEdge(edge.getName()) ) && ( edge.getColor() != EDGE_COLOR_TRAVERESED) ) {
                     bfsGraph.removeEdge(edge.getFromVertex().getName(), edge.getToVertex().getName());
                 }
             }

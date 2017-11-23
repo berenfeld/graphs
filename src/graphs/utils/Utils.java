@@ -42,5 +42,13 @@ public class Utils {
     public static double distance(double fromX, double fromY, double toX, double toY) {
         return Math.sqrt(Math.pow(toY - fromY,2 ) + Math.pow(toX - fromX, 2));
     }
+      
+    
+    public static boolean inLine(double x, double y, double fromX, double fromY, double toX, double toY) {
+        double fullDistance = distance(fromX, fromY, toX, toY);
+        double fromDist = distance(x,y,fromX, fromY);
+        double toDist = distance(x,y,toX, toY);
         
+        return ( fromDist + toDist ) < ( fullDistance + 1 );
+    }
 }

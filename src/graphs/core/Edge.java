@@ -70,9 +70,6 @@ public class Edge extends BaseElement implements Comparable, Serializable {
     }
 
     public static String EDGE_ATTRIBUTE_COLOR = "Color";
-    public static int EDGE_COLOR_WHITE = 1;
-    public static int EDGE_COLOR_GRAY = 2;
-    public static int EDGE_COLOR_BLACK = 3;  
     public static String EDGE_ATTRIBUTE_WEIGHT = "Weight";
 
     @Override
@@ -95,7 +92,7 @@ public class Edge extends BaseElement implements Comparable, Serializable {
     }
     
     public int getColor() {
-        return (int) getAttribute(EDGE_ATTRIBUTE_COLOR);
+        return (int) getAttribute(EDGE_ATTRIBUTE_COLOR, 0);
     }
 
     public void setColor(int color) {

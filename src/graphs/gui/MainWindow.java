@@ -49,12 +49,15 @@ public class MainWindow extends JFrame implements ActionListener {
         
         _algorithms.add(_colorGraphAlgorithm);
         _colorGraphAlgorithm.addActionListener(this);
+        _algorithms.add(_bfsAlgorithm);
+        _bfsAlgorithm.addActionListener(this);
         
         _menuBar.add(_graphsMenu);
         _menuBar.add(_algorithms);
         setJMenuBar(_menuBar);
     }
 
+            
     @Override
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
@@ -73,6 +76,26 @@ public class MainWindow extends JFrame implements ActionListener {
                 return;
             }
             Coloring.colorGraph_Greedy(graphFrame.getGraph());
+            graphFrame.repaint();
+            return;
+        }
+        if (source.equals(_colorGraphAlgorithm)) {
+            GraphFrame graphFrame = (GraphFrame) _desktopPane.getSelectedFrame();
+            if (graphFrame == null) {
+                JOptionPane.showMessageDialog(this, "Please select a graph" );
+                return;
+            }
+            Coloring.colorGraph_Greedy(graphFrame.getGraph());
+            graphFrame.repaint();
+            return;
+        }
+        if (source.equals(_bfsAlgorithm)) {
+            GraphFrame graphFrame = (GraphFrame) _desktopPane.getSelectedFrame();
+            if (graphFrame == null) {
+                JOptionPane.showMessageDialog(this, "Please select a graph" );
+                return;
+            }
+            BFS.bfs(graphFrame.getGraph());
             graphFrame.repaint();
             return;
         }
@@ -154,6 +177,7 @@ public class MainWindow extends JFrame implements ActionListener {
         _desktopPane.add(graphFrame);
         graphFrame.setSize(_desktopPane.getSize());
         graphFrame.setLocation(0, 0);                
+        _desktopPane.setSelectedFrame(graphFrame);
     }    
     
     private JDesktopPane _desktopPane = new JDesktopPane();
@@ -169,6 +193,7 @@ public class MainWindow extends JFrame implements ActionListener {
     
     private JMenu _algorithms = new JMenu("Algorithms");
     private JMenuItem _colorGraphAlgorithm = new JMenuItem("Color Graph");
+    private JMenuItem _bfsAlgorithm = new JMenuItem("BFS");
     
     private static void setLookAndFeel(String lookAndFeel)
     {

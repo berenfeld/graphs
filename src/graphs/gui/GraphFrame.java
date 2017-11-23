@@ -9,6 +9,7 @@ import graphs.algorithms.Factory;
 import graphs.core.*;
 import graphs.utils.Utils;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -39,7 +40,7 @@ public class GraphFrame extends JInternalFrame implements MouseListener, ActionL
 
         _canvas.addMouseListener(this);
         _canvas.addMouseMotionListener(this);
-        initMenus();
+        initMenus(); 
     }
 
     private void initMenus() {
@@ -73,6 +74,11 @@ public class GraphFrame extends JInternalFrame implements MouseListener, ActionL
         _vertexMenu.add(_removeVertexMenu);
         _removeVertexMenu.addActionListener(this);
         
+        _edgeNameMenu.setEnabled(false);
+        _edgeMenu.add(_edgeNameMenu);        
+        _edgeMenu.addSeparator();
+        _edgeMenu.add(_removeEdgeMenu);
+        _removeEdgeMenu.addActionListener(this);
     }
 
     public Graph getGraph() {
@@ -81,13 +87,17 @@ public class GraphFrame extends JInternalFrame implements MouseListener, ActionL
     private Graph _graph;
     private JPopupMenu _graphMenu = new JPopupMenu();
     private JPopupMenu _vertexMenu = new JPopupMenu();
+    private JPopupMenu _edgeMenu = new JPopupMenu();
     private JMenuItem _graphNameMenu = new JMenuItem();
     private JMenuItem _vertexNameMenu = new JMenuItem();
+    private JMenuItem _edgeNameMenu = new JMenuItem();
     private Vertex _selectedVertex;
+    private Edge _selectedEdge;
     private JMenuItem _changeGraphNameMenu = new JMenuItem("Change Name");
     private JMenuItem _addVertexMenu = new JMenuItem("Add Vertex");
     private JMenuItem _changeVertexNameMenu = new JMenuItem("Change Name");
     private JMenuItem _removeVertexMenu = new JMenuItem("Remove");
+    private JMenuItem _removeEdgeMenu = new JMenuItem("Remove");
     private JMenu _verticesSizeMenu = new JMenu("Vertices Size");
     private JMenu _verticesLayoutMenu = new JMenu("Vertices Layout");
     private JMenuItem _verticesLayoutGridMenu = new JMenuItem("Grid");
@@ -125,14 +135,28 @@ public class GraphFrame extends JInternalFrame implements MouseListener, ActionL
                 int vertexX = (int)((double) v.getAttribute(GraphPanel.VERTEX_X) * panelWidth);
                 int vertexY = (int)((double) v.getAttribute(GraphPanel.VERTEX_Y) * panelHeight);
                                 
-                if ( Utils.distance( vertexX, vertexY, _clickX, _clickY ) < 5 ) {
+                if ( Utils.distance( vertexX, vertexY, _clickX, _clickY ) < 10 ) {
                     _vertexNameMenu.setText(v.getName());
                     _vertexMenu.show(_canvas, e.getX(), e.getY());
                     _selectedVertex = v;
                     return;
                 }
+            }
+            for (Edge edge : _graph.getEdges()) {
+                Vertex v1 = edge.getFromVertex();
+                Vertex v2 = edge.getToVertex();
+                int vertex1X = (int)((double) v1.getAttribute(GraphPanel.VERTEX_X) * panelWidth);
+                int vertex1Y = (int)((double) v1.getAttribute(GraphPanel.VERTEX_Y) * panelHeight);
+                int vertex2X = (int)((double) v2.getAttribute(GraphPanel.VERTEX_X) * panelWidth);
+                int vertex2Y = (int)((double) v2.getAttribute(GraphPanel.VERTEX_Y) * panelHeight);
                 
-            }                        
+                if ( Utils.inLine( _clickX, _clickY, vertex1X, vertex1Y, vertex2X, vertex2Y ) ) {                    
+                    _edgeNameMenu.setText(edge.getName());
+                    _edgeMenu.show(_canvas, e.getX(), e.getY());
+                    _selectedEdge = edge;
+                    return;
+                }
+            }
             _graphMenu.show(_canvas, e.getX(), e.getY());
             return;
         }
@@ -149,8 +173,7 @@ public class GraphFrame extends JInternalFrame implements MouseListener, ActionL
                 int vertexX = (int)((double) v.getAttribute(GraphPanel.VERTEX_X) * panelWidth);
                 int vertexY = (int)((double) v.getAttribute(GraphPanel.VERTEX_Y) * panelHeight);
                 
-                if (    ( Math.abs(vertexX - e.getX()) < 10 ) &&
-                        ( Math.abs(vertexY - e.getY()) < 10 ) ) {
+                if (    Utils.distance(vertexX, vertexY, e.getX(), e.getY() ) < 10 ) {                    
                     _draggedVertex = v;
                     return;
                 }
@@ -218,10 +241,18 @@ public class GraphFrame extends JInternalFrame implements MouseListener, ActionL
             repaint();
             return;
         } 
-         if (source.equals(_removeVertexMenu)) {
-            if ( JOptionPane.YES_NO_OPTION == JOptionPane.showConfirmDialog(null, "Remove vertex " + _selectedVertex.getName() + "?", "Confirm", JOptionPane.YES_NO_OPTION ) )
+        if (source.equals(_removeVertexMenu)) {
+            if ( JOptionPane.YES_NO_OPTION == JOptionPane.showConfirmDialog(null, "Remove Vertex " + _selectedVertex.getName() + "?", "Confirm", JOptionPane.YES_NO_OPTION ) )
             {
                 _graph.removeVertex(_selectedVertex);       
+                repaint();
+            }
+            return;
+        } 
+        if (source.equals(_removeEdgeMenu )) {
+            if ( JOptionPane.YES_NO_OPTION == JOptionPane.showConfirmDialog(null, "Remove Edge " + _selectedEdge.getName() + "?", "Confirm", JOptionPane.YES_NO_OPTION ) )
+            {
+                _graph.removeEdge(_selectedEdge);       
                 repaint();
             }
             return;

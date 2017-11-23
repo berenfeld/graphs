@@ -134,9 +134,6 @@ public class Graph extends BaseElement implements Serializable {
     }
 
     public void removeVertex(Vertex v) throws Exception {
-        if (!v.getGraph().equals(this)) {
-            throw new Exception("Vertex '" + v.getName() + "' does not belong to this graph");
-        }
         removeVertex(v.getName());
     }
 

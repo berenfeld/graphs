@@ -23,7 +23,7 @@ public class GraphPanel extends JPanel implements ComponentListener {
     public GraphPanel(Graph graph) {
         super();
         _graph = graph;
-        addComponentListener(this);        
+        addComponentListener(this);            
     }
 
     public enum VerticesLayout {
@@ -127,6 +127,8 @@ public class GraphPanel extends JPanel implements ComponentListener {
     
     private void repaintGraph(Graphics g) {
 
+        g.setColor(Color.WHITE);
+        g.fillRect(0,0,getWidth(), getHeight());
         g.setFont(new Font("Arial", Font.PLAIN, 16 ) );
         
         if ( getVerticesLayout() == VerticesLayout.None) {
@@ -158,6 +160,7 @@ public class GraphPanel extends JPanel implements ComponentListener {
 
         g.setColor(Color.BLACK);
         for (Edge e : _graph.getEdges()) {
+            g.setColor(VERTEX_COLORS.get(e.getColor() ));
             Vertex from = e.getFromVertex();
             Vertex to = e.getToVertex();
             
