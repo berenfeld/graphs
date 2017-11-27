@@ -157,11 +157,14 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
             cascadeWindows();
             return;
         }
-        if ( _windowGraphMenus.values().contains(source)) {
-            try {
-                
+
+        for (GraphFrame graphFrame : _windowGraphMenus.keySet()) {
+            if (_windowGraphMenus.get(graphFrame).equals(source)) {
+                selectGraphFrame(graphFrame);
+                return;
             }
         }
+        
     }
 
     private void cascadeWindows() {
@@ -174,10 +177,10 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
         final Dimension FRAME_SIZE = new Dimension(_desktopPane.getWidth() - FRAMES_SEPERATION * numberOfFrames,
                  _desktopPane.getHeight() - FRAMES_SEPERATION * numberOfFrames );
         int i = 0;
-        for (JInternalFrame internalFrame : internalFrames) {
-            
+        for (JInternalFrame internalFrame : internalFrames) {            
             internalFrame.setSize( FRAME_SIZE );
             internalFrame.setLocation(i * FRAMES_SEPERATION, i * FRAMES_SEPERATION );   
+            selectGraphFrame((GraphFrame)internalFrame);
             i ++;
         }
         repaint();
@@ -207,6 +210,13 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
         addGraphFrame(g);
     }
 
+    private void selectGraphFrame(GraphFrame graphFrame)
+    {
+        try {
+            graphFrame.setSelected(true);
+        } catch (java.beans.PropertyVetoException e) {
+        }
+    }
     private void addGraphFrame(Graph g) {
         GraphFrame graphFrame = new GraphFrame(g);
         graphFrame.setSize(_desktopPane.getSize());
@@ -215,10 +225,7 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
         
         graphFrame.addInternalFrameListener(this);
         _desktopPane.add(graphFrame);                        
-        try {
-            graphFrame.setSelected(true);
-        } catch (java.beans.PropertyVetoException e) {
-        }
+        selectGraphFrame(graphFrame);
     }    
     
     private JDesktopPane _desktopPane = new JDesktopPane();
