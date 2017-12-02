@@ -23,6 +23,12 @@ public class Utils {
         Logger.getLogger(caller.getClass().getName()).log(Level.INFO, "{0}:{1} {2} {3}", new Object[]{caller.getFileName(), caller.getLineNumber(), caller.getMethodName(), message});
 
     }
+    
+    public static void exception(Throwable ex) {
+        ex.printStackTrace();;
+        
+    }
+
 
     public static <T> T getFirst(List<T> list) {
         if (list == null) {
