@@ -8,6 +8,8 @@ package graphs.gui;
 import com.sun.java.accessibility.util.SwingEventMonitor;
 import graphs.algorithms.*;
 import graphs.core.*;
+import graphs.utils.Utils;
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -35,13 +37,56 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
         initMenu();
+        
         _desktopPane.setVisible(true);
-        setContentPane(_desktopPane);
-
+        
+        getContentPane().add(_desktopPane, BorderLayout.CENTER);
+        
+        _toolbar.add(_selectModeButton);
+        _toolbar.add(_addVertexModeButton);
+        _toolbar.add(_addEdgeModeButton);
+        _modeButtonGroup.add(_selectModeButton);
+        _modeButtonGroup.add(_addVertexModeButton);
+        _modeButtonGroup.add(_addEdgeModeButton);
+        _selectModeButton.addActionListener(this);
+        _addVertexModeButton.addActionListener(this);
+        _addEdgeModeButton.addActionListener(this);
+        getContentPane().add(_toolbar, BorderLayout.NORTH);
         setVisible(true);
         _desktopPane.setDragMode(JDesktopPane.OUTLINE_DRAG_MODE);
     }
 
+    public static enum SelectionMode {
+        Normal,
+        AddVertex,
+        AddEdge
+    };
+    
+    private SelectionMode _selectionMode = SelectionMode.Normal;
+    private JToolBar _toolbar = new JToolBar();
+    private JToggleButton _selectModeButton = new JToggleButton("Normal");
+    private JToggleButton _addVertexModeButton = new JToggleButton("Add Vertex");
+    private JToggleButton _addEdgeModeButton = new JToggleButton("Add Edge");
+    private ButtonGroup _modeButtonGroup = new ButtonGroup();
+    private JDesktopPane _desktopPane = new JDesktopPane();
+    private JMenuBar _menuBar = new JMenuBar();
+    private JMenu _graphsMenu = new JMenu("Graphs");
+    
+    private JMenu _newGraphMenu = new JMenu("New Graph");
+    private JMenuItem _newEmptyGraph = new JMenuItem("Empty Graph");
+    private JMenuItem _newRandomGraph = new JMenuItem("Random Graph");
+
+    private JMenuItem _saveGraphMenu = new JMenuItem("Save To File");
+    private JMenuItem _loadGraphMenu = new JMenuItem("Load From File");
+    
+    private JMenu _algorithms = new JMenu("Algorithms");
+    private JMenuItem _colorGraphAlgorithm = new JMenuItem("Color Graph");
+    private JMenuItem _bfsAlgorithm = new JMenuItem("BFS");
+    
+    private JMenu _windowsMenu = new JMenu("Windows");
+    private JMenuItem _cascadeWindows = new JMenuItem("Cascade");
+    private Map<GraphFrame, JMenuItem> _windowGraphMenus = new HashMap<>();
+    
     private void initMenu() {
         _newEmptyGraph.addActionListener(this);
         _newRandomGraph.addActionListener(this);
@@ -67,7 +112,11 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
         setJMenuBar(_menuBar);
     }
 
-            
+    private GraphFrame getSelcetedFrame()
+    {
+        return (GraphFrame) _desktopPane.getSelectedFrame();
+    }
+    
     @Override
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
@@ -157,7 +206,6 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
             cascadeWindows();
             return;
         }
-
         for (GraphFrame graphFrame : _windowGraphMenus.keySet()) {
             if (_windowGraphMenus.get(graphFrame).equals(source)) {
                 selectGraphFrame(graphFrame);
@@ -165,8 +213,33 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
             }
         }
         
+        if ( source.equals(_selectModeButton)) {
+            _selectionMode = SelectionMode.Normal;
+            Utils.info("Selected normal selection mode");
+            updateSelectionMode();
+            return;
+        }
+        if ( source.equals(_addVertexModeButton)) {
+            _selectionMode = SelectionMode.AddVertex;
+            Utils.info("Selected adding vertex selection mode");
+            updateSelectionMode();
+            return;
+        }
+        if ( source.equals(_addEdgeModeButton)) {
+            _selectionMode = SelectionMode.AddEdge;
+            updateSelectionMode();
+            return;
+        }
     }
 
+    private void updateSelectionMode()
+    {
+        GraphFrame graphFrame = getSelcetedFrame();
+        if ( graphFrame != null ) {
+            graphFrame.setSelectionMode(_selectionMode);
+        }  
+    }
+    
     private void cascadeWindows() {
         JInternalFrame[] internalFrames = _desktopPane.getAllFrames();        
         int numberOfFrames = internalFrames.length;
@@ -227,25 +300,7 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
         _desktopPane.add(graphFrame);                        
         selectGraphFrame(graphFrame);
     }    
-    
-    private JDesktopPane _desktopPane = new JDesktopPane();
-    private JMenuBar _menuBar = new JMenuBar();
-    private JMenu _graphsMenu = new JMenu("Graphs");
-    
-    private JMenu _newGraphMenu = new JMenu("New Graph");
-    private JMenuItem _newEmptyGraph = new JMenuItem("Empty Graph");
-    private JMenuItem _newRandomGraph = new JMenuItem("Random Graph");
 
-    private JMenuItem _saveGraphMenu = new JMenuItem("Save To File");
-    private JMenuItem _loadGraphMenu = new JMenuItem("Load From File");
-    
-    private JMenu _algorithms = new JMenu("Algorithms");
-    private JMenuItem _colorGraphAlgorithm = new JMenuItem("Color Graph");
-    private JMenuItem _bfsAlgorithm = new JMenuItem("BFS");
-    
-    private JMenu _windowsMenu = new JMenu("Windows");
-    private JMenuItem _cascadeWindows = new JMenuItem("Cascade");
-    private Map<GraphFrame, JMenuItem> _windowGraphMenus = new HashMap<>();
     
     private static void setLookAndFeel(String lookAndFeel)
     {
@@ -330,6 +385,7 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
             _windowGraphMenus.put(graphFrame, windowMenuItem );
             windowMenuItem.addActionListener(this);
         }
+        graphFrame.setSelectionMode(_selectionMode);
     }
 
     /**
