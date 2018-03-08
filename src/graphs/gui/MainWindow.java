@@ -33,15 +33,15 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
 
     public MainWindow() {
         super("Graphs Theory");
-        setSize(new Dimension(1280, 720));
+        setExtendedState(getExtendedState() | JFrame.MAXIMIZED_BOTH);
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
         initMenu();
-        
+
         _desktopPane.setVisible(true);
-        
+
         getContentPane().add(_desktopPane, BorderLayout.CENTER);
-        
+
         _toolbar.add(_selectModeButton);
         _toolbar.add(_addVertexModeButton);
         _toolbar.add(_addEdgeModeButton);
@@ -61,7 +61,7 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
         AddVertex,
         AddEdge
     };
-    
+
     private SelectionMode _selectionMode = SelectionMode.Normal;
     private JToolBar _toolbar = new JToolBar();
     private JToggleButton _selectModeButton = new JToggleButton("Normal");
@@ -71,21 +71,22 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
     private JDesktopPane _desktopPane = new JDesktopPane();
     private JMenuBar _menuBar = new JMenuBar();
     private JMenu _graphsMenu = new JMenu("Graphs");
-    
+
     private JMenu _newGraphMenu = new JMenu("New Graph");
     private JMenuItem _newEmptyGraph = new JMenuItem("Empty Graph");
     private JMenuItem _newRandomGraph = new JMenuItem("Random Graph");
 
     private JMenuItem _saveGraphMenu = new JMenuItem("Save To File");
     private JMenuItem _loadGraphMenu = new JMenuItem("Load From File");
-    
+
     private JMenu _algorithms = new JMenu("Algorithms");
     private JMenuItem _colorGraphAlgorithm = new JMenuItem("Color Graph");
     private JMenuItem _bfsAlgorithm = new JMenuItem("BFS");
-    
+
     private JMenu _windowsMenu = new JMenu("Windows");
     private JMenuItem _cascadeWindows = new JMenuItem("Cascade");
     private Map<GraphFrame, JMenuItem> _windowGraphMenus = new HashMap<>();
+    private BFSDialog _bfsDialog = new BFSDialog(this);
     
     private void initMenu() {
         _newEmptyGraph.addActionListener(this);
@@ -93,17 +94,17 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
         _newGraphMenu.add(_newEmptyGraph);
         _newGraphMenu.add(_newRandomGraph);
         _graphsMenu.add(_newGraphMenu);
-        
+
         _graphsMenu.add(_saveGraphMenu);
         _saveGraphMenu.addActionListener(this);
         _graphsMenu.add(_loadGraphMenu);
         _loadGraphMenu.addActionListener(this);
-        
+
         _algorithms.add(_colorGraphAlgorithm);
         _colorGraphAlgorithm.addActionListener(this);
         _algorithms.add(_bfsAlgorithm);
         _bfsAlgorithm.addActionListener(this);
-        
+
         _windowsMenu.add(_cascadeWindows);
         _cascadeWindows.addActionListener(this);
         _menuBar.add(_graphsMenu);
@@ -112,18 +113,17 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
         setJMenuBar(_menuBar);
     }
 
-    private GraphFrame getSelcetedFrame()
-    {
+    private GraphFrame getSelcetedFrame() {
         return (GraphFrame) _desktopPane.getSelectedFrame();
     }
-    
+
     @Override
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
         if (source.equals(_newEmptyGraph)) {
             newEmptyGraph();
             return;
-        } 
+        }
         if (source.equals(_newRandomGraph)) {
             newRandomGraph();
             return;
@@ -131,7 +131,7 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
         if (source.equals(_colorGraphAlgorithm)) {
             GraphFrame graphFrame = (GraphFrame) _desktopPane.getSelectedFrame();
             if (graphFrame == null) {
-                JOptionPane.showMessageDialog(this, "Please select a graph" );
+                JOptionPane.showMessageDialog(this, "Please select a graph");
                 return;
             }
             Coloring.colorGraph_Greedy(graphFrame.getGraph());
@@ -141,7 +141,7 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
         if (source.equals(_colorGraphAlgorithm)) {
             GraphFrame graphFrame = (GraphFrame) _desktopPane.getSelectedFrame();
             if (graphFrame == null) {
-                JOptionPane.showMessageDialog(this, "Please select a graph" );
+                JOptionPane.showMessageDialog(this, "Please select a graph");
                 return;
             }
             Coloring.colorGraph_Greedy(graphFrame.getGraph());
@@ -151,17 +151,17 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
         if (source.equals(_bfsAlgorithm)) {
             GraphFrame graphFrame = (GraphFrame) _desktopPane.getSelectedFrame();
             if (graphFrame == null) {
-                JOptionPane.showMessageDialog(this, "Please select a graph" );
+                JOptionPane.showMessageDialog(this, "Please select a graph");
                 return;
             }
-            BFS.bfs(graphFrame.getGraph());
-            graphFrame.repaint();
+            _bfsDialog.setGraphFrame(graphFrame);          
+            _bfsDialog.setVisible(true);
             return;
         }
         if (source.equals(_saveGraphMenu)) {
             GraphFrame graphFrame = (GraphFrame) _desktopPane.getSelectedFrame();
             if (graphFrame == null) {
-                JOptionPane.showMessageDialog(this, "Please select a graph" );
+                JOptionPane.showMessageDialog(this, "Please select a graph");
                 return;
             }
             final JFileChooser fc = new JFileChooser("/home/me/new_site/graphs");
@@ -175,14 +175,14 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
                     oos.close();
                 } catch (Exception ex) {
                     Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
-                    JOptionPane.showMessageDialog(this, "Graph Save Failed" );
+                    JOptionPane.showMessageDialog(this, "Graph Save Failed");
                     return;
-                }			
+                }
             }
             return;
         }
         if (source.equals(_loadGraphMenu)) {
-            
+
             final JFileChooser fc = new JFileChooser("/home/me/new_site/graphs");
             int returnVal = fc.showOpenDialog(this);
             if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -192,10 +192,10 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
                     FileInputStream fis = new FileInputStream(fc.getSelectedFile());
                     ObjectInputStream ois = new ObjectInputStream(fis);
                     graph = (Graph) ois.readObject();
-                    ois.close();                    
+                    ois.close();
                 } catch (Exception ex) {
                     Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
-                    JOptionPane.showMessageDialog(this, "Graph Open Failed" );
+                    JOptionPane.showMessageDialog(this, "Graph Open Failed");
                     return;
                 }
                 addGraphFrame(graph);
@@ -212,57 +212,55 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
                 return;
             }
         }
-        
-        if ( source.equals(_selectModeButton)) {
+
+        if (source.equals(_selectModeButton)) {
             _selectionMode = SelectionMode.Normal;
             Utils.info("Selected normal selection mode");
             updateSelectionMode();
             return;
         }
-        if ( source.equals(_addVertexModeButton)) {
+        if (source.equals(_addVertexModeButton)) {
             _selectionMode = SelectionMode.AddVertex;
             Utils.info("Selected adding vertex selection mode");
             updateSelectionMode();
             return;
         }
-        if ( source.equals(_addEdgeModeButton)) {
+        if (source.equals(_addEdgeModeButton)) {
             _selectionMode = SelectionMode.AddEdge;
             updateSelectionMode();
             return;
         }
     }
 
-    private void updateSelectionMode()
-    {
+    private void updateSelectionMode() {
         GraphFrame graphFrame = getSelcetedFrame();
-        if ( graphFrame != null ) {
+        if (graphFrame != null) {
             graphFrame.setSelectionMode(_selectionMode);
-        }  
+        }
     }
-    
+
     private void cascadeWindows() {
-        JInternalFrame[] internalFrames = _desktopPane.getAllFrames();        
+        JInternalFrame[] internalFrames = _desktopPane.getAllFrames();
         int numberOfFrames = internalFrames.length;
-        if ( numberOfFrames == 0 ) {
+        if (numberOfFrames == 0) {
             return;
         }
-        final int FRAMES_SEPERATION = 30;        
+        final int FRAMES_SEPERATION = 30;
         final Dimension FRAME_SIZE = new Dimension(_desktopPane.getWidth() - FRAMES_SEPERATION * numberOfFrames,
-                 _desktopPane.getHeight() - FRAMES_SEPERATION * numberOfFrames );
+                _desktopPane.getHeight() - FRAMES_SEPERATION * numberOfFrames);
         int i = 0;
-        for (JInternalFrame internalFrame : internalFrames) {            
-            internalFrame.setSize( FRAME_SIZE );
-            internalFrame.setLocation(i * FRAMES_SEPERATION, i * FRAMES_SEPERATION );   
-            selectGraphFrame((GraphFrame)internalFrame);
-            i ++;
+        for (JInternalFrame internalFrame : internalFrames) {
+            internalFrame.setSize(FRAME_SIZE);
+            internalFrame.setLocation(i * FRAMES_SEPERATION, i * FRAMES_SEPERATION);
+            selectGraphFrame((GraphFrame) internalFrame);
+            i++;
         }
         repaint();
     }
-    private void newEmptyGraph() {
-        int vertices = Integer.parseInt(JOptionPane.showInputDialog("How manyu vertice ?"));
-        Graph g = Factory.buildEmptyGraph(vertices);
 
-        
+    private void newEmptyGraph() {
+        int vertices = Integer.parseInt(JOptionPane.showInputDialog("How manyu vertice ?", 10));
+        Graph g = Factory.buildEmptyGraph(vertices);
         addGraphFrame(g);
 
     }
@@ -270,43 +268,47 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
     private void newRandomGraph() {
         int vertices;
         try {
-            vertices = Integer.parseInt(JOptionPane.showInputDialog("How manyu vertice ?"));
-        } catch (NumberFormatException ex ) {
+            vertices = Integer.parseInt(JOptionPane.showInputDialog("How manyu vertice ?", 10));
+        } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(this, "Illegal number of vertices");
             return;
         }
-        if ( vertices < 0 ) {
+        if (vertices < 0) {
             JOptionPane.showMessageDialog(this, "Illegal number of vertices");
             return;
         }
-        Graph g = Factory.buildRandomGraph(vertices, 0.2);
+        Graph g = Factory.buildRandomGraph(vertices, 0.4);
         addGraphFrame(g);
     }
 
-    private void selectGraphFrame(GraphFrame graphFrame)
-    {
+    private void selectGraphFrame(GraphFrame graphFrame) {
         try {
             graphFrame.setSelected(true);
         } catch (java.beans.PropertyVetoException e) {
         }
     }
+
     private void addGraphFrame(Graph g) {
         GraphFrame graphFrame = new GraphFrame(g);
-        graphFrame.setSize(_desktopPane.getSize());
-        graphFrame.setLocation(0, 0);        
-        graphFrame.show();
+        setVisible(true);
         
-        graphFrame.addInternalFrameListener(this);
-        _desktopPane.add(graphFrame);                        
-        selectGraphFrame(graphFrame);
-    }    
+        graphFrame.setLocation(0, 0);
+        graphFrame.show();
 
-    
-    private static void setLookAndFeel(String lookAndFeel)
-    {
+        graphFrame.addInternalFrameListener(this);
+        _desktopPane.add(graphFrame);
+        selectGraphFrame(graphFrame);
+        try {
+            graphFrame.setMaximum(true);
+        } catch (PropertyVetoException ex) {
+            Utils.exception(ex);
+        }
+    }
+
+    private static void setLookAndFeel(String lookAndFeel) {
         try {
             for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-                
+
                 if (lookAndFeel.equals(info.getName())) {
                     UIManager.setLookAndFeel(info.getClassName());
                     break;
@@ -315,74 +317,75 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
         } catch (Exception e) {
             // If Nimbus is not available, you can set the GUI to another look and feel.
         }
-        
+
     }
+
     public static void main(String[] args) {
 
-        setLookAndFeel( "Nimbus" );
+        setLookAndFeel("Nimbus");
         new MainWindow();
 
     }
-    
+
     /**
      * Invoked when a internal frame has been opened.
+     *
      * @see javax.swing.JInternalFrame#show
      */
-    public void internalFrameOpened(InternalFrameEvent e)
-    {
-        
+    public void internalFrameOpened(InternalFrameEvent e) {
+
     }
 
     /**
-     * Invoked when an internal frame is in the process of being closed.
-     * The close operation can be overridden at this point.
+     * Invoked when an internal frame is in the process of being closed. The
+     * close operation can be overridden at this point.
+     *
      * @see javax.swing.JInternalFrame#setDefaultCloseOperation
      */
-    public void internalFrameClosing(InternalFrameEvent e)
-    {
-        
+    public void internalFrameClosing(InternalFrameEvent e) {
+
     }
 
     /**
      * Invoked when an internal frame has been closed.
+     *
      * @see javax.swing.JInternalFrame#setClosed
      */
-    public void internalFrameClosed(InternalFrameEvent e)
-    {
-        GraphFrame graphFrame = (GraphFrame) e.getSource();        
+    public void internalFrameClosed(InternalFrameEvent e) {
+        GraphFrame graphFrame = (GraphFrame) e.getSource();
         JMenuItem windowMenuItem = _windowGraphMenus.get(graphFrame);
-        _windowsMenu.remove(windowMenuItem);        
+        _windowsMenu.remove(windowMenuItem);
     }
 
     /**
      * Invoked when an internal frame is iconified.
+     *
      * @see javax.swing.JInternalFrame#setIcon
      */
-    public void internalFrameIconified(InternalFrameEvent e)
-    {
-        
+    public void internalFrameIconified(InternalFrameEvent e) {
+
     }
 
     /**
      * Invoked when an internal frame is de-iconified.
+     *
      * @see javax.swing.JInternalFrame#setIcon
      */
-    public void internalFrameDeiconified(InternalFrameEvent e)
-    {
+    public void internalFrameDeiconified(InternalFrameEvent e) {
     }
 
     /**
      * Invoked when an internal frame is activated.
+     *
      * @see javax.swing.JInternalFrame#setSelected
      */
-    public void internalFrameActivated(InternalFrameEvent e)
-    {
-        
+    public void internalFrameActivated(InternalFrameEvent e) {
+
         GraphFrame graphFrame = (GraphFrame) e.getSource();
-        if (! _windowGraphMenus.containsKey(graphFrame)) {
-            JMenuItem windowMenuItem = new JMenuItem(graphFrame.getGraph().getName());        
+        if (!_windowGraphMenus.containsKey(graphFrame)) {
+            JMenuItem windowMenuItem = new JMenuItem(graphFrame.getGraph().getName());
             _windowsMenu.add(windowMenuItem);
-            _windowGraphMenus.put(graphFrame, windowMenuItem );
+            _windowGraphMenus.put(graphFrame, windowMenuItem);
             windowMenuItem.addActionListener(this);
         }
         graphFrame.setSelectionMode(_selectionMode);
@@ -390,10 +393,10 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
 
     /**
      * Invoked when an internal frame is de-activated.
+     *
      * @see javax.swing.JInternalFrame#setSelected
      */
-    public void internalFrameDeactivated(InternalFrameEvent e)
-    {
-        
+    public void internalFrameDeactivated(InternalFrameEvent e) {
+
     }
 }

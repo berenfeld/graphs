@@ -8,7 +8,10 @@ package graphs.utils;
 import graphs.core.Edge;
 import graphs.core.Vertex;
 import graphs.gui.MainWindow;
+import java.awt.Color;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -18,17 +21,40 @@ import java.util.logging.Logger;
  */
 public class Utils {
 
+    public static final Map<Integer, Color> VERTEX_COLORS = new TreeMap<>();
+
+    static {
+        VERTEX_COLORS.put(0, Color.BLACK);
+        VERTEX_COLORS.put(1, Color.WHITE);
+        VERTEX_COLORS.put(2, Color.GRAY);
+        VERTEX_COLORS.put(3, Color.RED);
+        VERTEX_COLORS.put(4, Color.BLUE);
+        VERTEX_COLORS.put(5, Color.GREEN);
+        VERTEX_COLORS.put(6, Color.ORANGE);
+        VERTEX_COLORS.put(7, Color.MAGENTA);
+        VERTEX_COLORS.put(8, Color.CYAN);
+        VERTEX_COLORS.put(9, Color.YELLOW);
+    }
+
+    public static final int getColorNumber(Color color) {
+        for (int colorNumber : VERTEX_COLORS.keySet()) {
+            if (VERTEX_COLORS.get(colorNumber).equals(color)) {
+                return colorNumber;
+            }
+        }
+        return -1;
+    }
+
     public static void info(String message) {
         StackTraceElement caller = Thread.currentThread().getStackTrace()[2];
         Logger.getLogger(caller.getClass().getName()).log(Level.INFO, "{0}:{1} {2} {3}", new Object[]{caller.getFileName(), caller.getLineNumber(), caller.getMethodName(), message});
 
     }
-    
+
     public static void exception(Throwable ex) {
         ex.printStackTrace();;
-        
-    }
 
+    }
 
     public static <T> T getFirst(List<T> list) {
         if (list == null) {

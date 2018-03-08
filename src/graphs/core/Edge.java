@@ -69,7 +69,7 @@ public class Edge extends BaseElement implements Comparable, Serializable {
         return _graph;
     }
 
-    public static String EDGE_ATTRIBUTE_COLOR = "Color";
+    public static String EDGE_ATTRIBUTE_COLOR = "_Color";
     public static String EDGE_ATTRIBUTE_WEIGHT = "Weight";
 
     @Override

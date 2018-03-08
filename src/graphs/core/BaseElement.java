@@ -8,6 +8,7 @@ package graphs.core;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  *
@@ -16,6 +17,10 @@ import java.util.Map;
 public class BaseElement implements Serializable {
     // attribtes
     protected Map<String, Object> _attributes = new HashMap<String, Object>();
+    
+    public Set<String> attributeNames() {
+        return _attributes.keySet();
+    }
     
     public Object getAttribute(String name) {        
         return getAttribute(name, null);
