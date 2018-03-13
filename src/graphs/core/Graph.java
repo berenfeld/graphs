@@ -26,8 +26,8 @@ public class Graph extends BaseElement implements Serializable {
     private int _vertexIndex = 1;
     private final Map<String, Vertex> _vertices = new TreeMap<>();
     private final Map<String, Edge> _edges = new TreeMap<>();
-    private final ArrayList<String> _vertexNames = new ArrayList<>();    
-    
+    private final ArrayList<String> _vertexNames = new ArrayList<>();
+
     private final ArrayList<String> _edgeNames = new ArrayList<>();
 
     private final Random rand = new Random();
@@ -35,7 +35,7 @@ public class Graph extends BaseElement implements Serializable {
     // connectivity
     private boolean _connectivityCalculated = false;
     private Map<Vertex, Map<String, Vertex>> _connectedComponents = new TreeMap<Vertex, Map<String, Vertex>>();
-   
+
     private int _numberOfConnectedComponents = 0;
 
     // diameter
@@ -61,18 +61,19 @@ public class Graph extends BaseElement implements Serializable {
     public void setVertexName(Vertex v, String newName) {
         setVertexName(v.getName(), newName);
     }
-    
+
     public void setVertexName(String oldName, String newName) {
-        _vertices.get(oldName).setName(newName);        
+        _vertices.get(oldName).setName(newName);
     }
+
     public Set<Vertex> getVertices() {
-        return new TreeSet<>( _vertices.values());
+        return new TreeSet<>(_vertices.values());
     }
 
     public Set<String> getVerticesNames() {
-        return new TreeSet<>( _vertexNames );
+        return new TreeSet<>(_vertexNames);
     }
-    
+
     public int getNumberOfEdges() {
         return _edges.size();
     }
@@ -92,9 +93,9 @@ public class Graph extends BaseElement implements Serializable {
     public Vertex getFirstVertex() {
         return getVertex(1);
     }
-    
+
     public Vertex getRandomVertex() {
-        int index = rand.nextInt(_vertices.size()) + 1;
+        int index = rand.nextInt(_vertices.size());
         return getVertex(_vertexNames.get(index));
     }
 
@@ -102,18 +103,18 @@ public class Graph extends BaseElement implements Serializable {
         String name = "v" + _vertexIndex;
         return addVertex(name);
     }
-    
+
     public Vertex addVertex(String name) throws Exception {
         if (_vertices.containsKey(name)) {
             throw new Exception("Vertex '" + name + "' already exists");
-        }        
+        }
         Vertex newVertex = new Vertex(this, name, _vertexIndex);
-        
+
         _vertices.put(name, newVertex);
         _vertexNames.add(name);
         _connectivityCalculated = false;
         _diameterCalculated = false;
-        ++ _vertexIndex;
+        ++_vertexIndex;
         return newVertex;
     }
 
@@ -242,7 +243,15 @@ public class Graph extends BaseElement implements Serializable {
         }
         return sum;
     }
-    
+
+    public List<Integer> getDegrees() {
+        List<Integer> result = new ArrayList<Integer>();
+        for (Vertex v : _vertices.values()) {
+            result.add(v.getDegree());
+        }
+        return result;
+    }
+
     public int getMaximumDegree() {
         int maximum = 0;
         for (Vertex v : _vertices.values()) {
@@ -250,7 +259,7 @@ public class Graph extends BaseElement implements Serializable {
         }
         return maximum;
     }
-    
+
     private void calculateConnectivity() {
         if (_connectivityCalculated) {
             return;
@@ -260,7 +269,7 @@ public class Graph extends BaseElement implements Serializable {
         ArrayList<String> leftVertices = new ArrayList<>(_vertexNames);
         while (!leftVertices.isEmpty()) {
             Vertex v = getVertex(leftVertices.get(0));
-            Graph bfs = BFS.bfs(this, v);
+            Graph bfs = BFS.bfs(this, v, true);
             Vertex bfsRoot = bfs.getVertex(v.getName());
 
             Map<String, Vertex> connectedComponent = new TreeMap<>();
@@ -300,13 +309,12 @@ public class Graph extends BaseElement implements Serializable {
             return;
         }
 
-        
         int maximumBfsDepth = 0;
         for (Vertex v : _vertices.values()) {
-            Graph bfsOfV = BFS.bfs(this, v);
+            Graph bfsOfV = BFS.bfs(this, v, true);
             Vertex bfsRoot = bfsOfV.getVertex(v.getName());
             maximumBfsDepth = Math.max(maximumBfsDepth, (int) bfsRoot.getAttribute(BFS.BFS_MAXIMUM_DEPTH));
-            
+
         }
         _diameter = maximumBfsDepth;
     }

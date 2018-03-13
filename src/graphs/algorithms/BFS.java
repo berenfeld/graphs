@@ -37,24 +37,29 @@ public class BFS {
     public static final int EDGE_COLOR_NOT_TRAVERESED = Utils.getColorNumber(Color.WHITE);
     public static final int EDGE_COLOR_TRAVERESED = Utils.getColorNumber(Color.BLACK);
 
-    public static Graph bfs(Graph g, Vertex initial) {
-        Graph bfsGraph = Factory.copyOf(g);
+    public static Graph bfs(Graph graph, Vertex initial, boolean copy) {
+        Graph bfsGraph = Factory.copyOf(graph);
+        bfsGraph.setName("BFS on " + graph.getName());
+        Graph resultGraph = graph;
+        if (copy) {
+            resultGraph = bfsGraph;
+        }
         try {
-            for (Vertex vertex : g.getVertices()) {
+            for (Vertex vertex : resultGraph.getVertices()) {
                 vertex.setColor(BFS_COLOR_NOT_VISITED);
 
             }
-            for (Edge edge : g.getEdges()) {
+            for (Edge edge : resultGraph.getEdges()) {
                 edge.setColor(EDGE_COLOR_NOT_TRAVERESED);
             }
 
-            Vertex start = g.getVertex(initial.getName());
+            Vertex start = resultGraph.getVertex(initial.getName());
             start.setAttribute(BFS_VERTEX_DEPTH, 0);
 
-            g.setAttribute(BFS_INITIAL_VERTEX, start.getName());
+            resultGraph.setAttribute(BFS_INITIAL_VERTEX, start.getName());
 
             start.setColor(BFS_COLOR_VISITING);
-            Path path = new Path(g);
+            Path path = new Path(resultGraph);
             start.setAttribute(BFS_PATH_FROM_ROOT, path);
             start.setAttribute(BFS_PREDECESSOR, null);
             Queue<Vertex> queue = new LinkedList<>();
@@ -89,15 +94,15 @@ public class BFS {
                 current.setColor(BFS_COLOR_VISITED);
             }
 
-            bfsGraph.setName("BFS on " + g.getName());
+            
 
-            for (Vertex vertex : g.getVertices()) {
+            for (Vertex vertex : resultGraph.getVertices()) {
                 if (vertex.getColor() != BFS_COLOR_VISITED) {
                     bfsGraph.removeVertex(vertex);
                 }
             }
 
-            for (Edge edge : g.getEdges()) {
+            for (Edge edge : resultGraph.getEdges()) {
                 if ((bfsGraph.hasEdge(edge.getName())) && (edge.getColor() != EDGE_COLOR_TRAVERESED)) {
                     bfsGraph.removeEdge(edge.getFromVertex().getName(), edge.getToVertex().getName());
                 }
@@ -112,6 +117,10 @@ public class BFS {
     }
 
     public static Graph bfs(Graph g) {
-        return BFS.bfs(g, g.getRandomVertex());
+        return BFS.bfs(g, g.getRandomVertex(), true);
+    }
+    
+    public static Graph bfs(Graph g, boolean copy) {
+        return BFS.bfs(g, g.getRandomVertex(), copy);
     }
 }

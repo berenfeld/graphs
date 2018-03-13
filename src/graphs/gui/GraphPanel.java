@@ -5,15 +5,19 @@
  */
 package graphs.gui;
 
+import graphs.algorithms.BiPartite;
+import graphs.algorithms.MaximumCut;
 import graphs.core.*;
 import graphs.utils.Utils;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 import javax.swing.*;
 
 /**
@@ -31,7 +35,8 @@ public class GraphPanel extends JPanel implements ComponentListener {
     public enum VerticesLayout {
         None,
         Grid,
-        Circle
+        Circle,
+        BiPartite
     };
 
     private Graph _graph;
@@ -54,6 +59,9 @@ public class GraphPanel extends JPanel implements ComponentListener {
                 break;
             case Circle:
                 layoutVerticesCircle();
+                break;
+            case BiPartite:
+                layoutVerticesBiPartite();
                 break;
         }
         repaint();
@@ -120,6 +128,36 @@ public class GraphPanel extends JPanel implements ComponentListener {
             i++;
         }
         _graph.setAttribute(GUI_LAYOUT, VerticesLayout.Circle);
+
+    }
+    
+    private void layoutVerticesBiPartite() {
+        
+        Graph maximumCut = MaximumCut.maximumCut(_graph);
+        
+        List<Vertex> sideA = (List<Vertex>) maximumCut.getAttribute(MaximumCut.MAXIMUM_CUT_SIDE_A);
+        List<Vertex> sideB = (List<Vertex>) maximumCut.getAttribute(MaximumCut.MAXIMUM_CUT_SIDE_B);
+        
+        int aPosition = 0, bPosition = 0;
+        for (Vertex v : _graph.getVertices()) {
+            double vertexX, vertexY;
+            if (sideA.contains(v))
+            {
+                vertexX = 0.1;        
+                vertexY = 0.1 + ( aPosition * 0.8 / ( sideA.size() ) );
+                aPosition++;
+            }
+            else
+            {
+                vertexX = 0.9;
+                vertexY = 0.1 + ( bPosition * 0.8 / ( sideB.size() ) );
+                bPosition++;
+            }
+            
+            v.setAttribute(VERTEX_X, vertexX);
+            v.setAttribute(VERTEX_Y, vertexY); 
+        }
+        _graph.setAttribute(GUI_LAYOUT, VerticesLayout.BiPartite);
 
     }
 

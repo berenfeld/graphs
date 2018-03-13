@@ -87,6 +87,7 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
     private JMenuItem _cascadeWindows = new JMenuItem("Cascade");
     private Map<GraphFrame, JMenuItem> _windowGraphMenus = new HashMap<>();
     private BFSDialog _bfsDialog = new BFSDialog(this);
+    private GraphPropertiesDialog _graphPropertiesDialog = new GraphPropertiesDialog(this);
     
     private void initMenu() {
         _newEmptyGraph.addActionListener(this);
@@ -117,6 +118,12 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
         return (GraphFrame) _desktopPane.getSelectedFrame();
     }
 
+    public void showGraphProperties(GraphFrame graphFrame)
+    {
+        _graphPropertiesDialog.setGraphFrame(graphFrame);
+        _graphPropertiesDialog.show();
+    }
+    
     @Override
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
@@ -288,21 +295,17 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
         }
     }
 
-    private void addGraphFrame(Graph g) {
-        GraphFrame graphFrame = new GraphFrame(g);
+    public void addGraphFrame(Graph g) {
+        GraphFrame graphFrame = new GraphFrame(this, g);
         setVisible(true);
         
         graphFrame.setLocation(0, 0);
+        graphFrame.setSize(_desktopPane.getSize());        
         graphFrame.show();
 
         graphFrame.addInternalFrameListener(this);
         _desktopPane.add(graphFrame);
         selectGraphFrame(graphFrame);
-        try {
-            graphFrame.setMaximum(true);
-        } catch (PropertyVetoException ex) {
-            Utils.exception(ex);
-        }
     }
 
     private static void setLookAndFeel(String lookAndFeel) {

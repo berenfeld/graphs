@@ -17,6 +17,7 @@ import java.awt.event.ActionListener;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -32,9 +33,9 @@ import javax.swing.border.TitledBorder;
  */
 public class BFSDialog extends JDialog implements ActionListener {
 
-    public BFSDialog(JFrame mainWindow) {
+    public BFSDialog(MainWindow mainWindow) {
         super(mainWindow, "BFS Algoritm", true);
-
+        _mainWindow = mainWindow;
         setSize(640, 480);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         this.setLocation(dim.width / 2 - this.getSize().width / 2, dim.height / 2 - this.getSize().height / 2);
@@ -67,7 +68,8 @@ public class BFSDialog extends JDialog implements ActionListener {
         _sourceVertexPanel.setBorder(titledBorder);
         _sourceVertexPanel.add(_vertexSelectLabel);
         _sourceVertexPanel.add(_vertexSelectComboBox);
-
+        _sourceVertexPanel.add(_copyGraphCheckBox);
+        _copyGraphCheckBox.setSelected(true);
         add(_sourceVertexPanel);
     }
 
@@ -86,17 +88,24 @@ public class BFSDialog extends JDialog implements ActionListener {
         Object o = e.getSource();
         if (o.equals(_startButton)) {
             Vertex source = _graph.getVertex( (String) _vertexSelectComboBox.getSelectedItem());
-            BFS.bfs(_graph, source);
-            _graphFrame.repaint();
+            boolean copy = _copyGraphCheckBox.isSelected();
+            Graph bfsGraph = BFS.bfs(_graph, source, copy);
+            if ( copy ) {
+                _mainWindow.addGraphFrame(bfsGraph);
+            } else {
+                _graphFrame.repaint();
+            }
             setVisible(false);
         }
     }
     
+    private MainWindow _mainWindow;
     private Graph _graph;
     private GraphFrame _graphFrame;
     private JPanel _buttonsPanel = new JPanel();
     private JButton _startButton = new JButton("Start");
     private JPanel _sourceVertexPanel = new JPanel();
     private JLabel _vertexSelectLabel = new JLabel("Select source vertex : ");
+    private JCheckBox _copyGraphCheckBox = new JCheckBox("Put result in new graph ?");
     private JComboBox _vertexSelectComboBox = new JComboBox();
 }

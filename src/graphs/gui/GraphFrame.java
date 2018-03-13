@@ -32,8 +32,9 @@ import javax.swing.*;
  */
 public class GraphFrame extends JInternalFrame implements MouseListener, ActionListener, MouseMotionListener {
 
-    public GraphFrame(Graph graph) {
+    public GraphFrame(MainWindow mainWindow, Graph graph) {
         super(graph.getName(), true, true, true, true);
+        _mainWindow = mainWindow;
         _graph = graph;
         
         setLocation(0, 0);
@@ -46,7 +47,7 @@ public class GraphFrame extends JInternalFrame implements MouseListener, ActionL
         initMenus();
 
     }
-
+    private MainWindow _mainWindow;
     private MainWindow.SelectionMode _selectionMode = MainWindow.SelectionMode.Normal;
     private Graph _graph;
     private JPopupMenu _graphMenu = new JPopupMenu();
@@ -58,6 +59,7 @@ public class GraphFrame extends JInternalFrame implements MouseListener, ActionL
     private Vertex _selectedVertex;
     private Edge _selectedEdge;
     private JMenuItem _changeGraphNameMenu = new JMenuItem("Change Name");
+    private JMenuItem _graphPropertiesMenu = new JMenuItem("Properties");
     private JMenuItem _addVertexMenu = new JMenuItem("Add Vertex");
     private JMenuItem _changeVertexNameMenu = new JMenuItem("Change Name");
     private JMenuItem _removeVertexMenu = new JMenuItem("Remove");
@@ -67,6 +69,7 @@ public class GraphFrame extends JInternalFrame implements MouseListener, ActionL
     private JMenu _verticesLayoutMenu = new JMenu("Vertices Layout");
     private JMenuItem _verticesLayoutGridMenu = new JMenuItem("Grid");
     private JMenuItem _verticesLayoutCircleMenu = new JMenuItem("Circle");
+    private JMenuItem _verticesLayoutBiPartiteMenu = new JMenuItem("Bi-Partite");
     private List<JMenuItem> _verticesSizeMenus = new ArrayList<JMenuItem>();
      private List<JMenuItem> _fontSizeMenus = new ArrayList<JMenuItem>();
     private GraphPanel _canvas;
@@ -93,6 +96,8 @@ public class GraphFrame extends JInternalFrame implements MouseListener, ActionL
         _graphMenu.addSeparator();
         _graphMenu.add(_changeGraphNameMenu);
         _changeGraphNameMenu.addActionListener(this);
+        _graphMenu.add(_graphPropertiesMenu);
+        _graphPropertiesMenu.addActionListener(this);
         _graphMenu.add(_addVertexMenu);
         _addVertexMenu.addActionListener(this);
         _graphMenu.add(_verticesSizeMenu);
@@ -113,6 +118,8 @@ public class GraphFrame extends JInternalFrame implements MouseListener, ActionL
         _verticesLayoutGridMenu.addActionListener(this);
         _verticesLayoutMenu.add(_verticesLayoutCircleMenu);
         _verticesLayoutCircleMenu.addActionListener(this);
+        _verticesLayoutMenu.add(_verticesLayoutBiPartiteMenu);        
+        _verticesLayoutBiPartiteMenu.addActionListener(this);
         _graphMenu.add(_verticesLayoutMenu);
 
         _vertexNameMenu.setEnabled(false);
@@ -367,6 +374,10 @@ public class GraphFrame extends JInternalFrame implements MouseListener, ActionL
             setTitle(newName);
             return;
         }
+        if (source.equals(_graphPropertiesMenu)) {
+            _mainWindow.showGraphProperties(this);
+            return;
+        }
         if (source.equals(_addVertexMenu)) {
             Vertex newVertex = _graph.addVertex();
             newVertex.setAttribute(GraphPanel.VERTEX_X, (double) _clickX / panelWidth);
@@ -381,6 +392,10 @@ public class GraphFrame extends JInternalFrame implements MouseListener, ActionL
         }
         if (source.equals(_verticesLayoutCircleMenu)) {
             _canvas.setVerticesLayout(GraphPanel.VerticesLayout.Circle);
+            return;
+        }
+        if (source.equals(_verticesLayoutBiPartiteMenu)) {
+            _canvas.setVerticesLayout(GraphPanel.VerticesLayout.BiPartite);
             return;
         }
         for (JMenuItem verticesSizeMenuItem : _verticesSizeMenus) {
