@@ -75,6 +75,8 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
     private JMenu _newGraphMenu = new JMenu("New Graph");
     private JMenuItem _newEmptyGraph = new JMenuItem("Empty Graph");
     private JMenuItem _newRandomGraph = new JMenuItem("Random Graph");
+    private JMenuItem _newCompleteGraph = new JMenuItem("Complete Graph");
+    private JMenuItem _newCycleGraph = new JMenuItem("Cycle Graph");
 
     private JMenuItem _saveGraphMenu = new JMenuItem("Save To File");
     private JMenuItem _loadGraphMenu = new JMenuItem("Load From File");
@@ -92,8 +94,12 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
     private void initMenu() {
         _newEmptyGraph.addActionListener(this);
         _newRandomGraph.addActionListener(this);
+        _newCompleteGraph.addActionListener(this);
+        _newCycleGraph.addActionListener(this);
         _newGraphMenu.add(_newEmptyGraph);
         _newGraphMenu.add(_newRandomGraph);
+        _newGraphMenu.add(_newCompleteGraph);
+         _newGraphMenu.add(_newCycleGraph);
         _graphsMenu.add(_newGraphMenu);
 
         _graphsMenu.add(_saveGraphMenu);
@@ -133,6 +139,14 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
         }
         if (source.equals(_newRandomGraph)) {
             newRandomGraph();
+            return;
+        }
+        if (source.equals(_newCompleteGraph)) {
+            newCompleteGraph();
+            return;
+        }
+        if (source.equals(_newCycleGraph)) {
+            newCycleGraph();
             return;
         }
         if (source.equals(_colorGraphAlgorithm)) {
@@ -287,6 +301,38 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
         Graph g = Factory.buildRandomGraph(vertices, 0.4);
         addGraphFrame(g);
     }
+    
+    private void newCompleteGraph() {
+        int vertices;
+        try {
+            vertices = Integer.parseInt(JOptionPane.showInputDialog("How manyu vertice ?", 10));
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Illegal number of vertices");
+            return;
+        }
+        if (vertices < 0) {
+            JOptionPane.showMessageDialog(this, "Illegal number of vertices");
+            return;
+        }
+        Graph g = Factory.buildCompleteGraph(vertices);
+        addGraphFrame(g, GraphPanel.VerticesLayout.Circle);
+    }
+    
+    private void newCycleGraph() {
+        int vertices;
+        try {
+            vertices = Integer.parseInt(JOptionPane.showInputDialog("How manyu vertice ?", 10));
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Illegal number of vertices");
+            return;
+        }
+        if (vertices < 0) {
+            JOptionPane.showMessageDialog(this, "Illegal number of vertices");
+            return;
+        }
+        Graph g = Factory.buildCycleGraph(vertices);
+        addGraphFrame(g, GraphPanel.VerticesLayout.Circle);
+    }
 
     private void selectGraphFrame(GraphFrame graphFrame) {
         try {
@@ -296,6 +342,9 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
     }
 
     public void addGraphFrame(Graph g) {
+        addGraphFrame(g, GraphPanel.VerticesLayout.Grid);
+    }
+    public void addGraphFrame(Graph g, GraphPanel.VerticesLayout layout) {
         GraphFrame graphFrame = new GraphFrame(this, g);
         setVisible(true);
         
@@ -306,6 +355,8 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
         graphFrame.addInternalFrameListener(this);
         _desktopPane.add(graphFrame);
         selectGraphFrame(graphFrame);
+        
+        graphFrame.setVerticesLayout(layout);
     }
 
     private static void setLookAndFeel(String lookAndFeel) {

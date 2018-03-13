@@ -74,6 +74,8 @@ public class GraphPropertiesDialog extends JDialog {
         _connectivityPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 30, 5));
         _isConnected.setEnabled(false);
         _connectivityPanel.add(_isConnected);
+        _isTree.setEnabled(false);
+        _connectivityPanel.add(_isTree);
         _connectivityPanel.add(_numberOfConnectedComponents);
         _connectivityPanel.add(_connectedComponents);
 
@@ -86,7 +88,7 @@ public class GraphPropertiesDialog extends JDialog {
 
         setTitle("Graph '" + _graph.getName() + "' Properties");
         _numberOfVertices.setText("Number of vertices : " + _graph.getNumberOfVertices());
-        _numberOfEdges.setText("Number of vertices : " + _graph.getNumberOfEdges());
+        _numberOfEdges.setText("Number of edges : " + _graph.getNumberOfEdges());
         List<Integer> degrees = _graph.getDegrees();
         Collections.sort(degrees);
         _minimumVertexDegree.setText("Minimum vertex degree : " + degrees.get(0));
@@ -94,7 +96,13 @@ public class GraphPropertiesDialog extends JDialog {
 
         Map<Vertex, Map<String, Vertex>> connectedComponents = _graph.getConnectedComponents();
         int numberOfConnectedComponents = connectedComponents.size();
-        _isConnected.setSelected(numberOfConnectedComponents == 1);
+        _isConnected.setSelected(numberOfConnectedComponents == 1);        
+        _isTree.setSelected(false);
+        if ( numberOfConnectedComponents == 1) {
+            if ( _graph.getNumberOfEdges() == ( _graph.getNumberOfVertices() - 1 ) ) {
+                _isTree.setSelected(true);
+            }
+        }
         _numberOfConnectedComponents.setText("Number of connected components : " + numberOfConnectedComponents);
         String components = " { ";
       
@@ -117,6 +125,7 @@ public class GraphPropertiesDialog extends JDialog {
     private JLabel _maximumVertexDegree = new JLabel();
     private JPanel _connectivityPanel = new JPanel();
     private JCheckBox _isConnected = new JCheckBox("Connected ?");
+    private JCheckBox _isTree = new JCheckBox("Tree ?");
     private JLabel _numberOfConnectedComponents = new JLabel("Connected ?");
     private JLabel _connectedComponents = new JLabel();
 }

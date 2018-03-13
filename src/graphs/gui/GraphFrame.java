@@ -343,6 +343,11 @@ public class GraphFrame extends JInternalFrame implements MouseListener, ActionL
     public void mouseMoved(MouseEvent e) {
     }
 
+    public void setVerticesLayout( GraphPanel.VerticesLayout layout)
+    {
+        _canvas.setVerticesLayout(layout);
+    }
+    
     private void handleEvent(ActionEvent e) throws Exception {
         double panelWidth = _canvas.getSize().getWidth();
         double panelHeight = _canvas.getSize().getHeight();
@@ -387,15 +392,15 @@ public class GraphFrame extends JInternalFrame implements MouseListener, ActionL
             return;
         }
         if (source.equals(_verticesLayoutGridMenu)) {
-            _canvas.setVerticesLayout(GraphPanel.VerticesLayout.Grid);
+            setVerticesLayout(GraphPanel.VerticesLayout.Grid);           
             return;
         }
         if (source.equals(_verticesLayoutCircleMenu)) {
-            _canvas.setVerticesLayout(GraphPanel.VerticesLayout.Circle);
+            setVerticesLayout(GraphPanel.VerticesLayout.Circle);    
             return;
         }
         if (source.equals(_verticesLayoutBiPartiteMenu)) {
-            _canvas.setVerticesLayout(GraphPanel.VerticesLayout.BiPartite);
+            setVerticesLayout(GraphPanel.VerticesLayout.BiPartite);   
             return;
         }
         for (JMenuItem verticesSizeMenuItem : _verticesSizeMenus) {
