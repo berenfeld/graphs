@@ -15,7 +15,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyVetoException;
 import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Level;
@@ -77,6 +80,7 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
     private JMenuItem _newRandomGraph = new JMenuItem("Random Graph");
     private JMenuItem _newCompleteGraph = new JMenuItem("Complete Graph");
     private JMenuItem _newCycleGraph = new JMenuItem("Cycle Graph");
+    private JMenuItem _graphFromDegrees = new JMenuItem("Graph From Degrees List");
 
     private JMenuItem _saveGraphMenu = new JMenuItem("Save To File");
     private JMenuItem _loadGraphMenu = new JMenuItem("Load From File");
@@ -90,16 +94,18 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
     private Map<GraphFrame, JMenuItem> _windowGraphMenus = new HashMap<>();
     private BFSDialog _bfsDialog = new BFSDialog(this);
     private GraphPropertiesDialog _graphPropertiesDialog = new GraphPropertiesDialog(this);
-    
+
     private void initMenu() {
         _newEmptyGraph.addActionListener(this);
         _newRandomGraph.addActionListener(this);
         _newCompleteGraph.addActionListener(this);
         _newCycleGraph.addActionListener(this);
+        _graphFromDegrees.addActionListener(this);
         _newGraphMenu.add(_newEmptyGraph);
         _newGraphMenu.add(_newRandomGraph);
         _newGraphMenu.add(_newCompleteGraph);
-         _newGraphMenu.add(_newCycleGraph);
+        _newGraphMenu.add(_newCycleGraph);
+        _newGraphMenu.add(_graphFromDegrees);
         _graphsMenu.add(_newGraphMenu);
 
         _graphsMenu.add(_saveGraphMenu);
@@ -124,12 +130,11 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
         return (GraphFrame) _desktopPane.getSelectedFrame();
     }
 
-    public void showGraphProperties(GraphFrame graphFrame)
-    {
+    public void showGraphProperties(GraphFrame graphFrame) {
         _graphPropertiesDialog.setGraphFrame(graphFrame);
         _graphPropertiesDialog.show();
     }
-    
+
     @Override
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
@@ -147,6 +152,10 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
         }
         if (source.equals(_newCycleGraph)) {
             newCycleGraph();
+            return;
+        }
+        if (source.equals(_graphFromDegrees)) {
+            newGraphFromDegrees();
             return;
         }
         if (source.equals(_colorGraphAlgorithm)) {
@@ -175,7 +184,7 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
                 JOptionPane.showMessageDialog(this, "Please select a graph");
                 return;
             }
-            _bfsDialog.setGraphFrame(graphFrame);          
+            _bfsDialog.setGraphFrame(graphFrame);
             _bfsDialog.setVisible(true);
             return;
         }
@@ -301,7 +310,7 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
         Graph g = Factory.buildRandomGraph(vertices, 0.4);
         addGraphFrame(g);
     }
-    
+
     private void newCompleteGraph() {
         int vertices;
         try {
@@ -317,7 +326,7 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
         Graph g = Factory.buildCompleteGraph(vertices);
         addGraphFrame(g, GraphPanel.VerticesLayout.Circle);
     }
-    
+
     private void newCycleGraph() {
         int vertices;
         try {
@@ -333,6 +342,27 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
         Graph g = Factory.buildCycleGraph(vertices);
         addGraphFrame(g, GraphPanel.VerticesLayout.Circle);
     }
+    
+    private void newGraphFromDegrees() {
+        String degreesList = JOptionPane.showInputDialog("Enter degrees, seperated by comma", "4,3,3");
+        
+         Graph graph = null;
+        try {
+            List<String> list = Arrays.asList(degreesList.split("\\s*,\\s*"));
+            List<Integer> degreesSequence = new ArrayList<>();
+            for (String s : list) {
+                degreesSequence.add(Integer.parseInt(s));
+            }        
+            graph = GraphFromDegreeSequence.fromDegreeSequence(degreesSequence);
+        } catch ( Exception ex) {
+            Utils.exception(ex);
+            JOptionPane.showMessageDialog(this, "Could not build graph from degree sequence "+ degreesList);
+            return;
+            
+        }
+        addGraphFrame(graph, GraphPanel.VerticesLayout.Circle);
+    }
+    
 
     private void selectGraphFrame(GraphFrame graphFrame) {
         try {
@@ -344,19 +374,22 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
     public void addGraphFrame(Graph g) {
         addGraphFrame(g, GraphPanel.VerticesLayout.Grid);
     }
+
     public void addGraphFrame(Graph g, GraphPanel.VerticesLayout layout) {
         GraphFrame graphFrame = new GraphFrame(this, g);
         setVisible(true);
-        
+
         graphFrame.setLocation(0, 0);
-        graphFrame.setSize(_desktopPane.getSize());        
+        graphFrame.setSize(_desktopPane.getSize());
         graphFrame.show();
 
         graphFrame.addInternalFrameListener(this);
         _desktopPane.add(graphFrame);
         selectGraphFrame(graphFrame);
-        
-        graphFrame.setVerticesLayout(layout);
+
+        if (layout != GraphPanel.VerticesLayout.None) {
+            graphFrame.setVerticesLayout(layout);
+        }
     }
 
     private static void setLookAndFeel(String lookAndFeel) {

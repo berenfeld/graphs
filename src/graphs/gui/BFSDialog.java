@@ -91,7 +91,7 @@ public class BFSDialog extends JDialog implements ActionListener {
             boolean copy = _copyGraphCheckBox.isSelected();
             Graph bfsGraph = BFS.bfs(_graph, source, copy);
             if ( copy ) {
-                _mainWindow.addGraphFrame(bfsGraph);
+                _mainWindow.addGraphFrame(bfsGraph, GraphPanel.VerticesLayout.None);
             } else {
                 _graphFrame.repaint();
             }

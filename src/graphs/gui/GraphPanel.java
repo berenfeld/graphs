@@ -170,9 +170,6 @@ public class GraphPanel extends JPanel implements ComponentListener {
 
     private void repaintGraph(Graphics g) {
 
-        if (getVerticesLayout() == VerticesLayout.None) {
-            layoutVerticesGrid();
-        }
         Graphics2D g2 = (Graphics2D) g;
 
         double panelWidth = getSize().getWidth();
