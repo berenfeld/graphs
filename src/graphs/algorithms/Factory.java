@@ -106,6 +106,25 @@ public class Factory {
         return graph;
     }
 
+    public static Graph buildRandomBiPartiteGraph(int leftVertices, int rightVertices, double density) {
+        Graph graph = buildEmptyGraph(leftVertices + rightVertices);
+        graph.setName("K" + leftVertices + "," + rightVertices);
+        Random rand = new Random();    
+        try {
+            for (int i = 1; i <= leftVertices; i++) {
+                for (int j = 1; j <= rightVertices; j++) {
+                    if (rand.nextDouble() < density) {
+                        graph.addEdge(graph.getVertex(i), graph.getVertex(rightVertices + j));
+                    }
+                }
+
+            }
+        } catch (Exception ex) {
+            return null;
+        }
+        return graph;
+    }
+    
     public static Graph copyVerticesFrom(Graph other) {
         Graph result = new Graph("Copy of " + other.getName());
         try {

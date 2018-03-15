@@ -11,6 +11,7 @@ import graphs.core.*;
 import graphs.utils.Utils;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyVetoException;
@@ -41,6 +42,7 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
 
         initMenu();
 
+         _desktopPane.setDragMode(JDesktopPane.OUTLINE_DRAG_MODE);
         _desktopPane.setVisible(true);
 
         getContentPane().add(_desktopPane, BorderLayout.CENTER);
@@ -55,8 +57,13 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
         _addVertexModeButton.addActionListener(this);
         _addEdgeModeButton.addActionListener(this);
         getContentPane().add(_toolbar, BorderLayout.NORTH);
-        setVisible(true);
-        _desktopPane.setDragMode(JDesktopPane.OUTLINE_DRAG_MODE);
+        
+        setResizable(false);
+        Dimension size = new Dimension(1280, 720);
+        setSize(size.width, size.height);        
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        setLocation(screenSize.width / 2 - size.width / 2, screenSize.height / 2 - size.height / 2);
+        setVisible(true);       
     }
 
     public static enum SelectionMode {
@@ -76,9 +83,8 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
     private JMenu _graphsMenu = new JMenu("Graphs");
 
     private JMenu _newGraphMenu = new JMenu("New Graph");
-    private JMenuItem _newEmptyGraph = new JMenuItem("Empty Graph");
-    private JMenuItem _newRandomGraph = new JMenuItem("Random Graph");
-    private JMenuItem _newCompleteGraph = new JMenuItem("Complete Graph");
+    private JMenuItem _newGraph = new JMenuItem("New Graph");    
+    private JMenuItem _newRandomGraph = new JMenuItem("Random Graph");    
     private JMenuItem _newCycleGraph = new JMenuItem("Cycle Graph");
     private JMenuItem _graphFromDegrees = new JMenuItem("Graph From Degrees List");
 
@@ -87,23 +93,22 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
 
     private JMenu _algorithms = new JMenu("Algorithms");
     private JMenuItem _colorGraphAlgorithm = new JMenuItem("Color Graph");
-    private JMenuItem _bfsAlgorithm = new JMenuItem("BFS");
+    private JMenuItem _bfsAlgorithm = new JMenuItem("BFS");    
 
     private JMenu _windowsMenu = new JMenu("Windows");
     private JMenuItem _cascadeWindows = new JMenuItem("Cascade");
     private Map<GraphFrame, JMenuItem> _windowGraphMenus = new HashMap<>();
     private BFSDialog _bfsDialog = new BFSDialog(this);
+    private NewGraphDialog _newGraphDialog = new NewGraphDialog(this);
     private GraphPropertiesDialog _graphPropertiesDialog = new GraphPropertiesDialog(this);
 
     private void initMenu() {
-        _newEmptyGraph.addActionListener(this);
-        _newRandomGraph.addActionListener(this);
-        _newCompleteGraph.addActionListener(this);
+        _newGraph.addActionListener(this);        
+        _newRandomGraph.addActionListener(this);        
         _newCycleGraph.addActionListener(this);
         _graphFromDegrees.addActionListener(this);
-        _newGraphMenu.add(_newEmptyGraph);
-        _newGraphMenu.add(_newRandomGraph);
-        _newGraphMenu.add(_newCompleteGraph);
+        _newGraphMenu.add(_newGraph);        
+        _newGraphMenu.add(_newRandomGraph);        
         _newGraphMenu.add(_newCycleGraph);
         _newGraphMenu.add(_graphFromDegrees);
         _graphsMenu.add(_newGraphMenu);
@@ -138,18 +143,14 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
     @Override
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
-        if (source.equals(_newEmptyGraph)) {
-            newEmptyGraph();
+        if (source.equals(_newGraph)) {
+            newGraph();
             return;
-        }
+        }        
         if (source.equals(_newRandomGraph)) {
             newRandomGraph();
             return;
-        }
-        if (source.equals(_newCompleteGraph)) {
-            newCompleteGraph();
-            return;
-        }
+        }     
         if (source.equals(_newCycleGraph)) {
             newCycleGraph();
             return;
@@ -288,8 +289,12 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
         repaint();
     }
 
+    private void newGraph() {
+        _newGraphDialog.setVisible(true);        
+    }
+    
     private void newEmptyGraph() {
-        int vertices = Integer.parseInt(JOptionPane.showInputDialog("How manyu vertice ?", 10));
+        int vertices = Integer.parseInt(JOptionPane.showInputDialog(this, "How manyu vertice ?", 10));
         Graph g = Factory.buildEmptyGraph(vertices);
         addGraphFrame(g);
 
@@ -298,7 +303,7 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
     private void newRandomGraph() {
         int vertices;
         try {
-            vertices = Integer.parseInt(JOptionPane.showInputDialog("How manyu vertice ?", 10));
+            vertices = Integer.parseInt(JOptionPane.showInputDialog(this, "How manyu vertice ?", 10));
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(this, "Illegal number of vertices");
             return;
@@ -309,28 +314,12 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
         }
         Graph g = Factory.buildRandomGraph(vertices, 0.4);
         addGraphFrame(g);
-    }
-
-    private void newCompleteGraph() {
-        int vertices;
-        try {
-            vertices = Integer.parseInt(JOptionPane.showInputDialog("How manyu vertice ?", 10));
-        } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(this, "Illegal number of vertices");
-            return;
-        }
-        if (vertices < 0) {
-            JOptionPane.showMessageDialog(this, "Illegal number of vertices");
-            return;
-        }
-        Graph g = Factory.buildCompleteGraph(vertices);
-        addGraphFrame(g, GraphPanel.VerticesLayout.Circle);
-    }
+    }    
 
     private void newCycleGraph() {
         int vertices;
         try {
-            vertices = Integer.parseInt(JOptionPane.showInputDialog("How manyu vertice ?", 10));
+            vertices = Integer.parseInt(JOptionPane.showInputDialog(this, "How manyu vertice ?", 10));
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(this, "Illegal number of vertices");
             return;
@@ -344,7 +333,7 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
     }
     
     private void newGraphFromDegrees() {
-        String degreesList = JOptionPane.showInputDialog("Enter degrees, seperated by comma", "4,3,3");
+        String degreesList = JOptionPane.showInputDialog(this, "Enter degrees, seperated by comma", "4,3,3");
         
          Graph graph = null;
         try {
@@ -408,7 +397,6 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
     }
 
     public static void main(String[] args) {
-
         setLookAndFeel("Nimbus");
         new MainWindow();
 
