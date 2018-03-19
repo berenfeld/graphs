@@ -123,4 +123,8 @@ public class BFS {
     public static Graph bfs(Graph g, boolean copy) {
         return BFS.bfs(g, g.getRandomVertex(), copy);
     }
+    
+     public static Graph bfs(Graph g, Vertex v) {
+        return BFS.bfs(g, v, true);
+    }
 }

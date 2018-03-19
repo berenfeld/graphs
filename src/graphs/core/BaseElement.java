@@ -22,6 +22,10 @@ public class BaseElement implements Serializable {
         return _attributes.keySet();
     }
     
+    public boolean hasAttribute( String name) {
+        return _attributes.containsKey(name);
+    }
+    
     public Object getAttribute(String name) {        
         return getAttribute(name, null);
     }

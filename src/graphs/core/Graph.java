@@ -74,6 +74,16 @@ public class Graph extends BaseElement implements Serializable {
         return new TreeSet<>(_vertexNames);
     }
 
+    public List<Vertex> getVerticesWith(String attribute, Object value) {
+        List<Vertex> result = new ArrayList<>();
+        for (Vertex v : getVertices()) {
+            if ( value.equals(v.getAttribute(attribute))) {
+                result.add(v);
+            }
+        }
+        return result;
+    }
+    
     public int getNumberOfEdges() {
         return _edges.size();
     }

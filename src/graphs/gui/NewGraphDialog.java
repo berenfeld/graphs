@@ -50,13 +50,16 @@ public class NewGraphDialog extends JDialog implements ActionListener {
 
 
     private void initComponents() {
-        initGeneralInformationPanel();
+        initGeneralInformationPanel();   
+        initButtonsPanel();     
+        initRandomGraphPanel();
         initBiPartiteGraphPanel();
-        initButtonsPanel();
+           
     }
 
-    private static final String EMPTY_GRAPH = "Empty graph";
+    private static final String EMPTY_GRAPH = "Empty graph";    
     private static final String COMPLETE_GRAPH = "Complete graph";   
+    private static final String RANDOM_GRAPH = "Random graph";
     private static final String BIPARTITE_GRAPH = "Bi-Partite graph";
     
     private void initGeneralInformationPanel() {
@@ -78,11 +81,12 @@ public class NewGraphDialog extends JDialog implements ActionListener {
         _numberOfVerticesComboBox.setSelectedItem(10);
         _graphTypeComboBox.addItem(EMPTY_GRAPH);
         _graphTypeComboBox.addItem(COMPLETE_GRAPH);
+        _graphTypeComboBox.addItem(RANDOM_GRAPH);
         _graphTypeComboBox.addItem(BIPARTITE_GRAPH);
         _graphTypeComboBox.addActionListener(this);
         add(_generalInformationPanel);
     }
-
+    
     private void initButtonsPanel() {
         Border lowerEtched = BorderFactory.createEtchedBorder(EtchedBorder.LOWERED);
         TitledBorder titledBorder = BorderFactory.createTitledBorder(lowerEtched, "Create graph",
@@ -94,21 +98,46 @@ public class NewGraphDialog extends JDialog implements ActionListener {
         add(_buttonsPanel);
     }
 
+    private void initRandomGraphPanel()
+    {
+    Border lowerEtched = BorderFactory.createEtchedBorder(EtchedBorder.LOWERED);
+        TitledBorder titledBorder = BorderFactory.createTitledBorder(lowerEtched, RANDOM_GRAPH,
+                TitledBorder.LEFT, TitledBorder.TOP);
+                
+        _randomGraphPanel.setBorder(titledBorder);
+        _randomGraphPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));
+        _randomGraphPanel.add(_randomGraphFullness);
+        _randomGraphPanel.add(_randomGraphFullnessComboBox);    
+        
+        for (int i=0;i<20;i++) {
+            _randomGraphFullnessComboBox.addItem((i*5) + "%");
+        }
+        _randomGraphFullnessComboBox.setSelectedItem("50%");
+    }
     private void initBiPartiteGraphPanel()
     {
         Border lowerEtched = BorderFactory.createEtchedBorder(EtchedBorder.LOWERED);
         TitledBorder titledBorder = BorderFactory.createTitledBorder(lowerEtched, BIPARTITE_GRAPH,
                 TitledBorder.LEFT, TitledBorder.TOP);
+        
+        for (int i=0;i<10;i++) {
+            _bipartiteGraphSideAVerticesComboBox.addItem(i);
+        }
+        for (int i=10;i<30;i+=5) {
+            _bipartiteGraphSideAVerticesComboBox.addItem(i);
+        }
+        _bipartiteGraphSideAVerticesComboBox.setSelectedItem(10);
+        _bipartiteGraphPanel.setBorder(titledBorder);
+        _bipartiteGraphPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));
+        _bipartiteGraphPanel.add(_bipartiteGraphSideAVertices);
+        _bipartiteGraphPanel.add(_bipartiteGraphSideAVerticesComboBox);
+        _bipartiteGraphPanel.add(_bipartiteGraphFullness);
+        _bipartiteGraphPanel.add(_bipartiteGraphFullnessComboBox);
+        
         for (int i=0;i<20;i++) {
             _bipartiteGraphFullnessComboBox.addItem((i*5) + "%");
         }
         _bipartiteGraphFullnessComboBox.setSelectedItem("50%");
-        _bipartiteGraphPanel.setBorder(titledBorder);
-        _bipartiteGraphPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));
-        _bipartiteGraphPanel.add(_bipartiteGraphFullness);
-        _bipartiteGraphPanel.add(_bipartiteGraphFullnessComboBox);
-        _bipartiteGraphPanel.setVisible(true);
-        
     }
     
     void createEmptyGraph( int vertices ) {        
@@ -123,11 +152,21 @@ public class NewGraphDialog extends JDialog implements ActionListener {
         setVisible(false);
     }
     
+    void createRandomGraph( int vertices ) {        
+        String densityStr = (String)_randomGraphFullnessComboBox.getSelectedItem();
+        int densityPercent = Integer.parseInt(densityStr.substring(0, densityStr.length() - 1));
+        
+        Graph graph = Factory.buildRandomGraph(vertices, (double)densityPercent / 100);
+        _mainWindow.addGraphFrame(graph, GraphPanel.VerticesLayout.Circle);
+        setVisible(false);
+    }
+    
     void createBiPartiteGraph( int vertices ) {        
         String densityStr = (String)_bipartiteGraphFullnessComboBox.getSelectedItem();
         int densityPercent = Integer.parseInt(densityStr.substring(0, densityStr.length() - 1));
-        
-        Graph graph = Factory.buildRandomBiPartiteGraph(vertices / 2, vertices / 2, (double)densityPercent / 100);
+        int verticesSideA = (Integer) _bipartiteGraphSideAVerticesComboBox.getSelectedItem();
+        verticesSideA = Math.min( verticesSideA, vertices );
+        Graph graph = Factory.buildRandomBiPartiteGraph(verticesSideA, vertices  - verticesSideA, (double)densityPercent / 100);
         _mainWindow.addGraphFrame(graph, GraphPanel.VerticesLayout.BiPartite);
         setVisible(false);
     }
@@ -135,12 +174,15 @@ public class NewGraphDialog extends JDialog implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         Object o = e.getSource();
         
-        if (o.equals(_graphTypeComboBox)) {
+        if (o.equals(_graphTypeComboBox)) {           
             remove(_bipartiteGraphPanel);
+            remove(_randomGraphPanel);
             Object graphType = _graphTypeComboBox.getSelectedItem();
             if (BIPARTITE_GRAPH.equals(graphType)) {                
-                add(_bipartiteGraphPanel);        
-            }
+                add(_bipartiteGraphPanel);   
+            } else if (RANDOM_GRAPH.equals(graphType)) {                
+                add(_randomGraphPanel);   
+            } 
             repaint();
         }
         else if (o.equals(_createGraphButton)) {
@@ -152,6 +194,9 @@ public class NewGraphDialog extends JDialog implements ActionListener {
             }
             else if (COMPLETE_GRAPH.equals(graphType)) {
                 createCompleteGraph(vertices);
+            }
+            else if (RANDOM_GRAPH.equals(graphType)) {
+                createRandomGraph(vertices);
             }
             else if (BIPARTITE_GRAPH.equals(graphType)) {
                 createBiPartiteGraph(vertices);
@@ -169,7 +214,13 @@ public class NewGraphDialog extends JDialog implements ActionListener {
     private JComboBox _numberOfVerticesComboBox = new JComboBox();
     private JComboBox _graphTypeComboBox = new JComboBox();
     
+    private JPanel _randomGraphPanel = new JPanel();    
+    private JLabel _randomGraphFullness = new JLabel("Graph fullness");     
+    private JComboBox _randomGraphFullnessComboBox = new JComboBox();
+    
     private JPanel _bipartiteGraphPanel = new JPanel();
-    private JLabel _bipartiteGraphFullness = new JLabel("Graph fullness");    
+    private JLabel _bipartiteGraphSideAVertices = new JLabel("Vertices on first side");   
+    private JComboBox _bipartiteGraphSideAVerticesComboBox = new JComboBox();    
+    private JLabel _bipartiteGraphFullness = new JLabel("Graph fullness");     
     private JComboBox _bipartiteGraphFullnessComboBox = new JComboBox();
 }

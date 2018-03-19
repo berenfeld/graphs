@@ -91,35 +91,31 @@ public class Factory {
     }
 
     public static Graph buildCompleteBiPartiteGraph(int leftVertices, int rightVertices) {
-        Graph graph = buildEmptyGraph(leftVertices + rightVertices);
-        graph.setName("K" + leftVertices + "," + rightVertices);
-        try {
-            for (int i = 1; i <= leftVertices; i++) {
-                for (int j = 1; j <= rightVertices; j++) {
-                    graph.addEdge(graph.getVertex(i), graph.getVertex(rightVertices + j));
-                }
-
-            }
-        } catch (Exception ex) {
-            return null;
-        }
-        return graph;
+        return buildRandomBiPartiteGraph(leftVertices, rightVertices, 1.0);       
     }
 
     public static Graph buildRandomBiPartiteGraph(int leftVertices, int rightVertices, double density) {
+        int vertices = leftVertices + rightVertices;
         Graph graph = buildEmptyGraph(leftVertices + rightVertices);
         graph.setName("K" + leftVertices + "," + rightVertices);
         Random rand = new Random();    
         try {
+            for (int i = 1; i <= leftVertices; i++ ) {
+                graph.getVertex(i).setAttribute(Vertex.VERTEX_ATTRIBUTE_SIDE, 1 );
+            }
+            for (int i = leftVertices + 1; i <= vertices; i++ ) {
+                graph.getVertex(i).setAttribute(Vertex.VERTEX_ATTRIBUTE_SIDE, 2 );
+            }
             for (int i = 1; i <= leftVertices; i++) {
                 for (int j = 1; j <= rightVertices; j++) {
                     if (rand.nextDouble() < density) {
-                        graph.addEdge(graph.getVertex(i), graph.getVertex(rightVertices + j));
+                        graph.addEdge(graph.getVertex(i), graph.getVertex(leftVertices + j));
                     }
                 }
 
             }
         } catch (Exception ex) {
+            Utils.exception(ex);
             return null;
         }
         return graph;

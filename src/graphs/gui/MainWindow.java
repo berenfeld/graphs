@@ -84,7 +84,6 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
 
     private JMenu _newGraphMenu = new JMenu("New Graph");
     private JMenuItem _newGraph = new JMenuItem("New Graph");    
-    private JMenuItem _newRandomGraph = new JMenuItem("Random Graph");    
     private JMenuItem _newCycleGraph = new JMenuItem("Cycle Graph");
     private JMenuItem _graphFromDegrees = new JMenuItem("Graph From Degrees List");
 
@@ -103,12 +102,10 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
     private GraphPropertiesDialog _graphPropertiesDialog = new GraphPropertiesDialog(this);
 
     private void initMenu() {
-        _newGraph.addActionListener(this);        
-        _newRandomGraph.addActionListener(this);        
+        _newGraph.addActionListener(this);              
         _newCycleGraph.addActionListener(this);
         _graphFromDegrees.addActionListener(this);
-        _newGraphMenu.add(_newGraph);        
-        _newGraphMenu.add(_newRandomGraph);        
+        _newGraphMenu.add(_newGraph);             
         _newGraphMenu.add(_newCycleGraph);
         _newGraphMenu.add(_graphFromDegrees);
         _graphsMenu.add(_newGraphMenu);
@@ -146,11 +143,7 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
         if (source.equals(_newGraph)) {
             newGraph();
             return;
-        }        
-        if (source.equals(_newRandomGraph)) {
-            newRandomGraph();
-            return;
-        }     
+        }         
         if (source.equals(_newCycleGraph)) {
             newCycleGraph();
             return;
@@ -298,23 +291,7 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
         Graph g = Factory.buildEmptyGraph(vertices);
         addGraphFrame(g);
 
-    }
-
-    private void newRandomGraph() {
-        int vertices;
-        try {
-            vertices = Integer.parseInt(JOptionPane.showInputDialog(this, "How manyu vertice ?", 10));
-        } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(this, "Illegal number of vertices");
-            return;
-        }
-        if (vertices < 0) {
-            JOptionPane.showMessageDialog(this, "Illegal number of vertices");
-            return;
-        }
-        Graph g = Factory.buildRandomGraph(vertices, 0.4);
-        addGraphFrame(g);
-    }    
+    }   
 
     private void newCycleGraph() {
         int vertices;

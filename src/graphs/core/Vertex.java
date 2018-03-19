@@ -23,6 +23,7 @@ public class Vertex extends BaseElement implements Comparable, Serializable {
 
     public static String VERTEX_ATTRIBUTE_COLOR = "_Color";
     public static String VERTEX_ATTRIBUTE_WEIGHT = "Weight";
+    public static String VERTEX_ATTRIBUTE_SIDE = "_Side";
     
     private Graph _graph;
     private String _name;

@@ -133,15 +133,31 @@ public class GraphPanel extends JPanel implements ComponentListener {
     
     private void layoutVerticesBiPartite() {
         
-        Graph maximumCut = MaximumCut.maximumCut(_graph);
+        boolean hasSideAttribute = true;
+        for (Vertex v : _graph.getVertices()) {
+            if ( ! v.hasAttribute(Vertex.VERTEX_ATTRIBUTE_SIDE)) {
+                hasSideAttribute = false;
+            }
+        }
+        if ( ! hasSideAttribute ) {
+            Graph maximumCut = MaximumCut.maximumCut(_graph);        
+            List<Vertex> sideA = (List<Vertex>) maximumCut.getAttribute(MaximumCut.MAXIMUM_CUT_SIDE_A);
+            List<Vertex> sideB = (List<Vertex>) maximumCut.getAttribute(MaximumCut.MAXIMUM_CUT_SIDE_B);
+            for (Vertex v : sideA ) {
+                v.setAttribute(Vertex.VERTEX_ATTRIBUTE_SIDE, 1 );                
+            }
+            for (Vertex v : sideB ) {
+                v.setAttribute(Vertex.VERTEX_ATTRIBUTE_SIDE, 2 );                
+            }
+        }
         
-        List<Vertex> sideA = (List<Vertex>) maximumCut.getAttribute(MaximumCut.MAXIMUM_CUT_SIDE_A);
-        List<Vertex> sideB = (List<Vertex>) maximumCut.getAttribute(MaximumCut.MAXIMUM_CUT_SIDE_B);
+        List<Vertex> sideA = _graph.getVerticesWith(Vertex.VERTEX_ATTRIBUTE_SIDE, 1 );
+        List<Vertex> sideB = _graph.getVerticesWith(Vertex.VERTEX_ATTRIBUTE_SIDE, 2 );
         
         int aPosition = 0, bPosition = 0;
         for (Vertex v : _graph.getVertices()) {
             double vertexX, vertexY;
-            if (sideA.contains(v))
+            if (v.getAttribute(Vertex.VERTEX_ATTRIBUTE_SIDE).equals(1))
             {
                 vertexX = 0.1;        
                 vertexY = 0.1 + ( aPosition * 0.8 / ( sideA.size() ) );
