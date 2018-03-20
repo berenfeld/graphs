@@ -84,9 +84,7 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
 
     private JMenu _newGraphMenu = new JMenu("New Graph");
     private JMenuItem _newGraph = new JMenuItem("New Graph");    
-    private JMenuItem _newCycleGraph = new JMenuItem("Cycle Graph");
-    private JMenuItem _graphFromDegrees = new JMenuItem("Graph From Degrees List");
-
+    
     private JMenuItem _saveGraphMenu = new JMenuItem("Save To File");
     private JMenuItem _loadGraphMenu = new JMenuItem("Load From File");
 
@@ -103,11 +101,7 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
 
     private void initMenu() {
         _newGraph.addActionListener(this);              
-        _newCycleGraph.addActionListener(this);
-        _graphFromDegrees.addActionListener(this);
         _newGraphMenu.add(_newGraph);             
-        _newGraphMenu.add(_newCycleGraph);
-        _newGraphMenu.add(_graphFromDegrees);
         _graphsMenu.add(_newGraphMenu);
 
         _graphsMenu.add(_saveGraphMenu);
@@ -144,14 +138,6 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
             newGraph();
             return;
         }         
-        if (source.equals(_newCycleGraph)) {
-            newCycleGraph();
-            return;
-        }
-        if (source.equals(_graphFromDegrees)) {
-            newGraphFromDegrees();
-            return;
-        }
         if (source.equals(_colorGraphAlgorithm)) {
             GraphFrame graphFrame = (GraphFrame) _desktopPane.getSelectedFrame();
             if (graphFrame == null) {
@@ -292,44 +278,7 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
         addGraphFrame(g);
 
     }   
-
-    private void newCycleGraph() {
-        int vertices;
-        try {
-            vertices = Integer.parseInt(JOptionPane.showInputDialog(this, "How manyu vertice ?", 10));
-        } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(this, "Illegal number of vertices");
-            return;
-        }
-        if (vertices < 0) {
-            JOptionPane.showMessageDialog(this, "Illegal number of vertices");
-            return;
-        }
-        Graph g = Factory.buildCycleGraph(vertices);
-        addGraphFrame(g, GraphPanel.VerticesLayout.Circle);
-    }
     
-    private void newGraphFromDegrees() {
-        String degreesList = JOptionPane.showInputDialog(this, "Enter degrees, seperated by comma", "4,3,3");
-        
-         Graph graph = null;
-        try {
-            List<String> list = Arrays.asList(degreesList.split("\\s*,\\s*"));
-            List<Integer> degreesSequence = new ArrayList<>();
-            for (String s : list) {
-                degreesSequence.add(Integer.parseInt(s));
-            }        
-            graph = GraphFromDegreeSequence.fromDegreeSequence(degreesSequence);
-        } catch ( Exception ex) {
-            Utils.exception(ex);
-            JOptionPane.showMessageDialog(this, "Could not build graph from degree sequence "+ degreesList);
-            return;
-            
-        }
-        addGraphFrame(graph, GraphPanel.VerticesLayout.Circle);
-    }
-    
-
     private void selectGraphFrame(GraphFrame graphFrame) {
         try {
             graphFrame.setSelected(true);
