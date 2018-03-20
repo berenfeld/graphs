@@ -11,6 +11,7 @@ import graphs.algorithms.GraphFromDegreeSequence;
 import graphs.core.Graph;
 import graphs.core.Vertex;
 import graphs.utils.Utils;
+import java.awt.CardLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
@@ -47,7 +48,7 @@ public class NewGraphDialog extends JDialog implements ActionListener {
         setMinimumSize(new Dimension(640, 480));
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         this.setLocation(dim.width / 2 - this.getSize().width / 2, dim.height / 2 - this.getSize().height / 2);
-        setLayout(new GridLayout(5, 1));
+        setLayout(new GridLayout(6, 1));
 
         initComponents();
     }
@@ -55,6 +56,9 @@ public class NewGraphDialog extends JDialog implements ActionListener {
     private void initComponents() {
         initGeneralInformationPanel();
         initButtonsPanel();
+        _extraInformationPanel.setLayout(new CardLayout(0, 0));
+        _extraInformationPanel.add(_emptyPanel, EMPTY_GRAPH);
+        add(_extraInformationPanel);
         initRandomGraphPanel();
         initBiPartiteGraphPanel();
         initGraphFromDegreesListPanel();
@@ -119,6 +123,8 @@ public class NewGraphDialog extends JDialog implements ActionListener {
             _randomGraphFullnessComboBox.addItem((i * 5) + "%");
         }
         _randomGraphFullnessComboBox.setSelectedItem("50%");
+        _extraInformationPanel.add(_randomGraphPanel, RANDOM_GRAPH);
+       
     }
 
     private void initBiPartiteGraphPanel() {
@@ -144,6 +150,8 @@ public class NewGraphDialog extends JDialog implements ActionListener {
             _bipartiteGraphFullnessComboBox.addItem((i * 5) + "%");
         }
         _bipartiteGraphFullnessComboBox.setSelectedItem("50%");
+        _extraInformationPanel.add(_bipartiteGraphPanel, BIPARTITE_GRAPH);
+        
     }
 
     private void initGraphFromDegreesListPanel() {
@@ -155,8 +163,8 @@ public class NewGraphDialog extends JDialog implements ActionListener {
         
         _graphFromDegreesListPanel.add(_graphFromDegreesListLabel);
         _graphFromDegreesListPanel.add(_graphFromDegreesListTextField);
+         _extraInformationPanel.add(_graphFromDegreesListPanel, GRAPH_FROM_DEGREES_LIST);
         
-        add(_graphFromDegreesListPanel);
     }
 
     void createEmptyGraph(int vertices) {
@@ -212,22 +220,26 @@ public class NewGraphDialog extends JDialog implements ActionListener {
             JOptionPane.showMessageDialog(this, "Could not build graph from degree sequence "+ degreesList);          
         }
     }
+      
+    public void showDialog()
+    {
         
+        pack();        
+        setVisible(true);
+    }
+
     public void actionPerformed(ActionEvent e) {
         Object o = e.getSource();
 
         if (o.equals(_graphTypeComboBox)) {
-            remove(_bipartiteGraphPanel);
-            remove(_randomGraphPanel);
-            remove(_graphFromDegreesListPanel);
+           ((CardLayout)_extraInformationPanel.getLayout()).show(_extraInformationPanel, EMPTY_GRAPH);
             Object graphType = _graphTypeComboBox.getSelectedItem();
             if (BIPARTITE_GRAPH.equals(graphType)) {
-                add(_bipartiteGraphPanel);
+                ((CardLayout)_extraInformationPanel.getLayout()).show(_extraInformationPanel, BIPARTITE_GRAPH);
             } else if (RANDOM_GRAPH.equals(graphType)) {
-                add(_randomGraphPanel);
+                ((CardLayout)_extraInformationPanel.getLayout()).show(_extraInformationPanel, RANDOM_GRAPH);
             } else if (GRAPH_FROM_DEGREES_LIST.equals(graphType)) {
-                add(_graphFromDegreesListPanel);
-                _graphFromDegreesListPanel.setVisible(true);
+                ((CardLayout)_extraInformationPanel.getLayout()).show(_extraInformationPanel, GRAPH_FROM_DEGREES_LIST);
             }            
             repaint();
         } else if (o.equals(_createGraphButton)) {
@@ -260,6 +272,9 @@ public class NewGraphDialog extends JDialog implements ActionListener {
     private JComboBox _numberOfVerticesComboBox = new JComboBox();
     private JComboBox _graphTypeComboBox = new JComboBox();
 
+    private JPanel _extraInformationPanel = new JPanel();
+    private JPanel _emptyPanel = new JPanel();
+    
     private JPanel _randomGraphPanel = new JPanel();
     private JLabel _randomGraphFullness = new JLabel("Graph fullness");
     private JComboBox _randomGraphFullnessComboBox = new JComboBox();

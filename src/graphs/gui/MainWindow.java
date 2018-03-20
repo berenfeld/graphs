@@ -269,7 +269,7 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
     }
 
     private void newGraph() {
-        _newGraphDialog.setVisible(true);        
+        _newGraphDialog.showDialog();      
     }
     
     private void newEmptyGraph() {
