@@ -259,6 +259,17 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
         }
     }
 
+    private void resizeAndShowInternalFrame( JInternalFrame internalFrame, int x, int y, int width, int height)
+    {
+        try {
+            internalFrame.setSize(width, height);
+            internalFrame.setLocation(x,y);
+            internalFrame.setIcon(false);
+        } catch (PropertyVetoException ex) {
+            Utils.exception(ex);
+        }
+    }
+    
     private void cascadeWindows() {
         JInternalFrame[] internalFrames = _desktopPane.getAllFrames();
         int numberOfFrames = internalFrames.length;
@@ -266,15 +277,15 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
             return;
         }
         final int FRAMES_SEPERATION = 30;
-        final Dimension FRAME_SIZE = new Dimension(_desktopPane.getWidth() - FRAMES_SEPERATION * numberOfFrames,
-                _desktopPane.getHeight() - FRAMES_SEPERATION * numberOfFrames);
+        final Dimension FRAME_SIZE = new Dimension(_desktopPane.getWidth() - FRAMES_SEPERATION * (numberOfFrames-1),
+                _desktopPane.getHeight() - FRAMES_SEPERATION * (numberOfFrames-1));
         int i = 0;
         for (JInternalFrame internalFrame : internalFrames) {
-            internalFrame.setSize(FRAME_SIZE);
-            internalFrame.setLocation(i * FRAMES_SEPERATION, i * FRAMES_SEPERATION);
-            selectGraphFrame((GraphFrame) internalFrame);
+            resizeAndShowInternalFrame(internalFrame, i * FRAMES_SEPERATION, i * FRAMES_SEPERATION, FRAME_SIZE.width, FRAME_SIZE.height);
+            internalFrame.moveToFront();
             i++;
         }
+        selectGraphFrame((GraphFrame) internalFrames[numberOfFrames-1]);
         repaint();
     }
 
@@ -286,7 +297,7 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
             return;
         }
         int cols = (int) Math.ceil(Math.sqrt(numberOfFrames));
-        int rows = (int) Math.ceil(numberOfFrames / cols);
+        int rows = (int) Math.ceil((float)numberOfFrames / cols);
 
         Utils.info("Organize " + numberOfFrames + " windows tile rows " + rows + " cols " + cols );
         int frameWidth = _desktopPane.getWidth() / cols;
@@ -297,10 +308,9 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
             for (int j = 0; j < cols; j++) {
                 if (frameIndex >= internalFrames.length) {
                     break;
-                }
+                }                
                 JInternalFrame internalFrame = internalFrames[frameIndex];
-                internalFrame.setSize(frameWidth, frameHeight);
-                internalFrame.setLocation(j * frameWidth, i * frameHeight);
+                resizeAndShowInternalFrame(internalFrame, j * frameWidth, i * frameHeight, frameWidth, frameHeight);
                 frameIndex++;
             }
         }

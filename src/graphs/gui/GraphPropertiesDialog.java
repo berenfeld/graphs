@@ -45,7 +45,7 @@ public class GraphPropertiesDialog extends JDialog {
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         setLocation(dim.width / 2 - this.getSize().width / 2, dim.height / 2 - this.getSize().height / 2);
         setLayout(new GridLayout(5, 1));
-
+        setResizable(false);
         initComponents();
     }
 
@@ -78,6 +78,8 @@ public class GraphPropertiesDialog extends JDialog {
         _connectivityPanel.add(_isTree);
         _connectivityPanel.add(_numberOfConnectedComponents);
         _connectivityPanel.add(_connectedComponents);
+        _connectivityPanel.add(_diameter);
+        _connectivityPanel.add(_diameterPath);
 
         add(_connectivityPanel);
     }
@@ -124,6 +126,8 @@ public class GraphPropertiesDialog extends JDialog {
         }
         components += " } ";
         _connectedComponents.setText("Connected components : " + components);
+        _diameter.setText("Diameter : " + _graph.diameter());
+        _diameterPath.setText("Diameter Path: " + _graph.diameterPath());
         
         _maxDegree.setText("Maximum Degree : " + _graph.getMaximumDegree());        
         _minDegree.setText("Minimum Degree : " + _graph.getMinimumDegree());
@@ -144,6 +148,8 @@ public class GraphPropertiesDialog extends JDialog {
     private JCheckBox _isTree = new JCheckBox("Tree ?");
     private JLabel _numberOfConnectedComponents = new JLabel("Connected ?");
     private JLabel _connectedComponents = new JLabel();
+    private JLabel _diameter = new JLabel();
+    private JLabel _diameterPath = new JLabel();
     private JPanel _degreesPanel = new JPanel();
     private JLabel _maxDegree = new JLabel();
     private JLabel _minDegree = new JLabel();

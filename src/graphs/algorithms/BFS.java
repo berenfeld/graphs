@@ -28,8 +28,9 @@ public class BFS {
     public static final String BFS_MAXIMUM_DEPTH = "_BFS-Maximum-Depth";
     public static final String BFS_VERTEX_DEPTH = "d";
     public static final String BFS_PATH_FROM_ROOT = "_BFS-Path-From-Root";
-    public static final String BFS_PREDECESSOR = "p";
-
+    public static final String BFS_PREDECESSOR = "p";    
+    public static final String BFS_MAXIMUM_DEPTH_VERTEX = "_BFS-Maximum-Depth-Vertex";
+    
     public static final int BFS_COLOR_NOT_VISITED = Utils.getColorNumber(Color.WHITE);
     public static final int BFS_COLOR_VISITING = Utils.getColorNumber(Color.GRAY);
     public static final int BFS_COLOR_VISITED = Utils.getColorNumber(Color.BLACK);
@@ -72,7 +73,10 @@ public class BFS {
 
                 int bfsDepth = (int) current.getAttribute(BFS_VERTEX_DEPTH);
 
-                maxDepth = Math.max(maxDepth, bfsDepth);
+                if (bfsDepth > maxDepth) {
+                    maxDepth = bfsDepth;
+                    resultGraph.setAttribute(BFS_MAXIMUM_DEPTH_VERTEX, current);
+                }
 
                 for (Edge adjacentEdge : current.getAdjacentEdges()) {
                     Vertex adjacent = adjacentEdge.getOtherVertex(current);
@@ -108,7 +112,8 @@ public class BFS {
                 }
             }
 
-            start.setAttribute(BFS_MAXIMUM_DEPTH, maxDepth);
+            resultGraph.setAttribute(BFS_MAXIMUM_DEPTH, maxDepth);
+            
         } catch (Exception ex) {
             Logger.getLogger(Factory.class.getName()).log(Level.SEVERE, null, ex);
             return null;

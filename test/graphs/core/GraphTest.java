@@ -69,6 +69,7 @@ public class GraphTest {
 
         int numberOfConnectedComponentes = g.getNumberOfConnectedComponents();
         assertEquals(1, complete.getNumberOfConnectedComponents());
+        assertEquals(1, complete.diameter());
         assertEquals(100, numberOfConnectedComponentes);
 
         while (!g.isComplete()) {

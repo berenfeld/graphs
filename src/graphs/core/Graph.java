@@ -41,6 +41,7 @@ public class Graph extends BaseElement implements Serializable {
     // diameter
     private boolean _diameterCalculated = false;
     private int _diameter = 0;
+    private Path _diameterPath;
 
     public String getName() {
         return _name;
@@ -311,7 +312,7 @@ public class Graph extends BaseElement implements Serializable {
         calculateConnectivity();
         return _numberOfConnectedComponents;
     }
-
+    
     public Map<Vertex, Map<String, Vertex>> getConnectedComponents() {
         calculateConnectivity();
         return _connectedComponents;
@@ -324,15 +325,19 @@ public class Graph extends BaseElement implements Serializable {
         _diameterCalculated = true;
         if (!isConnected()) {
             _diameter = Integer.MAX_VALUE;
+            _diameterPath = null;
             return;
         }
 
         int maximumBfsDepth = 0;
         for (Vertex v : _vertices.values()) {
             Graph bfsOfV = BFS.bfs(this, v, true);
-            Vertex bfsRoot = bfsOfV.getVertex(v.getName());
-            maximumBfsDepth = Math.max(maximumBfsDepth, (int) bfsRoot.getAttribute(BFS.BFS_MAXIMUM_DEPTH));
-
+            int vertexDepth = (int) bfsOfV.getAttribute(BFS.BFS_MAXIMUM_DEPTH);
+            if ( vertexDepth > maximumBfsDepth ) {
+                maximumBfsDepth = vertexDepth;
+                Vertex maximumDepthVertex = (Vertex) bfsOfV.getAttribute(BFS.BFS_MAXIMUM_DEPTH_VERTEX);            
+                _diameterPath = (Path) maximumDepthVertex.getAttribute(BFS.BFS_PATH_FROM_ROOT);
+            }
         }
         _diameter = maximumBfsDepth;
     }
@@ -343,6 +348,11 @@ public class Graph extends BaseElement implements Serializable {
         return _diameter;
     }
 
+    public Path diameterPath() {
+        calcualteDiameter();
+        return _diameterPath;
+    }
+    
     class IntComparator implements Comparator<Integer> {
 
         @Override
