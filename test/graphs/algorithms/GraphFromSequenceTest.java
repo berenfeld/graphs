@@ -44,5 +44,31 @@ public class GraphFromSequenceTest {
         assertEquals(g.getNumberOfEdges(), 4);
     }
 
+    @Test
+    public void test_GraphFromSequence2() throws Exception {
+        Graph g = GraphFromDegreeSequence.fromDegreeSequence(Utils.parseList("3,3,3,3,3,3"));
+        assertEquals(g.getNumberOfVertices(), 6);
+        assertEquals(g.getNumberOfEdges(), 9);
+    }
 
+    @Test
+    public void test_GraphFromSequenceRandom() throws Exception {
+                
+        for (int i=0;i<10;i++)
+        {
+            int vertices = 5 * i;
+            Graph g1 = Factory.buildRandomGraph(vertices, 0.1 * i);
+            List<Integer> degreesList = g1.getDegrees();
+            Graph g2 = GraphFromDegreeSequence.fromDegreeSequence(degreesList);
+
+            assertEquals(g1.getNumberOfVertices(), g2.getNumberOfVertices());
+            assertEquals(g1.getNumberOfEdges(), g2.getNumberOfEdges());
+            List<Integer> d1 = g1.getDegrees();
+            List<Integer> d2 = g2.getDegrees();
+            Collections.sort(d1);
+            Collections.sort(d2);
+
+            assertEquals(d1,d2);
+        }
+    }
 }

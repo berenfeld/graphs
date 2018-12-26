@@ -106,4 +106,9 @@ public class Utils {
         }
         return result;
     }
+    
+    public static String join(List list)
+    {
+        return String.join(",", list);        
+    }
 }

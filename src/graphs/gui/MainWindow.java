@@ -5,7 +5,6 @@
  */
 package graphs.gui;
 
-import com.sun.java.accessibility.util.SwingEventMonitor;
 import graphs.algorithms.*;
 import graphs.core.*;
 import graphs.utils.Utils;
@@ -16,12 +15,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyVetoException;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
