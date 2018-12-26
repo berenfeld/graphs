@@ -111,7 +111,7 @@ public class Graph extends BaseElement implements Serializable {
     }
 
     public Vertex addVertex() throws Exception {
-        String name = "v" + _vertexIndex;
+        String name = String.valueOf((char)((int)'a'+_vertexIndex - 1));
         return addVertex(name);
     }
 

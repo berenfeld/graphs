@@ -36,7 +36,8 @@ public class GraphPanel extends JPanel implements ComponentListener {
         None,
         Grid,
         Circle,
-        BiPartite
+        BiPartite,
+        Tree
     };
 
     private Graph _graph;
@@ -45,11 +46,13 @@ public class GraphPanel extends JPanel implements ComponentListener {
     private int _verticesSize = 10;
 
     public static final String GUI_LAYOUT = "_GUI-Vertices-Layout";
+    public static final String GUI_SELECTED_VERTEX = "_GUI-Selected-Vertex";
     public static final String VERTEX_X = "_GUI-Vertex-X";
     public static final String VERTEX_Y = "_GUI-Vertex-Y";
 
     public void setSelectedVertex(Vertex v) {
         _selectedVertex = v;
+        _graph.setAttribute(GUI_SELECTED_VERTEX, v);
     }
 
     public void setVerticesLayout(VerticesLayout layout) {
@@ -62,6 +65,9 @@ public class GraphPanel extends JPanel implements ComponentListener {
                 break;
             case BiPartite:
                 layoutVerticesBiPartite();
+                break;
+            case Tree:
+                layoutVerticesTree();
                 break;
         }
         repaint();
@@ -79,7 +85,7 @@ public class GraphPanel extends JPanel implements ComponentListener {
         _boldFont = new Font("Arial", Font.BOLD, _fontSize);
         repaint();
     }
-    
+
     private void layoutVerticesGrid() {
         double panelWidth = getSize().getWidth();
         double panelHeight = getSize().getHeight();
@@ -130,57 +136,64 @@ public class GraphPanel extends JPanel implements ComponentListener {
         _graph.setAttribute(GUI_LAYOUT, VerticesLayout.Circle);
 
     }
-    
+
     private void layoutVerticesBiPartite() {
-        
+
         boolean hasSideAttribute = true;
         for (Vertex v : _graph.getVertices()) {
-            if ( ! v.hasAttribute(Vertex.VERTEX_ATTRIBUTE_SIDE)) {
+            if (!v.hasAttribute(Vertex.VERTEX_ATTRIBUTE_SIDE)) {
                 hasSideAttribute = false;
             }
         }
-        if ( ! hasSideAttribute ) {
-            Graph maximumCut = MaximumCut.maximumCut(_graph);        
+        if (!hasSideAttribute) {
+            Graph maximumCut = MaximumCut.maximumCut(_graph);
             List<Vertex> sideA = (List<Vertex>) maximumCut.getAttribute(MaximumCut.MAXIMUM_CUT_SIDE_A);
             List<Vertex> sideB = (List<Vertex>) maximumCut.getAttribute(MaximumCut.MAXIMUM_CUT_SIDE_B);
-            for (Vertex v : sideA ) {
-                v.setAttribute(Vertex.VERTEX_ATTRIBUTE_SIDE, 1 );                
+            for (Vertex v : sideA) {
+                v.setAttribute(Vertex.VERTEX_ATTRIBUTE_SIDE, 1);
             }
-            for (Vertex v : sideB ) {
-                v.setAttribute(Vertex.VERTEX_ATTRIBUTE_SIDE, 2 );                
+            for (Vertex v : sideB) {
+                v.setAttribute(Vertex.VERTEX_ATTRIBUTE_SIDE, 2);
             }
         }
-        
-        List<Vertex> sideA = _graph.getVerticesWith(Vertex.VERTEX_ATTRIBUTE_SIDE, 1 );
-        List<Vertex> sideB = _graph.getVerticesWith(Vertex.VERTEX_ATTRIBUTE_SIDE, 2 );
-        
+
+        List<Vertex> sideA = _graph.getVerticesWith(Vertex.VERTEX_ATTRIBUTE_SIDE, 1);
+        List<Vertex> sideB = _graph.getVerticesWith(Vertex.VERTEX_ATTRIBUTE_SIDE, 2);
+
         int aPosition = 0, bPosition = 0;
         for (Vertex v : _graph.getVertices()) {
             double vertexX, vertexY;
-            if (v.getAttribute(Vertex.VERTEX_ATTRIBUTE_SIDE).equals(1))
-            {
-                vertexX = 0.1;        
-                vertexY = 0.1 + ( aPosition * 0.8 / ( sideA.size() ) );
+            if (v.getAttribute(Vertex.VERTEX_ATTRIBUTE_SIDE).equals(1)) {
+                vertexX = 0.1;
+                vertexY = 0.1 + (aPosition * 0.8 / (sideA.size()));
                 aPosition++;
-            }
-            else
-            {
+            } else {
                 vertexX = 0.9;
-                vertexY = 0.1 + ( bPosition * 0.8 / ( sideB.size() ) );
+                vertexY = 0.1 + (bPosition * 0.8 / (sideB.size()));
                 bPosition++;
             }
-            
+
             v.setAttribute(VERTEX_X, vertexX);
-            v.setAttribute(VERTEX_Y, vertexY); 
+            v.setAttribute(VERTEX_Y, vertexY);
         }
         _graph.setAttribute(GUI_LAYOUT, VerticesLayout.BiPartite);
 
     }
 
-   
-    
+    private void layoutVerticesTree() {
+        int vertices = _graph.getNumberOfVertices();
+        int levels = _graph.diameter(); // TODO find max path from source vertex
+        
+        double panelWidth = getSize().getWidth();
+        double panelHeight = getSize().getHeight();
+        double levelHeight = panelHeight / ( levels + 1);
+        
+        
+        _graph.setAttribute(GUI_LAYOUT, VerticesLayout.Tree);
+    }
+
     private int _fontSize = 20;
-    
+
     private Font _regularFont = new Font("Arial", Font.PLAIN, _fontSize);
     private Font _boldFont = new Font("Arial", Font.BOLD, _fontSize);
 

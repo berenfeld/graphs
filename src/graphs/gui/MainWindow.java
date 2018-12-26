@@ -140,7 +140,7 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
     void createGraphFromDegreesList(String degreesList) throws Exception {
 
         List<Integer> degreesSequence = Utils.parseList(degreesList);
-        Utils.info("parse degrees list " + degreesSequence);
+        Utils.debug("parse degrees list " + degreesSequence);
         Graph graph = GraphFromDegreeSequence.fromDegreeSequence(degreesSequence);
         addGraphFrame(graph, GraphPanel.VerticesLayout.Circle);
     }
@@ -288,7 +288,7 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
         }
     }
 
-    private void cascadeWindows() {
+    public void cascadeWindows() {
         JInternalFrame[] internalFrames = _desktopPane.getAllFrames();
         int numberOfFrames = internalFrames.length;
         if (numberOfFrames == 0) {
@@ -307,7 +307,7 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
         repaint();
     }
 
-    private void tileWindows() {
+    public void tileWindows() {
 
         JInternalFrame[] internalFrames = _desktopPane.getAllFrames();
         int numberOfFrames = internalFrames.length;
@@ -317,7 +317,7 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
         int cols = (int) Math.ceil(Math.sqrt(numberOfFrames));
         int rows = (int) Math.ceil((float) numberOfFrames / cols);
 
-        Utils.info("Organize " + numberOfFrames + " windows tile rows " + rows + " cols " + cols);
+        Utils.debug("Organize " + numberOfFrames + " windows tile rows " + rows + " cols " + cols);
         int frameWidth = _desktopPane.getWidth() / cols;
         int frameHeight = _desktopPane.getHeight() / rows;
 
@@ -355,6 +355,11 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
         }
     }
 
+    public int numberOfGraphFrames()
+    {
+        return _desktopPane.getComponentCount();
+    }
+    
     public void addGraphFrame(Graph g) {
         addGraphFrame(g, GraphPanel.VerticesLayout.Grid);
     }

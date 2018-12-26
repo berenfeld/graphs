@@ -92,6 +92,9 @@ public class BFSDialog extends JDialog implements ActionListener {
             Graph bfsGraph = BFS.bfs(_graph, source, copy);
             if ( copy ) {
                 _mainWindow.addGraphFrame(bfsGraph, GraphPanel.VerticesLayout.None);
+                if ( _mainWindow.numberOfGraphFrames() == 2) {
+                    _mainWindow.tileWindows();
+                }
             } else {
                 _graphFrame.repaint();
             }

@@ -116,7 +116,7 @@ public class BFSTest {
 
         Vertex start = g.getFirstVertex();
         Graph bfs = BFS.bfs(g, start);
-        assertEquals(50, (int) bfs.getVertex(start.getName()).getAttribute(BFS.BFS_MAXIMUM_DEPTH));
+        assertEquals(50, (int) bfs.getAttribute(BFS.BFS_MAXIMUM_DEPTH));
     }
 
     @Test

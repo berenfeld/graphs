@@ -57,7 +57,7 @@ public class FactoryTest {
         assertEquals(100 * 99 / 2, g.getNumberOfEdges());
         int i = 1;
         for (Vertex v : g.getVertices()) {
-            assertEquals("v"+i, v.getName());
+            assertEquals(String.valueOf((char)((int)'a'+i - 1)), v.getName());
             i++;
         }        
     }
