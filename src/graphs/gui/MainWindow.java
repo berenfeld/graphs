@@ -83,7 +83,8 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
     private JMenu _graphsMenu = new JMenu("Graphs");
 
     private JMenu _newGraphMenu = new JMenu("New Graph");
-    private JMenuItem _newGraph = new JMenuItem("New Graph");
+    private JMenuItem _newGraph = new JMenuItem("New Graph Dialog");
+    private JMenuItem _fromDegreesList = new JMenuItem("From Degrees Sequence");
 
     private JMenuItem _saveGraphMenu = new JMenuItem("Save To File");
     private JMenuItem _loadGraphMenu = new JMenuItem("Load From File");
@@ -103,6 +104,10 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
     private void initMenu() {
         _newGraph.addActionListener(this);
         _newGraphMenu.add(_newGraph);
+
+        _fromDegreesList.addActionListener(this);
+        _newGraphMenu.add(_fromDegreesList);
+
         _graphsMenu.add(_newGraphMenu);
 
         _graphsMenu.add(_saveGraphMenu);
@@ -133,7 +138,15 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
 
     public void showGraphProperties(GraphFrame graphFrame) {
         _graphPropertiesDialog.setGraphFrame(graphFrame);
-        _graphPropertiesDialog.show();
+        _graphPropertiesDialog.setVisible(true);
+    }
+
+    void createGraphFromDegreesList(String degreesList) throws Exception {
+
+        List<Integer> degreesSequence = Utils.parseList(degreesList);
+        Utils.info("parse degrees list " + degreesSequence);
+        Graph graph = GraphFromDegreeSequence.fromDegreeSequence(degreesSequence);
+        addGraphFrame(graph, GraphPanel.VerticesLayout.Circle);
     }
 
     @Override
@@ -141,6 +154,16 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
         Object source = e.getSource();
         if (source.equals(_newGraph)) {
             newGraph();
+            return;
+        }
+        if (source.equals(_fromDegreesList)) {
+            String degreesListStr = null;
+            try {
+                degreesListStr = JOptionPane.showInputDialog(this, "Please enter degrees list, seperated by comma", "3,3,3,3,3,3");
+                createGraphFromDegreesList(degreesListStr);
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Failed to create a graph from degrees list : " + degreesListStr);
+            }
             return;
         }
         if (source.equals(_colorGraphAlgorithm)) {
@@ -259,17 +282,16 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
         }
     }
 
-    private void resizeAndShowInternalFrame( JInternalFrame internalFrame, int x, int y, int width, int height)
-    {
+    private void resizeAndShowInternalFrame(JInternalFrame internalFrame, int x, int y, int width, int height) {
         try {
             internalFrame.setSize(width, height);
-            internalFrame.setLocation(x,y);
+            internalFrame.setLocation(x, y);
             internalFrame.setIcon(false);
         } catch (PropertyVetoException ex) {
             Utils.exception(ex);
         }
     }
-    
+
     private void cascadeWindows() {
         JInternalFrame[] internalFrames = _desktopPane.getAllFrames();
         int numberOfFrames = internalFrames.length;
@@ -277,15 +299,15 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
             return;
         }
         final int FRAMES_SEPERATION = 30;
-        final Dimension FRAME_SIZE = new Dimension(_desktopPane.getWidth() - FRAMES_SEPERATION * (numberOfFrames-1),
-                _desktopPane.getHeight() - FRAMES_SEPERATION * (numberOfFrames-1));
+        final Dimension FRAME_SIZE = new Dimension(_desktopPane.getWidth() - FRAMES_SEPERATION * (numberOfFrames - 1),
+                _desktopPane.getHeight() - FRAMES_SEPERATION * (numberOfFrames - 1));
         int i = 0;
         for (JInternalFrame internalFrame : internalFrames) {
             resizeAndShowInternalFrame(internalFrame, i * FRAMES_SEPERATION, i * FRAMES_SEPERATION, FRAME_SIZE.width, FRAME_SIZE.height);
             internalFrame.moveToFront();
             i++;
         }
-        selectGraphFrame((GraphFrame) internalFrames[numberOfFrames-1]);
+        selectGraphFrame((GraphFrame) internalFrames[numberOfFrames - 1]);
         repaint();
     }
 
@@ -297,9 +319,9 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
             return;
         }
         int cols = (int) Math.ceil(Math.sqrt(numberOfFrames));
-        int rows = (int) Math.ceil((float)numberOfFrames / cols);
+        int rows = (int) Math.ceil((float) numberOfFrames / cols);
 
-        Utils.info("Organize " + numberOfFrames + " windows tile rows " + rows + " cols " + cols );
+        Utils.info("Organize " + numberOfFrames + " windows tile rows " + rows + " cols " + cols);
         int frameWidth = _desktopPane.getWidth() / cols;
         int frameHeight = _desktopPane.getHeight() / rows;
 
@@ -308,7 +330,7 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
             for (int j = 0; j < cols; j++) {
                 if (frameIndex >= internalFrames.length) {
                     break;
-                }                
+                }
                 JInternalFrame internalFrame = internalFrames[frameIndex];
                 resizeAndShowInternalFrame(internalFrame, j * frameWidth, i * frameHeight, frameWidth, frameHeight);
                 frameIndex++;

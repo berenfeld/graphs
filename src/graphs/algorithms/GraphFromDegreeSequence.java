@@ -7,6 +7,7 @@ package graphs.algorithms;
 
 import graphs.core.Graph;
 import graphs.core.Vertex;
+import graphs.utils.Utils;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -16,33 +17,51 @@ import java.util.List;
  * @author ranb
  */
 public class GraphFromDegreeSequence {
-    
-    public static Graph fromDegreeSequence(List<Integer> degreeSequence) throws Exception
-    {
+
+    public static Graph fromDegreeSequence(List<Integer> degreeSequence) throws Exception {
         int vertices = degreeSequence.size();
         Graph graph = Factory.buildEmptyGraph(vertices);
-        graph.setName("From sequence : "+ degreeSequence);
+        graph.setName("From Degree Sequence : " + degreeSequence);
         Collections.sort(degreeSequence);
         Collections.reverse(degreeSequence);
+
         
-        int vertexIndex = 1;
-        do {
-            int currentVertexDegree = degreeSequence.remove(0);
-            
-            Vertex v = graph.getVertex(vertexIndex);
-           
-            for (int i=0;i<currentVertexDegree;i++) {
-                graph.addEdge(v, graph.getVertex(vertexIndex + i + 1));
-                int adjacentDegree = degreeSequence.get(i);
-                adjacentDegree --;
-                if ( adjacentDegree < 0 ) {
-                    throw new Exception("Illegal degree sequence");
-                }
-                degreeSequence.set(i,adjacentDegree);
+        for (int vertexIndex = 1; vertexIndex <= vertices; vertexIndex ++) {
+            int currentVertexDegree = degreeSequence.get(vertexIndex-1);
+            if (currentVertexDegree < 0) {
+                throw new Exception("Can't create graph from degree sequence " + degreeSequence);
             }
-             vertexIndex++;
-        } while( ! degreeSequence.isEmpty());
-        
+
+            if (currentVertexDegree == 0) {
+                continue;
+            }
+            Vertex v = graph.getVertex(vertexIndex);
+
+            while(currentVertexDegree > 0) {
+                int otherVertexIndex = vertices;
+                while (otherVertexIndex > 0) {
+                    int adjacentDegree = degreeSequence.get(otherVertexIndex - 1);
+                    if ( adjacentDegree > 0 ) {
+                        adjacentDegree--;                        
+                        degreeSequence.set(otherVertexIndex - 1, adjacentDegree);
+                        currentVertexDegree --;
+                        Vertex otherVertex = graph.getVertex(otherVertexIndex);
+                        graph.addEdge(v, otherVertex );
+                        Utils.info("added edge " + v + "-" + otherVertex);
+                    }
+                    otherVertexIndex--;
+                    if ( currentVertexDegree == 0 ) {
+                        break;
+                    }
+                }
+                if ( currentVertexDegree > 0 ) {
+                    throw new Exception("Can't create graph from degree sequence " + degreeSequence);                    
+                } 
+            }
+            degreeSequence.set(vertexIndex-1, 0);
+            Utils.info("degrees list " + degreeSequence);
+        } 
+
         return graph;
     }
 }

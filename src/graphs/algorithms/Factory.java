@@ -49,7 +49,7 @@ public class Factory {
     public static Graph buildRandomGraph(int vertices, double density) {
         Graph graph = buildEmptyGraph(vertices);
         graph.setName("Random (" + vertices + ")");
-        Random rand = new Random();        
+        Random rand = new Random();
         try {
             for (int i = 1; i <= vertices; i++) {
                 for (int j = i + 1; j <= vertices; j++) {
@@ -82,7 +82,7 @@ public class Factory {
         graph.setName("L" + vertices);
         try {
             for (int i = 1; i < vertices; i++) {
-                graph.addEdge(graph.getVertex(i), graph.getVertex(i+1));
+                graph.addEdge(graph.getVertex(i), graph.getVertex(i + 1));
             }
         } catch (Exception ex) {
             return null;
@@ -91,20 +91,20 @@ public class Factory {
     }
 
     public static Graph buildCompleteBiPartiteGraph(int leftVertices, int rightVertices) {
-        return buildRandomBiPartiteGraph(leftVertices, rightVertices, 1.0);       
+        return buildRandomBiPartiteGraph(leftVertices, rightVertices, 1.0);
     }
 
     public static Graph buildRandomBiPartiteGraph(int leftVertices, int rightVertices, double density) {
         int vertices = leftVertices + rightVertices;
         Graph graph = buildEmptyGraph(leftVertices + rightVertices);
         graph.setName("K" + leftVertices + "," + rightVertices);
-        Random rand = new Random();    
+        Random rand = new Random();
         try {
-            for (int i = 1; i <= leftVertices; i++ ) {
-                graph.getVertex(i).setAttribute(Vertex.VERTEX_ATTRIBUTE_SIDE, 1 );
+            for (int i = 1; i <= leftVertices; i++) {
+                graph.getVertex(i).setAttribute(Vertex.VERTEX_ATTRIBUTE_SIDE, 1);
             }
-            for (int i = leftVertices + 1; i <= vertices; i++ ) {
-                graph.getVertex(i).setAttribute(Vertex.VERTEX_ATTRIBUTE_SIDE, 2 );
+            for (int i = leftVertices + 1; i <= vertices; i++) {
+                graph.getVertex(i).setAttribute(Vertex.VERTEX_ATTRIBUTE_SIDE, 2);
             }
             for (int i = 1; i <= leftVertices; i++) {
                 for (int j = 1; j <= rightVertices; j++) {
@@ -120,7 +120,7 @@ public class Factory {
         }
         return graph;
     }
-    
+
     public static Graph copyVerticesFrom(Graph other) {
         Graph result = new Graph("Copy of " + other.getName());
         try {
@@ -169,4 +169,5 @@ public class Factory {
         }
         return result;
     }
+
 }

@@ -9,6 +9,8 @@ import graphs.core.Edge;
 import graphs.core.Vertex;
 import graphs.gui.MainWindow;
 import java.awt.Color;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -93,5 +95,15 @@ public class Utils {
         double toDist = distance(x, y, toX, toY);
 
         return (fromDist + toDist) < (fullDistance + 1);
+    }
+    
+    public static List<Integer> parseList(String listStr)
+    {
+        List<String> tokens = Arrays.asList(listStr.split("\\s*,\\s*"));
+        List<Integer> result = new ArrayList();
+        for (String token : tokens){
+            result.add(0, Integer.valueOf(token));
+        }
+        return result;
     }
 }

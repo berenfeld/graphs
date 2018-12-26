@@ -61,15 +61,13 @@ public class NewGraphDialog extends JDialog implements ActionListener {
         add(_extraInformationPanel);
         initRandomGraphPanel();
         initBiPartiteGraphPanel();
-        initGraphFromDegreesListPanel();
     }
 
     private static final String EMPTY_GRAPH = "Empty graph";
     private static final String COMPLETE_GRAPH = "Complete graph";
     private static final String CYCLE_GRAPH = "Cycle graph";
     private static final String RANDOM_GRAPH = "Random graph";
-    private static final String BIPARTITE_GRAPH = "Bi-Partite graph";
-    private static final String GRAPH_FROM_DEGREES_LIST = "Graph from degrees list";
+    private static final String BIPARTITE_GRAPH = "Bi-Partite graph";    
 
     private void initGeneralInformationPanel() {
         Border lowerEtched = BorderFactory.createEtchedBorder(EtchedBorder.LOWERED);
@@ -93,7 +91,6 @@ public class NewGraphDialog extends JDialog implements ActionListener {
         _graphTypeComboBox.addItem(CYCLE_GRAPH);
         _graphTypeComboBox.addItem(RANDOM_GRAPH);
         _graphTypeComboBox.addItem(BIPARTITE_GRAPH);
-        _graphTypeComboBox.addItem(GRAPH_FROM_DEGREES_LIST);        
         _graphTypeComboBox.addActionListener(this);
         add(_generalInformationPanel);
     }
@@ -154,19 +151,6 @@ public class NewGraphDialog extends JDialog implements ActionListener {
         
     }
 
-    private void initGraphFromDegreesListPanel() {
-        Border lowerEtched = BorderFactory.createEtchedBorder(EtchedBorder.LOWERED);
-        TitledBorder titledBorder = BorderFactory.createTitledBorder(lowerEtched, GRAPH_FROM_DEGREES_LIST,
-                TitledBorder.LEFT, TitledBorder.TOP);
-        _graphFromDegreesListPanel.setBorder(titledBorder);
-        _graphFromDegreesListPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));
-        
-        _graphFromDegreesListPanel.add(_graphFromDegreesListLabel);
-        _graphFromDegreesListPanel.add(_graphFromDegreesListTextField);
-         _extraInformationPanel.add(_graphFromDegreesListPanel, GRAPH_FROM_DEGREES_LIST);
-        
-    }
-
     void createEmptyGraph(int vertices) {
         Graph graph = Factory.buildEmptyGraph(vertices);
         _mainWindow.addGraphFrame(graph, GraphPanel.VerticesLayout.Circle);
@@ -204,22 +188,7 @@ public class NewGraphDialog extends JDialog implements ActionListener {
         setVisible(false);
     }
 
-    void createGraphFromDegreesList(int vertices) {
-        String degreesList = _graphFromDegreesListTextField.getText();
-        try {
-            List<String> list = Arrays.asList(degreesList.split("\\s*,\\s*"));
-            List<Integer> degreesSequence = new ArrayList<>();
-            for (String s : list) {
-                degreesSequence.add(Integer.parseInt(s));
-            }        
-            Graph graph = GraphFromDegreeSequence.fromDegreeSequence(degreesSequence);
-            _mainWindow.addGraphFrame(graph );
-            setVisible(false);
-        } catch ( Exception ex) {
-            Utils.exception(ex);
-            JOptionPane.showMessageDialog(this, "Could not build graph from degree sequence "+ degreesList);          
-        }
-    }
+    
       
     public void showDialog()
     {
@@ -238,9 +207,7 @@ public class NewGraphDialog extends JDialog implements ActionListener {
                 ((CardLayout)_extraInformationPanel.getLayout()).show(_extraInformationPanel, BIPARTITE_GRAPH);
             } else if (RANDOM_GRAPH.equals(graphType)) {
                 ((CardLayout)_extraInformationPanel.getLayout()).show(_extraInformationPanel, RANDOM_GRAPH);
-            } else if (GRAPH_FROM_DEGREES_LIST.equals(graphType)) {
-                ((CardLayout)_extraInformationPanel.getLayout()).show(_extraInformationPanel, GRAPH_FROM_DEGREES_LIST);
-            }            
+            }          
             repaint();
         } else if (o.equals(_createGraphButton)) {
             int vertices = (Integer) _numberOfVerticesComboBox.getSelectedItem();
@@ -256,9 +223,7 @@ public class NewGraphDialog extends JDialog implements ActionListener {
                 createRandomGraph(vertices);
             } else if (BIPARTITE_GRAPH.equals(graphType)) {
                 createBiPartiteGraph(vertices);
-            } else if (GRAPH_FROM_DEGREES_LIST.equals(graphType)) {
-                createGraphFromDegreesList(vertices);
-            }
+            } 
         }
     }
 
@@ -284,9 +249,4 @@ public class NewGraphDialog extends JDialog implements ActionListener {
     private JComboBox _bipartiteGraphSideAVerticesComboBox = new JComboBox();
     private JLabel _bipartiteGraphFullness = new JLabel("Graph fullness");
     private JComboBox _bipartiteGraphFullnessComboBox = new JComboBox();
-
-    private JPanel _graphFromDegreesListPanel = new JPanel();
-    private JLabel _graphFromDegreesListLabel = new JLabel("Enter degrees list");
-    private JTextField _graphFromDegreesListTextField = new JTextField(20);
-
 }
