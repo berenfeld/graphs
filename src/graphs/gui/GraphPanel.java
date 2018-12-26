@@ -90,7 +90,7 @@ public class GraphPanel extends JPanel implements ComponentListener {
         double ratio = panelWidth / panelHeight;
         double vertices = _graph.getNumberOfVertices();
         int gridWidth = (int) Math.ceil(Math.sqrt(vertices) * ratio);
-        int gridHeight = (int) Math.ceil(vertices / gridWidth);
+        int gridHeight = (int) Math.ceil(vertices / gridWidth) + 1;
 
         int cellWidth = (int) (panelWidth / (gridWidth + 1));
         int cellHeight = (int) (panelHeight / (gridHeight + 1));

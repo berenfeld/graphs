@@ -42,7 +42,7 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
 
         initMenu();
 
-         _desktopPane.setDragMode(JDesktopPane.OUTLINE_DRAG_MODE);
+        _desktopPane.setDragMode(JDesktopPane.OUTLINE_DRAG_MODE);
         _desktopPane.setVisible(true);
 
         getContentPane().add(_desktopPane, BorderLayout.CENTER);
@@ -57,13 +57,13 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
         _addVertexModeButton.addActionListener(this);
         _addEdgeModeButton.addActionListener(this);
         getContentPane().add(_toolbar, BorderLayout.NORTH);
-        
+
         setResizable(false);
         Dimension size = new Dimension(1280, 720);
-        setSize(size.width, size.height);        
+        setSize(size.width, size.height);
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         setLocation(screenSize.width / 2 - size.width / 2, screenSize.height / 2 - size.height / 2);
-        setVisible(true);       
+        setVisible(true);
     }
 
     public static enum SelectionMode {
@@ -83,25 +83,26 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
     private JMenu _graphsMenu = new JMenu("Graphs");
 
     private JMenu _newGraphMenu = new JMenu("New Graph");
-    private JMenuItem _newGraph = new JMenuItem("New Graph");    
-    
+    private JMenuItem _newGraph = new JMenuItem("New Graph");
+
     private JMenuItem _saveGraphMenu = new JMenuItem("Save To File");
     private JMenuItem _loadGraphMenu = new JMenuItem("Load From File");
 
     private JMenu _algorithms = new JMenu("Algorithms");
     private JMenuItem _colorGraphAlgorithm = new JMenuItem("Color Graph");
-    private JMenuItem _bfsAlgorithm = new JMenuItem("BFS");    
+    private JMenuItem _bfsAlgorithm = new JMenuItem("BFS");
 
     private JMenu _windowsMenu = new JMenu("Windows");
     private JMenuItem _cascadeWindows = new JMenuItem("Cascade");
+    private JMenuItem _tileWindows = new JMenuItem("Tile");
     private Map<GraphFrame, JMenuItem> _windowGraphMenus = new HashMap<>();
     private BFSDialog _bfsDialog = new BFSDialog(this);
     private NewGraphDialog _newGraphDialog = new NewGraphDialog(this);
     private GraphPropertiesDialog _graphPropertiesDialog = new GraphPropertiesDialog(this);
 
     private void initMenu() {
-        _newGraph.addActionListener(this);              
-        _newGraphMenu.add(_newGraph);             
+        _newGraph.addActionListener(this);
+        _newGraphMenu.add(_newGraph);
         _graphsMenu.add(_newGraphMenu);
 
         _graphsMenu.add(_saveGraphMenu);
@@ -116,6 +117,10 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
 
         _windowsMenu.add(_cascadeWindows);
         _cascadeWindows.addActionListener(this);
+
+        _windowsMenu.add(_tileWindows);
+        _tileWindows.addActionListener(this);
+
         _menuBar.add(_graphsMenu);
         _menuBar.add(_algorithms);
         _menuBar.add(_windowsMenu);
@@ -137,7 +142,7 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
         if (source.equals(_newGraph)) {
             newGraph();
             return;
-        }         
+        }
         if (source.equals(_colorGraphAlgorithm)) {
             GraphFrame graphFrame = (GraphFrame) _desktopPane.getSelectedFrame();
             if (graphFrame == null) {
@@ -216,6 +221,11 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
             cascadeWindows();
             return;
         }
+        if (source.equals(_tileWindows)) {
+            tileWindows();
+            return;
+        }
+
         for (GraphFrame graphFrame : _windowGraphMenus.keySet()) {
             if (_windowGraphMenus.get(graphFrame).equals(source)) {
                 selectGraphFrame(graphFrame);
@@ -268,17 +278,48 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
         repaint();
     }
 
-    private void newGraph() {
-        _newGraphDialog.showDialog();      
+    private void tileWindows() {
+
+        JInternalFrame[] internalFrames = _desktopPane.getAllFrames();
+        int numberOfFrames = internalFrames.length;
+        if (numberOfFrames == 0) {
+            return;
+        }
+        int cols = (int) Math.ceil(Math.sqrt(numberOfFrames));
+        int rows = (int) Math.ceil(numberOfFrames / cols);
+
+        Utils.info("Organize " + numberOfFrames + " windows tile rows " + rows + " cols " + cols );
+        int frameWidth = _desktopPane.getWidth() / cols;
+        int frameHeight = _desktopPane.getHeight() / rows;
+
+        int frameIndex = 0;
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                if (frameIndex >= internalFrames.length) {
+                    break;
+                }
+                JInternalFrame internalFrame = internalFrames[frameIndex];
+                internalFrame.setSize(frameWidth, frameHeight);
+                internalFrame.setLocation(j * frameWidth, i * frameHeight);
+                frameIndex++;
+            }
+        }
+        selectGraphFrame((GraphFrame) internalFrames[0]);
+
+        repaint();
     }
-    
+
+    private void newGraph() {
+        _newGraphDialog.showDialog();
+    }
+
     private void newEmptyGraph() {
         int vertices = Integer.parseInt(JOptionPane.showInputDialog(this, "How manyu vertice ?", 10));
         Graph g = Factory.buildEmptyGraph(vertices);
         addGraphFrame(g);
 
-    }   
-    
+    }
+
     private void selectGraphFrame(GraphFrame graphFrame) {
         try {
             graphFrame.setSelected(true);

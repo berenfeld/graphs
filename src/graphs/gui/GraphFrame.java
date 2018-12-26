@@ -61,6 +61,7 @@ public class GraphFrame extends JInternalFrame implements MouseListener, ActionL
     private JMenuItem _changeGraphNameMenu = new JMenuItem("Change Name");
     private JMenuItem _graphPropertiesMenu = new JMenuItem("Properties");
     private JMenuItem _addVertexMenu = new JMenuItem("Add Vertex");
+    private JMenuItem _createComplementGraph = new JMenuItem("Create Complement Graph");
     private JMenuItem _changeVertexNameMenu = new JMenuItem("Change Name");
     private JMenuItem _removeVertexMenu = new JMenuItem("Remove");
     private JMenuItem _removeEdgeMenu = new JMenuItem("Remove");
@@ -100,6 +101,8 @@ public class GraphFrame extends JInternalFrame implements MouseListener, ActionL
         _graphPropertiesMenu.addActionListener(this);
         _graphMenu.add(_addVertexMenu);
         _addVertexMenu.addActionListener(this);
+        _graphMenu.add(_createComplementGraph);
+        _createComplementGraph.addActionListener(this);
         _graphMenu.add(_verticesSizeMenu);
         for (int i = 3; i <= 15; i++) {
             JMenuItem verticesSizeMenuItem = new JMenuItem(i + " Points");
@@ -238,7 +241,7 @@ public class GraphFrame extends JInternalFrame implements MouseListener, ActionL
         _clickX = e.getX();
         _clickY = e.getY();
         
-        Utils.info( "clicked "+ _clickX + ","+ _clickY + " canvas size "+ _panelWidth + " x "+ _panelHeight);
+        Utils.debug( "clicked "+ _clickX + ","+ _clickY + " canvas size "+ _panelWidth + " x "+ _panelHeight);
         updateSelectdVertex();
         
         if ( _selectedVertex == null ) {
@@ -353,7 +356,7 @@ public class GraphFrame extends JInternalFrame implements MouseListener, ActionL
         double panelHeight = _canvas.getSize().getHeight();
         Object source = e.getSource();
         if (source.equals(_changeVertexNameMenu)) {
-            String newName = JOptionPane.showInputDialog("Replace Name '" + _selectedVertex.getName() + "' With :");
+            String newName = JOptionPane.showInputDialog("Replace Name '" + _selectedVertex.getName() + "' With :", _selectedVertex.getName());
             _graph.setVertexName(_selectedVertex, newName);
             setTitle(newName);
             repaint();
@@ -374,7 +377,7 @@ public class GraphFrame extends JInternalFrame implements MouseListener, ActionL
             return;
         }
         if (source.equals(_changeGraphNameMenu)) {
-            String newName = JOptionPane.showInputDialog("Replace Name '" + _graph.getName() + "' With :");
+            String newName = JOptionPane.showInputDialog("Replace Name '" + _graph.getName() + "' With :", _graph.getName());
             _graph.setName(newName);
             setTitle(newName);
             return;
@@ -389,6 +392,12 @@ public class GraphFrame extends JInternalFrame implements MouseListener, ActionL
             newVertex.setAttribute(GraphPanel.VERTEX_Y, (double) _clickY / panelHeight);
 
             repaint();
+            return;
+        }
+        if (source.equals(_createComplementGraph)) {
+            //ranb
+            _mainWindow.addGraphFrame( Factory.complementOf(_graph), _canvas.getVerticesLayout());
+            
             return;
         }
         if (source.equals(_verticesLayoutGridMenu)) {

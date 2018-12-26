@@ -255,10 +255,10 @@ public class Graph extends BaseElement implements Serializable {
     }
 
     public List<Integer> getDegrees() {
-        List<Integer> result = new ArrayList<Integer>();
-        for (Vertex v : _vertices.values()) {
+        List<Integer> result = new ArrayList<>();
+        _vertices.values().forEach((v) -> {
             result.add(v.getDegree());
-        }
+        });
         return result;
     }
 
@@ -270,6 +270,14 @@ public class Graph extends BaseElement implements Serializable {
         return maximum;
     }
 
+    public int getMinimumDegree() {
+        int minimum = _vertexNames.size() - 1;
+        for (Vertex v : _vertices.values()) {
+            minimum = Math.min(minimum, v.getDegree());
+        }
+        return minimum;
+    }
+    
     private void calculateConnectivity() {
         if (_connectivityCalculated) {
             return;

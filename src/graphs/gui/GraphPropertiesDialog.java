@@ -14,6 +14,7 @@ import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -51,6 +52,7 @@ public class GraphPropertiesDialog extends JDialog {
     private void initComponents() {
         initGeneralInformationPanel();
         initConnectivityPanel();
+        initDegreesPanel();
     }
 
     private void initGeneralInformationPanel() {
@@ -60,9 +62,7 @@ public class GraphPropertiesDialog extends JDialog {
         _generalInformationPanel.setBorder(titledBorder);
         _generalInformationPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 30, 5));
         _generalInformationPanel.add(_numberOfVertices);
-        _generalInformationPanel.add(_numberOfEdges);
-        _generalInformationPanel.add(_minimumVertexDegree);
-        _generalInformationPanel.add(_maximumVertexDegree);
+        _generalInformationPanel.add(_numberOfEdges);       
         add(_generalInformationPanel);
     }
 
@@ -81,6 +81,19 @@ public class GraphPropertiesDialog extends JDialog {
 
         add(_connectivityPanel);
     }
+    
+    private void initDegreesPanel() {
+        Border lowerEtched = BorderFactory.createEtchedBorder(EtchedBorder.LOWERED);
+        TitledBorder titledBorder = BorderFactory.createTitledBorder(lowerEtched, "Degrees",
+                TitledBorder.LEFT, TitledBorder.TOP);
+        _degreesPanel.setBorder(titledBorder);
+        _degreesPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 30, 5));                
+        _degreesPanel.add(_maxDegree);        
+        _degreesPanel.add(_minDegree);
+        _degreesPanel.add(_degreesList);
+        _degreesPanel.add(_averageDegree);
+        add(_degreesPanel);
+    }
 
     public void setGraphFrame(GraphFrame graphFrame) {
         _graphFrame = graphFrame;
@@ -91,8 +104,7 @@ public class GraphPropertiesDialog extends JDialog {
         _numberOfEdges.setText("Number of edges : " + _graph.getNumberOfEdges());
         List<Integer> degrees = _graph.getDegrees();
         Collections.sort(degrees);
-        _minimumVertexDegree.setText("Minimum vertex degree : " + degrees.get(0));
-        _maximumVertexDegree.setText("Maximum vertex degree : " + degrees.get(degrees.size() - 1));
+        Collections.reverse(degrees);
 
         Map<Vertex, Map<String, Vertex>> connectedComponents = _graph.getConnectedComponents();
         int numberOfConnectedComponents = connectedComponents.size();
@@ -112,6 +124,12 @@ public class GraphPropertiesDialog extends JDialog {
         }
         components += " } ";
         _connectedComponents.setText("Connected components : " + components);
+        
+        _maxDegree.setText("Maximum Degree : " + _graph.getMaximumDegree());        
+        _minDegree.setText("Minimum Degree : " + _graph.getMinimumDegree());
+        _degreesList.setText("Degrees List : " + degrees);
+        _averageDegree.setText( "Average Degree : " + ( (float)_graph.getNumberOfEdges() * 2 ) / (float)_graph.getNumberOfVertices());
+                
         repaint();
     }
 
@@ -120,12 +138,15 @@ public class GraphPropertiesDialog extends JDialog {
     private GraphFrame _graphFrame;
     private JPanel _generalInformationPanel = new JPanel();
     private JLabel _numberOfVertices = new JLabel();
-    private JLabel _numberOfEdges = new JLabel();
-    private JLabel _minimumVertexDegree = new JLabel();
-    private JLabel _maximumVertexDegree = new JLabel();
-    private JPanel _connectivityPanel = new JPanel();
+    private JLabel _numberOfEdges = new JLabel();    
+    private JPanel _connectivityPanel = new JPanel();    
     private JCheckBox _isConnected = new JCheckBox("Connected ?");
     private JCheckBox _isTree = new JCheckBox("Tree ?");
     private JLabel _numberOfConnectedComponents = new JLabel("Connected ?");
     private JLabel _connectedComponents = new JLabel();
+    private JPanel _degreesPanel = new JPanel();
+    private JLabel _maxDegree = new JLabel();
+    private JLabel _minDegree = new JLabel();
+    private JLabel _averageDegree = new JLabel();
+    private JLabel _degreesList = new JLabel();
 }

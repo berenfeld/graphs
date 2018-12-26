@@ -150,6 +150,7 @@ public class Factory {
 
     public static Graph complementOf(Graph graph) {
         Graph result = copyVerticesFrom(graph);
+        result.setName("Complement of " + graph.getName());
         try {
             for (Vertex v : result.getVertices()) {
                 for (Vertex u : result.getVertices()) {

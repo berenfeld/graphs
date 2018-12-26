@@ -93,7 +93,7 @@ public class NewGraphDialog extends JDialog implements ActionListener {
         _graphTypeComboBox.addItem(CYCLE_GRAPH);
         _graphTypeComboBox.addItem(RANDOM_GRAPH);
         _graphTypeComboBox.addItem(BIPARTITE_GRAPH);
-        _graphTypeComboBox.addItem(GRAPH_FROM_DEGREES_LIST);
+        _graphTypeComboBox.addItem(GRAPH_FROM_DEGREES_LIST);        
         _graphTypeComboBox.addActionListener(this);
         add(_generalInformationPanel);
     }

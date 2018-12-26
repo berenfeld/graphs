@@ -48,12 +48,15 @@ public class Utils {
     public static void info(String message) {
         StackTraceElement caller = Thread.currentThread().getStackTrace()[2];
         Logger.getLogger(caller.getClass().getName()).log(Level.INFO, "{0}:{1} {2} {3}", new Object[]{caller.getFileName(), caller.getLineNumber(), caller.getMethodName(), message});
-
     }
 
+    public static void debug(String message) {
+        StackTraceElement caller = Thread.currentThread().getStackTrace()[2];
+        Logger.getLogger(caller.getClass().getName()).log(Level.FINE, "{0}:{1} {2} {3}", new Object[]{caller.getFileName(), caller.getLineNumber(), caller.getMethodName(), message});
+    }
+    
     public static void exception(Throwable ex) {
-        ex.printStackTrace();;
-
+        ex.printStackTrace();
     }
 
     public static <T> T getFirst(List<T> list) {
