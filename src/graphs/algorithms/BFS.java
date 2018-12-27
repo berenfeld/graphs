@@ -30,6 +30,9 @@ public class BFS {
     public static final String BFS_PATH_FROM_ROOT = "_BFS-Path-From-Root";
     public static final String BFS_PREDECESSOR = "p";    
     public static final String BFS_MAXIMUM_DEPTH_VERTEX = "_BFS-Maximum-Depth-Vertex";
+    public static final String BFS_VERTEX_NUMBER_IN_LEVEL = "_BFS-Vertex-Number-In-Level";    
+    public static final String BFS_NUMBER_OF_VERTICES_IN_EACH_LEVEL = "_BFS-Number-Of-Vertices-In-Each-Level";
+    
     
     public static final int BFS_COLOR_NOT_VISITED = Utils.getColorNumber(Color.WHITE);
     public static final int BFS_COLOR_VISITING = Utils.getColorNumber(Color.GRAY);
@@ -58,11 +61,14 @@ public class BFS {
             start.setAttribute(BFS_VERTEX_DEPTH, 0);
 
             resultGraph.setAttribute(BFS_INITIAL_VERTEX, start.getName());
+            Map<Integer, Integer> verticesPerLevel = new HashMap<Integer, Integer>();
+            verticesPerLevel.put(0, 1);           
 
             start.setColor(BFS_COLOR_VISITING);
             Path path = new Path(resultGraph);
             start.setAttribute(BFS_PATH_FROM_ROOT, path);
             start.setAttribute(BFS_PREDECESSOR, null);
+            start.setAttribute(BFS_VERTEX_NUMBER_IN_LEVEL, 1);
             Queue<Vertex> queue = new LinkedList<>();
             queue.add(start);
             int maxDepth = 0;
@@ -75,8 +81,9 @@ public class BFS {
 
                 if (bfsDepth > maxDepth) {
                     maxDepth = bfsDepth;
-                    resultGraph.setAttribute(BFS_MAXIMUM_DEPTH_VERTEX, current);
+                    resultGraph.setAttribute(BFS_MAXIMUM_DEPTH_VERTEX, current);                                        
                 }
+
 
                 for (Edge adjacentEdge : current.getAdjacentEdges()) {
                     Vertex adjacent = adjacentEdge.getOtherVertex(current);
@@ -88,10 +95,24 @@ public class BFS {
 
                         adjacent.setAttribute(BFS_PATH_FROM_ROOT, path);
                         adjacent.setAttribute(BFS_PREDECESSOR, current.getName());
+                        int adjacentDepth = bfsDepth + 1;
+                        Integer verticesInLevel = verticesPerLevel.get(bfsDepth + 1);
+                        int vertexIndexInLevel = 1;
+                        if ( verticesInLevel == null ) {
+                            verticesPerLevel.put( adjacentDepth, vertexIndexInLevel);
+                        } else {                            
+                            verticesInLevel ++;
+                            vertexIndexInLevel = verticesInLevel;
+                            verticesPerLevel.put( adjacentDepth, verticesInLevel);
+                        }
+                        adjacent.setAttribute(BFS_VERTEX_NUMBER_IN_LEVEL, vertexIndexInLevel);             
                         adjacent.setColor(BFS_COLOR_VISITING);
-                        adjacent.setAttribute(BFS_VERTEX_DEPTH, bfsDepth + 1);
+                        
+                        adjacent.setAttribute(BFS_VERTEX_DEPTH, adjacentDepth);                        
                         adjacentEdge.setColor(EDGE_COLOR_TRAVERESED);
                         queue.add(adjacent);
+                        
+                        
                     }
                 }
 
@@ -113,6 +134,7 @@ public class BFS {
             }
 
             resultGraph.setAttribute(BFS_MAXIMUM_DEPTH, maxDepth);
+            resultGraph.setAttribute(BFS_NUMBER_OF_VERTICES_IN_EACH_LEVEL, verticesPerLevel);
             
         } catch (Exception ex) {
             Logger.getLogger(Factory.class.getName()).log(Level.SEVERE, null, ex);

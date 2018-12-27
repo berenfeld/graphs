@@ -398,9 +398,7 @@ public class GraphFrame extends JInternalFrame implements MouseListener, ActionL
             return;
         }
         if (source.equals(_createComplementGraph)) {
-            //ranb
             _mainWindow.addGraphFrame(Factory.complementOf(_graph), _canvas.getVerticesLayout());
-
             return;
         }
         if (source.equals(_verticesLayoutGridMenu)) {

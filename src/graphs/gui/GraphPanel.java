@@ -5,6 +5,7 @@
  */
 package graphs.gui;
 
+import graphs.algorithms.BFS;
 import graphs.algorithms.BiPartite;
 import graphs.algorithms.MaximumCut;
 import graphs.core.*;
@@ -70,8 +71,8 @@ public class GraphPanel extends JPanel implements ComponentListener {
                 layoutVerticesTree();
                 break;
         }
-        repaint();
         _graph.setAttribute(GUI_LAYOUT, layout);
+        repaint();
     }
 
     public void setVerticesSize(int size) {
@@ -113,8 +114,6 @@ public class GraphPanel extends JPanel implements ComponentListener {
             v.setAttribute(VERTEX_Y, (double) vertexY / panelHeight);
             i++;
         }
-
-        _graph.setAttribute(GUI_LAYOUT, VerticesLayout.Grid);
     }
 
     public VerticesLayout getVerticesLayout() {
@@ -133,7 +132,6 @@ public class GraphPanel extends JPanel implements ComponentListener {
             v.setAttribute(VERTEX_Y, vertexY);
             i++;
         }
-        _graph.setAttribute(GUI_LAYOUT, VerticesLayout.Circle);
 
     }
 
@@ -176,20 +174,29 @@ public class GraphPanel extends JPanel implements ComponentListener {
             v.setAttribute(VERTEX_X, vertexX);
             v.setAttribute(VERTEX_Y, vertexY);
         }
-        _graph.setAttribute(GUI_LAYOUT, VerticesLayout.BiPartite);
-
     }
 
     private void layoutVerticesTree() {
-        int vertices = _graph.getNumberOfVertices();
-        int levels = _graph.diameter(); // TODO find max path from source vertex
-        
-        double panelWidth = getSize().getWidth();
-        double panelHeight = getSize().getHeight();
-        double levelHeight = panelHeight / ( levels + 1);
-        
-        
-        _graph.setAttribute(GUI_LAYOUT, VerticesLayout.Tree);
+
+        Graph bfs = BFS.bfs(_graph, _selectedVertex, true);
+
+        int levels = (int) bfs.getAttribute(BFS.BFS_MAXIMUM_DEPTH) + 1;
+        double levelHeight = 1.0 / (double) (levels + 1);
+
+        Map<Integer, Integer> verticesInEachLevel = (Map<Integer, Integer>) bfs.getAttribute(BFS.BFS_NUMBER_OF_VERTICES_IN_EACH_LEVEL);
+
+        for (Vertex v : bfs.getVertices()) {
+            int depth = (int) v.getAttribute(BFS.BFS_VERTEX_DEPTH);
+            int verticesInLevel = verticesInEachLevel.get(depth);
+            int indexInLevel = (int) v.getAttribute(BFS.BFS_VERTEX_NUMBER_IN_LEVEL);
+
+            double space = 1.0 / (verticesInLevel + 1);
+
+            Vertex vInGraph = _graph.getVertex(v.getName());
+            vInGraph.setAttribute(VERTEX_X, space * indexInLevel);
+            vInGraph.setAttribute(VERTEX_Y, levelHeight * (depth + 1));
+        }
+
     }
 
     private int _fontSize = 20;
