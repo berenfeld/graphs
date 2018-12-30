@@ -336,7 +336,7 @@ public class Graph extends BaseElement implements Serializable {
             if ( vertexDepth > maximumBfsDepth ) {
                 maximumBfsDepth = vertexDepth;
                 Vertex maximumDepthVertex = (Vertex) bfsOfV.getAttribute(BFS.BFS_MAXIMUM_DEPTH_VERTEX);            
-                _diameterPath = (Path) maximumDepthVertex.getAttribute(BFS.BFS_PATH_FROM_ROOT);
+                _diameterPath = (Path) maximumDepthVertex.getAttribute(BFS.BFS_VERTEX_PATH_FROM_ROOT);
             }
         }
         _diameter = maximumBfsDepth;

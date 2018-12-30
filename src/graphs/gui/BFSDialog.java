@@ -91,7 +91,11 @@ public class BFSDialog extends JDialog implements ActionListener {
             boolean copy = _copyGraphCheckBox.isSelected();
             Graph bfsGraph = BFS.bfs(_graph, source, copy);
             if ( copy ) {
-                _mainWindow.addGraphFrame(bfsGraph, GraphPanel.VerticesLayout.None);
+                GraphFrame graphFrame = _mainWindow.addGraphFrame(bfsGraph, GraphPanel.VerticesLayout.Tree, source);
+                graphFrame.showVertexattribute(BFS.BFS_VERTEX_DEPTH);
+                graphFrame.showVertexattribute(BFS.BFS_VERTEX_PATH_FROM_ROOT);
+                graphFrame.showVertexattribute(BFS.BFS_PREDECESSOR);
+                
                 if ( _mainWindow.numberOfGraphFrames() == 2) {
                     _mainWindow.tileWindows();
                 }

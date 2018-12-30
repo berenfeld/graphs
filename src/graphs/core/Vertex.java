@@ -6,6 +6,7 @@
 package graphs.core;
 
 import graphs.utils.Utils;
+import java.awt.Color;
 import java.io.Serializable;
 import java.util.*;
 
@@ -16,17 +17,20 @@ import java.util.*;
 public class Vertex extends BaseElement implements Comparable, Serializable {
 
     public Vertex(Graph graph, String name, int index) {
+        super();
         _graph = graph;
-        _name = name;
         _index = index;
+        setAttribute(VERTEX_ATTRIBUTE_NAME, name);
+        setAttribute(VERTEX_ATTRIBUTE_COLOR, Utils.getColorNumber(Color.BLACK));
+        setAttribute(VERTEX_ATTRIBUTE_WEIGHT, 0);
     }
 
-    public static String VERTEX_ATTRIBUTE_COLOR = "_Color";
-    public static String VERTEX_ATTRIBUTE_WEIGHT = "Weight";
-    public static String VERTEX_ATTRIBUTE_SIDE = "_Side";
+    public static String VERTEX_ATTRIBUTE_NAME = "name";
+    public static String VERTEX_ATTRIBUTE_COLOR = "color";
+    public static String VERTEX_ATTRIBUTE_WEIGHT = "weight";
+    public static String VERTEX_ATTRIBUTE_SIDE = "side";
     
-    private Graph _graph;
-    private String _name;
+    private Graph _graph;   
     private int _index;
     private Map<String, Vertex> _neighbors = new HashMap<String, Vertex>();
     private Map<String, Edge> _adjacentEdges = new HashMap<String, Edge>();
@@ -41,11 +45,11 @@ public class Vertex extends BaseElement implements Comparable, Serializable {
     }
     
     public String getName() {
-        return _name;
+        return (String) getAttribute(VERTEX_ATTRIBUTE_NAME);
     }
     
     void setName( String name) {
-        _name = name;
+        setAttribute(VERTEX_ATTRIBUTE_NAME, name);
     }
 
     void connectTo(Vertex other, Edge byEdge) throws Exception {
@@ -142,7 +146,7 @@ public class Vertex extends BaseElement implements Comparable, Serializable {
 
     @Override
     public String toString() {
-        return _name;
+        return getName();
     }
 
 }

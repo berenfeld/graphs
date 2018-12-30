@@ -44,12 +44,14 @@ public class GraphPanel extends JPanel implements ComponentListener {
     private Graph _graph;
     private Vertex _selectedVertex;
 
+    private List<String> _showVertexAttributes = new ArrayList<String>();
+
     private int _verticesSize = 10;
 
-    public static final String GUI_LAYOUT = "_GUI-Vertices-Layout";
-    public static final String GUI_SELECTED_VERTEX = "_GUI-Selected-Vertex";
-    public static final String VERTEX_X = "_GUI-Vertex-X";
-    public static final String VERTEX_Y = "_GUI-Vertex-Y";
+    public static final String GUI_LAYOUT = "_gui-Vertices-Layout";
+    public static final String GUI_SELECTED_VERTEX = "_gui-Selected-Vertex";
+    public static final String VERTEX_X = "_gui-Vertex-X";
+    public static final String VERTEX_Y = "_gui-Vertex-Y";
 
     public void setSelectedVertex(Vertex v) {
         _selectedVertex = v;
@@ -83,8 +85,23 @@ public class GraphPanel extends JPanel implements ComponentListener {
     public void setFontSize(int size) {
         _fontSize = size;
         _regularFont = new Font("Arial", Font.PLAIN, _fontSize);
-        _boldFont = new Font("Arial", Font.BOLD, _fontSize);
         repaint();
+    }
+
+    public void showVertexAttribute(String attribute) {
+        _showVertexAttributes.add(attribute);
+    }
+
+    public void hideVertexAttribute(String attribute) {
+        _showVertexAttributes.remove(attribute);
+    }
+
+    public void toggleShowVertexAttribute(String attribute) {
+        if (_showVertexAttributes.contains(attribute)) {
+            hideVertexAttribute(attribute);
+        } else {
+            showVertexAttribute(attribute);
+        }
     }
 
     private void layoutVerticesGrid() {
@@ -202,7 +219,6 @@ public class GraphPanel extends JPanel implements ComponentListener {
     private int _fontSize = 20;
 
     private Font _regularFont = new Font("Arial", Font.PLAIN, _fontSize);
-    private Font _boldFont = new Font("Arial", Font.BOLD, _fontSize);
 
     private void repaintGraph(Graphics g) {
 
@@ -224,25 +240,29 @@ public class GraphPanel extends JPanel implements ComponentListener {
             int vertexY = (int) ((double) v.getAttribute(VERTEX_Y) * panelHeight);
 
             g.setColor(Utils.VERTEX_COLORS.get(v.getColor()));
-            if (v.equals(_selectedVertex)) {
-                g.setFont(_boldFont);
-            } else {
-                g.setFont(_regularFont);
-            }
+            g.setFont(_regularFont);            
 
             int height = g.getFontMetrics().getHeight();
-            Rectangle2D textRectAngle = g.getFontMetrics().getStringBounds(v.getName(), g);
+            //Rectangle2D textRectAngle = g.getFontMetrics().getStringBounds(v.getName(), g);
 
-            int startX = vertexX - (int) textRectAngle.getWidth() / 2;
+            //int startX = vertexX - (int) textRectAngle.getWidth() / 2;
+            int line = 1;
+            if (_showVertexAttributes.contains(Vertex.VERTEX_ATTRIBUTE_NAME)) {
+                g.drawString(v.getName(), vertexX, vertexY + (line * height));
+                line ++;
+            }
 
-            g.drawString(v.getName(), startX, vertexY + height);
-            int line = 2;
             for (String attribute : v.attributeNames()) {
-                if (attribute.startsWith("_")) {
+                if (Vertex.VERTEX_ATTRIBUTE_NAME.equals(attribute)) {
                     continue;
                 }
-                String text = attribute + " = " + v.getAttribute(attribute);
-                g.drawString(text, startX, vertexY + (line * height));
+                if (!_showVertexAttributes.contains(attribute)) {
+                    continue;
+                }
+                
+                String text = attribute + " : " + v.getAttribute(attribute);
+
+                g.drawString(text, vertexX, vertexY + (line * height));
                 line++;
             }
             g2.fill(new Ellipse2D.Double(vertexX - (_verticesSize / 2), vertexY - (_verticesSize / 2), _verticesSize, _verticesSize));

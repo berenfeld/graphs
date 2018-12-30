@@ -57,14 +57,14 @@ public class BFSTest {
         for (Vertex v : bfs.getVertices()) {
             if (v.equals(start)) {
                 assertEquals(0, v.getAttribute(BFS.BFS_VERTEX_DEPTH));
-                assertEquals(new Path(bfs), v.getAttribute(BFS.BFS_PATH_FROM_ROOT));
+                assertEquals(new Path(bfs), v.getAttribute(BFS.BFS_VERTEX_PATH_FROM_ROOT));
             } else {
 
                 assertEquals(1, v.getAttribute(BFS.BFS_VERTEX_DEPTH));
                 Path path = new Path(bfs);
                 path.add(bfs.getEdge(start, v));
 
-                assertEquals(path, v.getAttribute(BFS.BFS_PATH_FROM_ROOT));
+                assertEquals(path, v.getAttribute(BFS.BFS_VERTEX_PATH_FROM_ROOT));
             }
         }
 
@@ -84,15 +84,15 @@ public class BFSTest {
             if (v.equals(start)) {
                 assertEquals(0, v.getAttribute(BFS.BFS_VERTEX_DEPTH));
                 Path pathToVertex = new Path(bfs);
-                assertEquals(pathToVertex, v.getAttribute(BFS.BFS_PATH_FROM_ROOT));
+                assertEquals(pathToVertex, v.getAttribute(BFS.BFS_VERTEX_PATH_FROM_ROOT));
             } else if (v.connectedTo(start)) {
                 assertEquals(1, v.getAttribute(BFS.BFS_VERTEX_DEPTH));
                 Path pathToVertex = new Path(bfs);
                 pathToVertex.add(bfs.getEdge(start, v));
-                assertEquals(pathToVertex, v.getAttribute(BFS.BFS_PATH_FROM_ROOT));
+                assertEquals(pathToVertex, v.getAttribute(BFS.BFS_VERTEX_PATH_FROM_ROOT));
             } else {
 
-                Path pathToVertex = (Path) v.getAttribute(BFS.BFS_PATH_FROM_ROOT);
+                Path pathToVertex = (Path) v.getAttribute(BFS.BFS_VERTEX_PATH_FROM_ROOT);
                 assertEquals(2, v.getAttribute(BFS.BFS_VERTEX_DEPTH));
                 assertEquals(start, pathToVertex.getFirstVertex());
                 assertEquals(v, pathToVertex.getLastVertex());

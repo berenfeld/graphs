@@ -45,6 +45,8 @@ public class GraphFrame extends JInternalFrame implements MouseListener, ActionL
         _canvas.addMouseListener(this);
         _canvas.addMouseMotionListener(this);
         initMenus();
+        
+        _canvas.showVertexAttribute(Vertex.VERTEX_ATTRIBUTE_NAME);
 
     }
     private MainWindow _mainWindow;
@@ -68,6 +70,8 @@ public class GraphFrame extends JInternalFrame implements MouseListener, ActionL
     private JMenu _verticesSizeMenu = new JMenu("Vertices Size");
     private JMenu _fontSizeMenu = new JMenu("Font Size");
     private JMenu _verticesLayoutMenu = new JMenu("Vertices Layout");
+    private JMenu _showVerticesAttributes = new JMenu("Show Vertices Attributes");
+    private List<JMenuItem> _verticesAttributesMenu = new ArrayList<JMenuItem>();
     private JMenuItem _verticesLayoutGridMenu = new JMenuItem("Grid");
     private JMenuItem _verticesLayoutCircleMenu = new JMenuItem("Circle");
     private JMenuItem _verticesLayoutBiPartiteMenu = new JMenuItem("Bi-Partite");
@@ -128,6 +132,20 @@ public class GraphFrame extends JInternalFrame implements MouseListener, ActionL
         _verticesLayoutTreeMenu.addActionListener(this);
         _graphMenu.add(_verticesLayoutMenu);
 
+        _graphMenu.add(_showVerticesAttributes);
+        Vertex v = _graph.getFirstVertex();
+
+        for (String attribute : v.attributeNames()) {
+            if (attribute.startsWith("_")) {
+                continue;
+            }
+
+            JMenuItem showAttributeMenuItem = new JMenuItem(attribute);
+            showAttributeMenuItem.addActionListener(this);
+            _verticesAttributesMenu.add(showAttributeMenuItem);
+            _showVerticesAttributes.add(showAttributeMenuItem);
+        }
+
         _vertexNameMenu.setEnabled(false);
         _vertexMenu.add(_vertexNameMenu);
         _vertexMenu.addSeparator();
@@ -174,12 +192,12 @@ public class GraphFrame extends JInternalFrame implements MouseListener, ActionL
 
             if (Utils.distance(vertexX, vertexY, _clickX, _clickY) < CLOSE_DISTANCE) {
                 _selectedVertex = v;
-                _canvas.setSelectedVertex(v);
+                setSelectedVertex(v);
                 return;
             }
         }
         _selectedVertex = null;
-        _canvas.setSelectedVertex(null);
+        setSelectedVertex(null);
     }
 
     @Override
@@ -252,7 +270,7 @@ public class GraphFrame extends JInternalFrame implements MouseListener, ActionL
         }
         if (_selectionMode == MainWindow.SelectionMode.Normal) {
             _draggedVertex = _selectedVertex;
-            _canvas.setSelectedVertex(_draggedVertex);
+            setSelectedVertex(_draggedVertex);
             return;
         }
 
@@ -304,8 +322,12 @@ public class GraphFrame extends JInternalFrame implements MouseListener, ActionL
             _newEdge = null;
         }
         _selectedVertex = null;
-        _canvas.setSelectedVertex(null);
+        setSelectedVertex(null);
 
+    }
+
+    public void setSelectedVertex(Vertex v) {
+        _canvas.setSelectedVertex(v);
     }
 
     @Override
@@ -352,8 +374,14 @@ public class GraphFrame extends JInternalFrame implements MouseListener, ActionL
 
     public void setVerticesLayout(GraphPanel.VerticesLayout layout) {
         _canvas.setVerticesLayout(layout);
+        repaint();
     }
 
+    public void showVertexattribute(String attribute)
+    {
+        _canvas.showVertexAttribute(attribute);
+    }
+    
     private void handleEvent(ActionEvent e) throws Exception {
         double panelWidth = _canvas.getSize().getWidth();
         double panelHeight = _canvas.getSize().getHeight();
@@ -420,9 +448,16 @@ public class GraphFrame extends JInternalFrame implements MouseListener, ActionL
                     null,
                     verticesNames,
                     null);
-            _canvas.setSelectedVertex(_graph.getVertex(vertexName));
+            setSelectedVertex(_graph.getVertex(vertexName));
             setVerticesLayout(GraphPanel.VerticesLayout.Tree);
             return;
+        }
+        for (JMenuItem showVerticesAttributeMenuItem : _verticesAttributesMenu) {
+            if (source.equals(showVerticesAttributeMenuItem)) {
+                _canvas.toggleShowVertexAttribute(showVerticesAttributeMenuItem.getText());
+                repaint();
+                return;
+            }
         }
         for (JMenuItem verticesSizeMenuItem : _verticesSizeMenus) {
             if (source.equals(verticesSizeMenuItem)) {

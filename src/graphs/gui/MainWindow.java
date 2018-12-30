@@ -55,10 +55,10 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
         getContentPane().add(_toolbar, BorderLayout.NORTH);
 
         setResizable(false);
-        Dimension size = new Dimension(1280, 720);
-        setSize(size.width, size.height);
+
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        setLocation(screenSize.width / 2 - size.width / 2, screenSize.height / 2 - size.height / 2);
+        setLocation(0,0);
+        setSize(screenSize.width, screenSize.height);
         setVisible(true);
     }
 
@@ -365,6 +365,10 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
     }
 
     public void addGraphFrame(Graph g, GraphPanel.VerticesLayout layout) {
+        addGraphFrame(g, layout, null);
+    }
+    
+    public GraphFrame addGraphFrame(Graph g, GraphPanel.VerticesLayout layout, Vertex sourceVertex) {
         GraphFrame graphFrame = new GraphFrame(this, g);
         setVisible(true);
 
@@ -376,9 +380,14 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
         _desktopPane.add(graphFrame);
         selectGraphFrame(graphFrame);
 
+        if (sourceVertex != null) {
+            graphFrame.setSelectedVertex(sourceVertex);
+        }
+        
         if (layout != GraphPanel.VerticesLayout.None) {
             graphFrame.setVerticesLayout(layout);
         }
+        return graphFrame;
     }
 
     private static void setLookAndFeel(String lookAndFeel) {

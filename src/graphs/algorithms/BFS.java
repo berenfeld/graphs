@@ -24,14 +24,14 @@ public class BFS {
         return null;
     }
 
-    public static final String BFS_INITIAL_VERTEX = "_BFS-Initial-Vertex";
-    public static final String BFS_MAXIMUM_DEPTH = "_BFS-Maximum-Depth";
-    public static final String BFS_VERTEX_DEPTH = "d";
-    public static final String BFS_PATH_FROM_ROOT = "_BFS-Path-From-Root";
-    public static final String BFS_PREDECESSOR = "p";    
-    public static final String BFS_MAXIMUM_DEPTH_VERTEX = "_BFS-Maximum-Depth-Vertex";
-    public static final String BFS_VERTEX_NUMBER_IN_LEVEL = "_BFS-Vertex-Number-In-Level";    
-    public static final String BFS_NUMBER_OF_VERTICES_IN_EACH_LEVEL = "_BFS-Number-Of-Vertices-In-Each-Level";
+    public static final String BFS_INITIAL_VERTEX = "bfs-Initial-Vertex";
+    public static final String BFS_MAXIMUM_DEPTH = "bfs-Maximum-Depth";
+    public static final String BFS_VERTEX_DEPTH = "bfs-septh";
+    public static final String BFS_VERTEX_PATH_FROM_ROOT = "bfs-path";
+    public static final String BFS_PREDECESSOR = "bfs-predecesor";
+    public static final String BFS_MAXIMUM_DEPTH_VERTEX = "bfs-Maximum-Depth-Vertex";
+    public static final String BFS_VERTEX_NUMBER_IN_LEVEL = "bfs-vertex-number-in-level";    
+    public static final String BFS_NUMBER_OF_VERTICES_IN_EACH_LEVEL = "bfs-Number-Of-Vertices-In-Each-Level";
     
     
     public static final int BFS_COLOR_NOT_VISITED = Utils.getColorNumber(Color.WHITE);
@@ -66,7 +66,7 @@ public class BFS {
 
             start.setColor(BFS_COLOR_VISITING);
             Path path = new Path(resultGraph);
-            start.setAttribute(BFS_PATH_FROM_ROOT, path);
+            start.setAttribute(BFS_VERTEX_PATH_FROM_ROOT, path);
             start.setAttribute(BFS_PREDECESSOR, null);
             start.setAttribute(BFS_VERTEX_NUMBER_IN_LEVEL, 1);
             Queue<Vertex> queue = new LinkedList<>();
@@ -90,10 +90,10 @@ public class BFS {
 
                     if (adjacent.getColor() == BFS_COLOR_NOT_VISITED) {
 
-                        path = new Path((Path) current.getAttribute(BFS_PATH_FROM_ROOT));
+                        path = new Path((Path) current.getAttribute(BFS_VERTEX_PATH_FROM_ROOT));
                         path.add(adjacentEdge);
 
-                        adjacent.setAttribute(BFS_PATH_FROM_ROOT, path);
+                        adjacent.setAttribute(BFS_VERTEX_PATH_FROM_ROOT, path);
                         adjacent.setAttribute(BFS_PREDECESSOR, current.getName());
                         int adjacentDepth = bfsDepth + 1;
                         Integer verticesInLevel = verticesPerLevel.get(bfsDepth + 1);

@@ -3,24 +3,14 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/ranb/Documents/personal/graphs/src/graphs/gui/MainWindow.java</file>
-            <file>file:/C:/Users/ranb/Documents/personal/graphs/src/graphs/gui/BFSDialog.java</file>
-            <file>file:/C:/Users/ranb/Documents/personal/graphs/src/graphs/core/Vertex.java</file>
-            <file>file:/C:/Users/ranb/Documents/personal/graphs/src/graphs/algorithms/Factory.java</file>
-            <file>file:/C:/Users/ranb/Documents/personal/graphs/src/graphs/algorithms/BFS.java</file>
-            <file>file:/C:/Users/ranb/Documents/personal/graphs/src/graphs/core/Edge.java</file>
-            <file>file:/C:/Users/ranb/Documents/personal/graphs/src/graphs/algorithms/BiPartite.java</file>
-            <file>file:/C:/Users/ranb/Documents/personal/graphs/src/graphs/gui/GraphPropertiesDialog.java</file>
-            <file>file:/C:/Users/ranb/Documents/personal/graphs/src/graphs/algorithms/GraphFromDegreeSequence.java</file>
-            <file>file:/C:/Users/ranb/Documents/personal/graphs/src/graphs/core/Graph.java</file>
-            <file>file:/C:/Users/ranb/Documents/personal/graphs/src/graphs/gui/GraphPanel.java</file>
-            <file>file:/C:/Users/ranb/Documents/personal/graphs/test/graphs/algorithms/BFSTest.java</file>
-            <file>file:/C:/Users/ranb/Documents/personal/graphs/src/graphs/core/BaseElement.java</file>
-            <file>file:/C:/Users/ranb/Documents/personal/graphs/src/graphs/utils/Utils.java</file>
-            <file>file:/C:/Users/ranb/Documents/personal/graphs/src/graphs/gui/GraphFrame.java</file>
-            <file>file:/C:/Users/ranb/Documents/personal/graphs/src/graphs/algorithms/MaximumCut.java</file>
-            <file>file:/C:/Users/ranb/Documents/personal/graphs/src/graphs/algorithms/Coloring.java</file>
-            <file>file:/C:/Users/ranb/Documents/personal/graphs/src/graphs/gui/NewGraphDialog.java</file>
+            <file>file:/C:/work/graphs/src/graphs/gui/BFSDialog.java</file>
+            <file>file:/C:/work/graphs/src/graphs/gui/GraphPanel.java</file>
+            <file>file:/C:/work/graphs/src/graphs/gui/MainWindow.java</file>
+            <file>file:/C:/work/graphs/src/graphs/algorithms/Coloring.java</file>
+            <file>file:/C:/work/graphs/src/graphs/gui/GraphFrame.java</file>
+            <file>file:/C:/work/graphs/src/graphs/core/BaseElement.java</file>
+            <file>file:/C:/work/graphs/src/graphs/algorithms/BFS.java</file>
+            <file>file:/C:/work/graphs/src/graphs/core/Vertex.java</file>
         </group>
     </open-files>
 </project-private>
