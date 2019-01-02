@@ -88,12 +88,14 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
     private JMenu _algorithms = new JMenu("Algorithms");
     private JMenuItem _colorGraphAlgorithm = new JMenuItem("Color Graph");
     private JMenuItem _bfsAlgorithm = new JMenuItem("BFS");
+    private JMenuItem _dfsAlgorithm = new JMenuItem("DFS");
 
     private JMenu _windowsMenu = new JMenu("Windows");
     private JMenuItem _cascadeWindows = new JMenuItem("Cascade");
     private JMenuItem _tileWindows = new JMenuItem("Tile");
     private Map<GraphFrame, JMenuItem> _windowGraphMenus = new HashMap<>();
     private BFSDialog _bfsDialog = new BFSDialog(this);
+    private DFSDialog _dfsDialog = new DFSDialog(this);
     private NewGraphDialog _newGraphDialog = new NewGraphDialog(this);
     private GraphPropertiesDialog _graphPropertiesDialog = new GraphPropertiesDialog(this);
 
@@ -115,7 +117,9 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
         _colorGraphAlgorithm.addActionListener(this);
         _algorithms.add(_bfsAlgorithm);
         _bfsAlgorithm.addActionListener(this);
-
+        _algorithms.add(_dfsAlgorithm);
+        _dfsAlgorithm.addActionListener(this);
+        
         _windowsMenu.add(_cascadeWindows);
         _cascadeWindows.addActionListener(this);
 
@@ -190,6 +194,16 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
             }
             _bfsDialog.setGraphFrame(graphFrame);
             _bfsDialog.setVisible(true);
+            return;
+        }
+        if (source.equals(_dfsAlgorithm)) {
+            GraphFrame graphFrame = (GraphFrame) _desktopPane.getSelectedFrame();
+            if (graphFrame == null) {
+                JOptionPane.showMessageDialog(this, "Please select a graph");
+                return;
+            }
+            _dfsDialog.setGraphFrame(graphFrame);
+            _dfsDialog.setVisible(true);
             return;
         }
         if (source.equals(_saveGraphMenu)) {
@@ -360,12 +374,12 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
         return _desktopPane.getComponentCount();
     }
     
-    public void addGraphFrame(Graph g) {
-        addGraphFrame(g, GraphPanel.VerticesLayout.Grid);
+    public GraphFrame addGraphFrame(Graph g) {
+        return addGraphFrame(g, GraphPanel.VerticesLayout.Grid);
     }
 
-    public void addGraphFrame(Graph g, GraphPanel.VerticesLayout layout) {
-        addGraphFrame(g, layout, null);
+    public GraphFrame addGraphFrame(Graph g, GraphPanel.VerticesLayout layout) {
+        return addGraphFrame(g, layout, null);
     }
     
     public GraphFrame addGraphFrame(Graph g, GraphPanel.VerticesLayout layout, Vertex sourceVertex) {

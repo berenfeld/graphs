@@ -19,8 +19,8 @@ import java.util.logging.Logger;
  */
 public class Factory {
 
-    public static Graph buildEmptyGraph(int vertices) {
-        Graph graph = new Graph("Empty (" + vertices + ")");
+    public static Graph buildEmptyGraph(int vertices, boolean directed) {
+        Graph graph = new Graph("Empty (" + vertices + ")", directed);
         try {
             for (int i = 1; i <= vertices; i++) {
                 graph.addVertex();
@@ -30,22 +30,34 @@ public class Factory {
         }
         return graph;
     }
+    
+    public static Graph buildEmptyGraph(int vertices ) {
+        return buildEmptyGraph(vertices, false);
+    }
 
-    public static Graph buildCompleteGraph(int vertices) {
-        Graph graph = buildEmptyGraph(vertices);
+    public static Graph buildCompleteGraph(int vertices, boolean directed) {
+        Graph graph = buildEmptyGraph(vertices, directed);
         graph.setName("K" + vertices);
         try {
             for (int i = 1; i <= vertices; i++) {
                 for (int j = i + 1; j <= vertices; j++) {
                     graph.addEdge(graph.getVertex(i), graph.getVertex(j));
+                    if (directed) {
+                        graph.addEdge(graph.getVertex(j), graph.getVertex(i));
+                    }
                 }
             }
         } catch (Exception ex) {
+            Utils.exception(ex);
             return null;
         }
         return graph;
     }
 
+    public static Graph buildCompleteGraph(int vertices) {
+        return buildCompleteGraph(vertices,false);
+    }
+    
     public static Graph buildRandomGraph(int vertices, double density) {
         Graph graph = buildEmptyGraph(vertices);
         graph.setName("Random (" + vertices + ")");

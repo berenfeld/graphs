@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,6 +26,7 @@ public class Utils {
 
     public static final Map<Integer, Color> VERTEX_COLORS = new TreeMap<>();
 
+    public static final Random RANDOM = new Random();
     static {
         VERTEX_COLORS.put(0, Color.BLACK);
         VERTEX_COLORS.put(1, Color.WHITE);
@@ -77,11 +79,14 @@ public class Utils {
         return list.get(list.size() - 1);
     }
 
-    public static String edgeName(Vertex from, Vertex to) {
-        return edgeName(from.toString(), to.toString());
+    public static String edgeName(Vertex from, Vertex to, boolean sort) {
+        return edgeName(from.toString(), to.toString(), sort);
     }
 
-    public static String edgeName(String from, String to) {
+    public static String edgeName(String from, String to, boolean sort) {
+        if ( ! sort ) {
+            return (from + "-" + to);
+        }
         return from.compareTo(to) < 0 ? (from + "-" + to) : (to + "-" + from);
     }
 

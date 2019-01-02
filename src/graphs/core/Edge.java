@@ -62,7 +62,7 @@ public class Edge extends BaseElement implements Comparable, Serializable {
     }
 
     public String getName() {
-        return Utils.edgeName(_from, _to);
+        return Utils.edgeName(_from, _to, ! _graph.isDirected());
     }
     
     public Graph getGraph() {
@@ -108,7 +108,7 @@ public class Edge extends BaseElement implements Comparable, Serializable {
     }
     @Override
     public String toString() {
-        return Utils.edgeName(_from, _to);
+        return Utils.edgeName(_from, _to, ! _graph.isDirected());
     }
 
 }

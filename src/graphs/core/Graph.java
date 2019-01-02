@@ -16,10 +16,15 @@ import java.util.*;
  */
 public class Graph extends BaseElement implements Serializable {
 
-    public Graph(String name) {
+    public Graph(String name, boolean directed) {
         _name = name;
+        _directed = directed;
     }
 
+    public Graph(String name) {
+        this(name, false);
+    }
+    private boolean _directed;
     private String _name;
 
     // structure
@@ -30,7 +35,7 @@ public class Graph extends BaseElement implements Serializable {
 
     private final ArrayList<String> _edgeNames = new ArrayList<>();
 
-    private final Random rand = new Random();
+    
 
     // connectivity
     private boolean _connectivityCalculated = false;
@@ -43,6 +48,9 @@ public class Graph extends BaseElement implements Serializable {
     private int _diameter = 0;
     private Path _diameterPath;
 
+    public boolean isDirected() {
+        return _directed;
+    }
     public String getName() {
         return _name;
     }
@@ -52,7 +60,11 @@ public class Graph extends BaseElement implements Serializable {
     }
 
     public boolean isComplete() {
-        return getNumberOfEdges() == (getNumberOfVertices() * (getNumberOfVertices() - 1)) / 2;
+        if (_directed) {
+            return getNumberOfEdges() == (getNumberOfVertices() * (getNumberOfVertices() - 1));
+        } else {
+            return getNumberOfEdges() == (getNumberOfVertices() * (getNumberOfVertices() - 1)) / 2;
+        }
     }
 
     public int getNumberOfVertices() {
@@ -106,12 +118,12 @@ public class Graph extends BaseElement implements Serializable {
     }
 
     public Vertex getRandomVertex() {
-        int index = rand.nextInt(_vertices.size());
+        int index = Utils.RANDOM.nextInt(_vertices.size());
         return getVertex(_vertexNames.get(index));
     }
 
     public Vertex addVertex() throws Exception {
-        String name = String.valueOf((char)((int)'a'+_vertexIndex - 1));
+        String name = "v" + String.valueOf((_vertexIndex));
         return addVertex(name);
     }
 
@@ -168,7 +180,7 @@ public class Graph extends BaseElement implements Serializable {
             throw new Exception("Vertex '" + to + "' does not exist");
         }
 
-        String edgeName = Utils.edgeName(fromVertex, toVertex);
+        String edgeName = Utils.edgeName(fromVertex, toVertex, ! _directed);
         Edge newEdge = new Edge(this, fromVertex, toVertex);
         if (_edges.containsKey(edgeName)) {
             throw new Exception("Edge '" + newEdge + "' already exists");
@@ -200,7 +212,7 @@ public class Graph extends BaseElement implements Serializable {
         if (toVertex == null) {
             throw new Exception("Vertex '" + to + "' does not exist");
         }
-        String edgeName = Utils.edgeName(fromVertex, toVertex);
+        String edgeName = Utils.edgeName(fromVertex, toVertex, ! _directed);
         Edge edge = _edges.get(edgeName);
         if (edge == null) {
             throw new Exception("Edge '" + edge + "' does not exist");
@@ -215,11 +227,11 @@ public class Graph extends BaseElement implements Serializable {
     }
 
     public boolean hasEdge(Vertex from, Vertex to) {
-        return hasEdge(Utils.edgeName(from.getName(), to.getName()));
+        return hasEdge(Utils.edgeName(from.getName(), to.getName(), ! _directed));
     }
 
     public boolean hasEdge(String from, String to) {
-        return hasEdge(Utils.edgeName(from, to));
+        return hasEdge(Utils.edgeName(from, to, ! _directed));
     }
 
     public boolean hasEdge(String name) {
@@ -231,7 +243,7 @@ public class Graph extends BaseElement implements Serializable {
     }
 
     public Edge getEdge(String from, String to) {
-        return getEdge(Utils.edgeName(from, to));
+        return getEdge(Utils.edgeName(from, to, ! _directed));
     }
 
     public Edge getEdge(String name) {
@@ -243,7 +255,7 @@ public class Graph extends BaseElement implements Serializable {
     }
 
     public Edge getRandomEdge() {
-        int index = rand.nextInt(_edgeNames.size());
+        int index = Utils.RANDOM.nextInt(_edgeNames.size());
         return getEdge(index);
     }
 
@@ -281,6 +293,10 @@ public class Graph extends BaseElement implements Serializable {
     
     private void calculateConnectivity() {
         if (_connectivityCalculated) {
+            return;
+        }
+        if (_directed) {
+            // TODO calculate SCC
             return;
         }
         _connectedComponents.clear();

@@ -19,11 +19,7 @@ import java.util.logging.*;
  * @author me
  */
 public class BFS {
-
-    public static Graph buildForSequence(int[] gradesSequence) throws Exception {
-        return null;
-    }
-
+   
     public static final String BFS_INITIAL_VERTEX = "bfs-Initial-Vertex";
     public static final String BFS_MAXIMUM_DEPTH = "bfs-Maximum-Depth";
     public static final String BFS_VERTEX_DEPTH = "bfs-septh";
@@ -38,8 +34,8 @@ public class BFS {
     public static final int BFS_COLOR_VISITING = Utils.getColorNumber(Color.GRAY);
     public static final int BFS_COLOR_VISITED = Utils.getColorNumber(Color.BLACK);
 
-    public static final int EDGE_COLOR_NOT_TRAVERESED = Utils.getColorNumber(Color.WHITE);
-    public static final int EDGE_COLOR_TRAVERESED = Utils.getColorNumber(Color.BLACK);
+    public static final int BFS_EDGE_COLOR_NOT_TRAVERESED = Utils.getColorNumber(Color.WHITE);
+    public static final int BFS_EDGE_COLOR_TRAVERESED = Utils.getColorNumber(Color.BLACK);
 
     public static Graph bfs(Graph graph, Vertex initial, boolean copy) {
         Graph bfsGraph = Factory.copyOf(graph);
@@ -54,7 +50,7 @@ public class BFS {
 
             }
             for (Edge edge : resultGraph.getEdges()) {
-                edge.setColor(EDGE_COLOR_NOT_TRAVERESED);
+                edge.setColor(BFS_EDGE_COLOR_NOT_TRAVERESED);
             }
 
             Vertex start = resultGraph.getVertex(initial.getName());
@@ -109,7 +105,7 @@ public class BFS {
                         adjacent.setColor(BFS_COLOR_VISITING);
                         
                         adjacent.setAttribute(BFS_VERTEX_DEPTH, adjacentDepth);                        
-                        adjacentEdge.setColor(EDGE_COLOR_TRAVERESED);
+                        adjacentEdge.setColor(BFS_EDGE_COLOR_TRAVERESED);
                         queue.add(adjacent);
                         
                         
@@ -128,7 +124,7 @@ public class BFS {
             }
 
             for (Edge edge : resultGraph.getEdges()) {
-                if ((bfsGraph.hasEdge(edge.getName())) && (edge.getColor() != EDGE_COLOR_TRAVERESED)) {
+                if ((bfsGraph.hasEdge(edge.getName())) && (edge.getColor() != BFS_EDGE_COLOR_TRAVERESED)) {
                     bfsGraph.removeEdge(edge.getFromVertex().getName(), edge.getToVertex().getName());
                 }
             }
