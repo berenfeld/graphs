@@ -76,9 +76,9 @@ public class Factory {
         }
         return graph;
     }
-
-    public static Graph buildCycleGraph(int vertices) {
-        Graph graph = buildLineGraph(vertices);
+    
+    public static Graph buildCycleGraph(int vertices, boolean directed) {
+        Graph graph = buildLineGraph(vertices, directed);
         graph.setName("C" + vertices);
         try {
             if (vertices > 2) {
@@ -90,8 +90,12 @@ public class Factory {
         return graph;
     }
 
-    public static Graph buildLineGraph(int vertices) {
-        Graph graph = buildEmptyGraph(vertices);
+    public static Graph buildCycleGraph(int vertices) {
+        return buildCycleGraph(vertices, false);
+    }
+    
+    public static Graph buildLineGraph(int vertices, boolean directed) {
+        Graph graph = buildEmptyGraph(vertices, directed);
         graph.setName("L" + vertices);
         try {
             for (int i = 1; i < vertices; i++) {
@@ -103,6 +107,10 @@ public class Factory {
         return graph;
     }
 
+    public static Graph buildLineGraph(int vertices) {
+        return buildLineGraph(vertices, false);
+    }
+    
     public static Graph buildCompleteBiPartiteGraph(int leftVertices, int rightVertices) {
         return buildRandomBiPartiteGraph(leftVertices, rightVertices, 1.0);
     }

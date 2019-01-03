@@ -167,8 +167,8 @@ public class NewGraphDialog extends JDialog implements ActionListener {
         setVisible(false);
     }
 
-    void createCycleGraph(int vertices) {
-        Graph graph = Factory.buildCycleGraph(vertices);
+    void createCycleGraph(int vertices, boolean directed) {
+        Graph graph = Factory.buildCycleGraph(vertices, directed);
         _mainWindow.addGraphFrame(graph, GraphPanel.VerticesLayout.Circle);
         setVisible(false);
     }
@@ -224,7 +224,7 @@ public class NewGraphDialog extends JDialog implements ActionListener {
             } else if (COMPLETE_GRAPH.equals(graphType)) {
                 createCompleteGraph(vertices, directed);
             } else if (CYCLE_GRAPH.equals(graphType)) {
-                createCycleGraph(vertices);
+                createCycleGraph(vertices, directed);
             } else if (RANDOM_GRAPH.equals(graphType)) {
                 createRandomGraph(vertices);
             } else if (BIPARTITE_GRAPH.equals(graphType)) {

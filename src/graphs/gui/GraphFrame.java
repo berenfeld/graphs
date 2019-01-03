@@ -372,11 +372,18 @@ public class GraphFrame extends JInternalFrame implements MouseListener, ActionL
     public void mouseMoved(MouseEvent e) {
     }
 
-    public void setVerticesLayout(GraphPanel.VerticesLayout layout) {
+    public void setVerticesLayout(GraphPanel.VerticesLayout layout, Vertex sourceVertex) {
+        if (sourceVertex != null) {
+            setSelectedVertex(sourceVertex);
+        }
         _canvas.setVerticesLayout(layout);
         repaint();
     }
 
+    public void setVerticesLayout(GraphPanel.VerticesLayout layout) {
+        setVerticesLayout(layout, null);
+    }
+    
     public void showVertexattribute(String attribute)
     {
         _canvas.showVertexAttribute(attribute);
