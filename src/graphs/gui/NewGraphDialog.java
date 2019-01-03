@@ -32,6 +32,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
@@ -78,7 +79,9 @@ public class NewGraphDialog extends JDialog implements ActionListener {
         _generalInformationPanel.add(_numberOfVertices);
         _generalInformationPanel.add(_numberOfVerticesComboBox);
         _generalInformationPanel.add(_graphTypeComboBox);
-
+        _generalInformationPanel.add(_directedCheckBox);
+        _directedCheckBox.setHorizontalTextPosition(SwingConstants.LEFT);
+        
         for (int i = 0; i < 10; i++) {
             _numberOfVerticesComboBox.addItem(i);
         }
@@ -92,6 +95,7 @@ public class NewGraphDialog extends JDialog implements ActionListener {
         _graphTypeComboBox.addItem(RANDOM_GRAPH);
         _graphTypeComboBox.addItem(BIPARTITE_GRAPH);
         _graphTypeComboBox.addActionListener(this);
+        
         add(_generalInformationPanel);
     }
 
@@ -151,14 +155,14 @@ public class NewGraphDialog extends JDialog implements ActionListener {
         
     }
 
-    void createEmptyGraph(int vertices) {
-        Graph graph = Factory.buildEmptyGraph(vertices);
+    void createEmptyGraph(int vertices, boolean directed) {
+        Graph graph = Factory.buildEmptyGraph(vertices, directed);
         _mainWindow.addGraphFrame(graph, GraphPanel.VerticesLayout.Circle);
         setVisible(false);
     }
 
-    void createCompleteGraph(int vertices) {
-        Graph graph = Factory.buildCompleteGraph(vertices);
+    void createCompleteGraph(int vertices, boolean directed) {
+        Graph graph = Factory.buildCompleteGraph(vertices, directed);
         _mainWindow.addGraphFrame(graph, GraphPanel.VerticesLayout.Circle);
         setVisible(false);
     }
@@ -213,10 +217,12 @@ public class NewGraphDialog extends JDialog implements ActionListener {
             int vertices = (Integer) _numberOfVerticesComboBox.getSelectedItem();
             Object graphType = _graphTypeComboBox.getSelectedItem();
 
+            boolean directed = _directedCheckBox.isSelected();
+            
             if (EMPTY_GRAPH.equals(graphType)) {
-                createEmptyGraph(vertices);
+                createEmptyGraph(vertices, directed);
             } else if (COMPLETE_GRAPH.equals(graphType)) {
-                createCompleteGraph(vertices);
+                createCompleteGraph(vertices, directed);
             } else if (CYCLE_GRAPH.equals(graphType)) {
                 createCycleGraph(vertices);
             } else if (RANDOM_GRAPH.equals(graphType)) {
@@ -249,4 +255,6 @@ public class NewGraphDialog extends JDialog implements ActionListener {
     private JComboBox _bipartiteGraphSideAVerticesComboBox = new JComboBox();
     private JLabel _bipartiteGraphFullness = new JLabel("Graph fullness");
     private JComboBox _bipartiteGraphFullnessComboBox = new JComboBox();
+    
+    private JCheckBox _directedCheckBox = new JCheckBox("Directed ?");
 }

@@ -85,7 +85,7 @@ public class Utils {
 
     public static String edgeName(String from, String to, boolean sort) {
         if ( ! sort ) {
-            return (from + "-" + to);
+            return (from + "->" + to);
         }
         return from.compareTo(to) < 0 ? (from + "-" + to) : (to + "-" + from);
     }

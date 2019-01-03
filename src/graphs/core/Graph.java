@@ -34,9 +34,7 @@ public class Graph extends BaseElement implements Serializable {
     private final ArrayList<String> _vertexNames = new ArrayList<>();
 
     private final ArrayList<String> _edgeNames = new ArrayList<>();
-
-    
-
+   
     // connectivity
     private boolean _connectivityCalculated = false;
     private Map<Vertex, Map<String, Vertex>> _connectedComponents = new TreeMap<Vertex, Map<String, Vertex>>();

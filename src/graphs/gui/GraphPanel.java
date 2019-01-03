@@ -17,6 +17,7 @@ import java.awt.Graphics2D;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.geom.Ellipse2D;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.*;
 import javax.swing.*;
@@ -282,6 +283,24 @@ public class GraphPanel extends JPanel implements ComponentListener {
             int toY = (int) ((double) to.getAttribute(VERTEX_Y) * panelHeight);
 
             g.drawLine(fromX, fromY, toX, toY);
+            if (_graph.isDirected()) {
+                int y = toY - fromY;
+                int x = toX - fromX;
+                if ( x == 0 ) {
+                    x = 1;
+                }                
+                double angle = Math.atan((float)y/x);
+                if ( x > 0) {
+                    angle += Math.PI;
+                }               
+                double angle1 = angle - (Math.PI / 8);                
+                double angle2 = angle + (Math.PI / 8);
+                double arrowLength = 30;
+                                
+                g.drawLine(toX, toY, toX + (int)( arrowLength * Math.cos(angle1) ), toY + (int)( arrowLength * Math.sin(angle1)));
+                g.drawLine(toX, toY, toX + (int)( arrowLength * Math.cos(angle2) ), toY + (int)( arrowLength * Math.sin(angle2)));
+                
+            } 
         }
     }
 
