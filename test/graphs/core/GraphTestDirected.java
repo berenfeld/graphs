@@ -6,6 +6,7 @@
 package graphs.core;
 
 import graphs.algorithms.Factory;
+import graphs.utils.Utils;
 import java.util.Map;
 import java.util.Vector;
 import org.junit.After;
@@ -41,9 +42,7 @@ public class GraphTestDirected {
     public void tearDown() {
     }
 
-    /**
-     * Test of toString method, of class Graph.
-     */
+
     @Test
     public void test_completeGraph() {
         Graph g = Factory.buildCompleteGraph(100, true);
@@ -53,6 +52,57 @@ public class GraphTestDirected {
         //assertEquals(1, g.diameter());
     }
 
+    @Test
+    public void test_addAndRemoveEdges() {
+        try {
+            Graph g = Factory.buildEmptyGraph(100, true);
+            for (int i=1;i<=101;i++) {
+                for (int j=i+1;j<101;j++) {
+                    g.addEdge(g.getVertex(i), g.getVertex(j));
+                    g.addEdge(g.getVertex(j), g.getVertex(i));
+                }            
+            }
+            assertEquals(g.getNumberOfEdges(), 100 * 99);
+            for (int i=1;i<=101;i++) {
+                for (int j=i+1;j<101;j++) {
+                    g.removeEdge(g.getVertex(i), g.getVertex(j));
+                    g.removeEdge(g.getVertex(j), g.getVertex(i));
+                }            
+            }
+            assertEquals(g.getNumberOfEdges(), 0);
+        } catch (Exception ex) {
+            Utils.exception(ex);
+            assertTrue(false);
+        }
+    }
+    
+    @Test
+    public void test_addAndRemoveEdges_random() {
+        try {
+            Graph g = Factory.buildEmptyGraph(10, true);
+            int totalEdges = 10 * 9;
+            
+            while (! g.isComplete()) {
+                Graph gc = Factory.complementOf(g);
+                assertNotNull(gc);
+                assertEquals(gc.getNumberOfEdges(), totalEdges - g.getNumberOfEdges());
+                Edge e = gc.getRandomEdge();
+                g.addEdge(e.getFromVertex(), e.getToVertex());
+            }
+            assertEquals(g.getNumberOfEdges(), totalEdges);
+            while (! g.isEmpty()) {
+                g.removeEdge(g.getRandomEdge());
+            }
+            for (Vertex v : g.getVertices()) {
+                assertEquals(v.getOutgoingEdges().size(), 0);
+            }
+            assertEquals(g.getNumberOfEdges(), 0);
+        } catch (Exception ex) {
+            Utils.exception(ex);
+            assertTrue(false);
+        }
+    }
+    
     @Test
     public void notest_Diameter_cyclicGraph() {
         Graph g = Factory.buildCycleGraph(100);

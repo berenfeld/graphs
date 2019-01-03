@@ -81,7 +81,7 @@ public class BFS {
                 }
 
 
-                for (Edge adjacentEdge : current.getAdjacentEdges()) {
+                for (Edge adjacentEdge : current.getOutgoingEdges()) {
                     Vertex adjacent = adjacentEdge.getOtherVertex(current);
 
                     if (adjacent.getColor() == BFS_COLOR_NOT_VISITED) {

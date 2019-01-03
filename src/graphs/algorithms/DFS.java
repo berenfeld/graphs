@@ -39,7 +39,7 @@ public class DFS {
         v.setAttribute(DFS_DISCOVERY_TIME, context.timer);
         
         Utils.info("Visiting vertex " + v + " time " + context.timer);
-        for (Edge adjacentEdge : v.getAdjacentEdges()) {                    
+        for (Edge adjacentEdge : v.getOutgoingEdges()) {                    
             
             Vertex adjacent = adjacentEdge.getOtherVertex(v);
             if ( adjacent.getColor() == DFS_COLOR_NOT_VISITED ) {

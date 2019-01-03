@@ -6,6 +6,7 @@
 package graphs.core;
 
 import graphs.algorithms.Factory;
+import graphs.utils.Utils;
 import java.util.Map;
 import java.util.Vector;
 import org.junit.After;
@@ -64,16 +65,19 @@ public class GraphTest {
 
     @Test
     public void test_connectivity() throws Exception {
-        Graph g = Factory.buildEmptyGraph(100);
+        Utils.info("test started");
+        Graph g = Factory.buildEmptyGraph(10);
+        
         Graph complete = Factory.complementOf(g);
-
         int numberOfConnectedComponentes = g.getNumberOfConnectedComponents();
         assertEquals(1, complete.getNumberOfConnectedComponents());
         assertEquals(1, complete.diameter());
-        assertEquals(100, numberOfConnectedComponentes);
+        assertEquals(10, numberOfConnectedComponentes);
 
+        Utils.info("complete graph ready");
         while (!g.isComplete()) {
             Edge randomEdge = complete.getRandomEdge();
+            Utils.info("adding edge " + randomEdge);
             g.addEdge(randomEdge);
             complete.removeEdge(randomEdge);
             assertTrue(g.getNumberOfConnectedComponents() <= numberOfConnectedComponentes);
@@ -86,13 +90,14 @@ public class GraphTest {
             numberOfConnectedComponentes = g.getNumberOfConnectedComponents();
         }
 
-        assertEquals(100, numberOfConnectedComponentes);
+        assertEquals(10, numberOfConnectedComponentes);
     }
 
     @Test
     public void test_Diameter_growingAndShrinkingGraph() throws Exception {
         Graph g = Factory.buildEmptyGraph(10);
         Graph complete = Factory.complementOf(g);
+        assertNotNull(complete);
 
         int diameter = g.diameter();
         assertEquals(Integer.MAX_VALUE, diameter);

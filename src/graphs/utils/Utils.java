@@ -49,6 +49,10 @@ public class Utils {
         return -1;
     }
 
+    public static void warning(String message) {
+        StackTraceElement caller = Thread.currentThread().getStackTrace()[2];
+        Logger.getLogger(caller.getClass().getName()).log(Level.WARNING, "{0}:{1} {2} {3}", new Object[]{caller.getFileName(), caller.getLineNumber(), caller.getMethodName(), message});
+    }
     public static void info(String message) {
         StackTraceElement caller = Thread.currentThread().getStackTrace()[2];
         Logger.getLogger(caller.getClass().getName()).log(Level.INFO, "{0}:{1} {2} {3}", new Object[]{caller.getFileName(), caller.getLineNumber(), caller.getMethodName(), message});

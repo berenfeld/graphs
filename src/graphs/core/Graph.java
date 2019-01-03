@@ -34,7 +34,7 @@ public class Graph extends BaseElement implements Serializable {
     private final ArrayList<String> _vertexNames = new ArrayList<>();
 
     private final ArrayList<String> _edgeNames = new ArrayList<>();
-   
+
     // connectivity
     private boolean _connectivityCalculated = false;
     private Map<Vertex, Map<String, Vertex>> _connectedComponents = new TreeMap<Vertex, Map<String, Vertex>>();
@@ -49,6 +49,7 @@ public class Graph extends BaseElement implements Serializable {
     public boolean isDirected() {
         return _directed;
     }
+
     public String getName() {
         return _name;
     }
@@ -63,6 +64,10 @@ public class Graph extends BaseElement implements Serializable {
         } else {
             return getNumberOfEdges() == (getNumberOfVertices() * (getNumberOfVertices() - 1)) / 2;
         }
+    }
+
+    public boolean isEmpty() {
+        return getNumberOfEdges() == 0;
     }
 
     public int getNumberOfVertices() {
@@ -88,13 +93,13 @@ public class Graph extends BaseElement implements Serializable {
     public List<Vertex> getVerticesWith(String attribute, Object value) {
         List<Vertex> result = new ArrayList<>();
         for (Vertex v : getVertices()) {
-            if ( value.equals(v.getAttribute(attribute))) {
+            if (value.equals(v.getAttribute(attribute))) {
                 result.add(v);
             }
         }
         return result;
     }
-    
+
     public int getNumberOfEdges() {
         return _edges.size();
     }
@@ -145,9 +150,15 @@ public class Graph extends BaseElement implements Serializable {
             throw new Exception("Vertex '" + name + "' does not exists");
         }
         Vertex vertex = _vertices.get(name);
-        Set< Edge> adjacents = vertex.getAdjacentEdges();
-        for (Edge edge : adjacents) {
+        Set< Edge> outgoingEdges = vertex.getOutgoingEdges();
+        for (Edge edge : outgoingEdges) {
             removeEdge(edge);
+        }
+        if ( _directed ) {
+            Set< Edge> incomingEdges = vertex.getIncomingEdges();
+            for (Edge edge : incomingEdges) {
+                removeEdge(edge);
+            }
         }
         _vertices.remove(name);
         _vertexNames.remove(name);
@@ -178,15 +189,15 @@ public class Graph extends BaseElement implements Serializable {
             throw new Exception("Vertex '" + to + "' does not exist");
         }
 
-        String edgeName = Utils.edgeName(fromVertex, toVertex, ! _directed);
-        Edge newEdge = new Edge(this, fromVertex, toVertex);
+        String edgeName = Utils.edgeName(fromVertex, toVertex, !_directed);
         if (_edges.containsKey(edgeName)) {
-            throw new Exception("Edge '" + newEdge + "' already exists");
+            throw new Exception("Edge '" + edgeName + "' already exists");
         }
+        Edge newEdge = new Edge(this, fromVertex, toVertex);
         _edges.put(edgeName, newEdge);
         _edgeNames.add(edgeName);
         fromVertex.connectTo(toVertex, newEdge);
-        toVertex.connectTo(fromVertex, newEdge);
+        toVertex.connectTo(fromVertex, newEdge);         
 
         _connectivityCalculated = false;
         _diameterCalculated = false;
@@ -210,13 +221,15 @@ public class Graph extends BaseElement implements Serializable {
         if (toVertex == null) {
             throw new Exception("Vertex '" + to + "' does not exist");
         }
-        String edgeName = Utils.edgeName(fromVertex, toVertex, ! _directed);
-        Edge edge = _edges.get(edgeName);
-        if (edge == null) {
-            throw new Exception("Edge '" + edge + "' does not exist");
+        String edgeName = Utils.edgeName(fromVertex, toVertex, !_directed);
+        Edge removedEdge = _edges.get(edgeName);
+        if (removedEdge == null) {
+            throw new Exception("Edge '" + removedEdge + "' does not exist");
         }
-        fromVertex.disconnectFrom(toVertex);
-        toVertex.disconnectFrom(fromVertex);
+
+        fromVertex.disconnectFrom(toVertex, removedEdge);
+        toVertex.disconnectFrom(fromVertex, removedEdge);
+
         _edges.remove(edgeName);
         _edgeNames.remove(edgeName);
 
@@ -225,11 +238,11 @@ public class Graph extends BaseElement implements Serializable {
     }
 
     public boolean hasEdge(Vertex from, Vertex to) {
-        return hasEdge(Utils.edgeName(from.getName(), to.getName(), ! _directed));
+        return hasEdge(Utils.edgeName(from.getName(), to.getName(), !_directed));
     }
 
     public boolean hasEdge(String from, String to) {
-        return hasEdge(Utils.edgeName(from, to, ! _directed));
+        return hasEdge(Utils.edgeName(from, to, !_directed));
     }
 
     public boolean hasEdge(String name) {
@@ -241,7 +254,7 @@ public class Graph extends BaseElement implements Serializable {
     }
 
     public Edge getEdge(String from, String to) {
-        return getEdge(Utils.edgeName(from, to, ! _directed));
+        return getEdge(Utils.edgeName(from, to, !_directed));
     }
 
     public Edge getEdge(String name) {
@@ -268,7 +281,7 @@ public class Graph extends BaseElement implements Serializable {
     public List<Integer> getDegrees() {
         List<Integer> result = new ArrayList<>();
         _vertices.values().forEach((v) -> {
-            result.add(v.getDegree());
+            result.add(v.getOutgoingDegree());
         });
         return result;
     }
@@ -276,7 +289,7 @@ public class Graph extends BaseElement implements Serializable {
     public int getMaximumDegree() {
         int maximum = 0;
         for (Vertex v : _vertices.values()) {
-            maximum = Math.max(maximum, v.getDegree());
+            maximum = Math.max(maximum, v.getOutgoingDegree());
         }
         return maximum;
     }
@@ -284,11 +297,11 @@ public class Graph extends BaseElement implements Serializable {
     public int getMinimumDegree() {
         int minimum = _vertexNames.size() - 1;
         for (Vertex v : _vertices.values()) {
-            minimum = Math.min(minimum, v.getDegree());
+            minimum = Math.min(minimum, v.getOutgoingDegree());
         }
         return minimum;
     }
-    
+
     private void calculateConnectivity() {
         if (_connectivityCalculated) {
             return;
@@ -303,8 +316,7 @@ public class Graph extends BaseElement implements Serializable {
         while (!leftVertices.isEmpty()) {
             Vertex v = getVertex(leftVertices.get(0));
             Graph bfs = BFS.bfs(this, v, true);
-            Vertex bfsRoot = bfs.getVertex(v.getName());
-
+ 
             Map<String, Vertex> connectedComponent = new TreeMap<>();
             for (String vertexName : bfs.getVerticesNames()) {
                 connectedComponent.put(vertexName, getVertex(vertexName));
@@ -326,7 +338,7 @@ public class Graph extends BaseElement implements Serializable {
         calculateConnectivity();
         return _numberOfConnectedComponents;
     }
-    
+
     public Map<Vertex, Map<String, Vertex>> getConnectedComponents() {
         calculateConnectivity();
         return _connectedComponents;
@@ -347,9 +359,9 @@ public class Graph extends BaseElement implements Serializable {
         for (Vertex v : _vertices.values()) {
             Graph bfsOfV = BFS.bfs(this, v, true);
             int vertexDepth = (int) bfsOfV.getAttribute(BFS.BFS_MAXIMUM_DEPTH);
-            if ( vertexDepth > maximumBfsDepth ) {
+            if (vertexDepth > maximumBfsDepth) {
                 maximumBfsDepth = vertexDepth;
-                Vertex maximumDepthVertex = (Vertex) bfsOfV.getAttribute(BFS.BFS_MAXIMUM_DEPTH_VERTEX);            
+                Vertex maximumDepthVertex = (Vertex) bfsOfV.getAttribute(BFS.BFS_MAXIMUM_DEPTH_VERTEX);
                 _diameterPath = (Path) maximumDepthVertex.getAttribute(BFS.BFS_VERTEX_PATH_FROM_ROOT);
             }
         }
@@ -366,7 +378,7 @@ public class Graph extends BaseElement implements Serializable {
         calcualteDiameter();
         return _diameterPath;
     }
-    
+
     class IntComparator implements Comparator<Integer> {
 
         @Override

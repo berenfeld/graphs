@@ -34,7 +34,7 @@ public class Prim {
         matched.add(start);
                 
         Set<Edge> edgesToConsider = new TreeSet<Edge>(new EdgeWeightComparator() );
-        edgesToConsider.addAll(start.getAdjacentEdges());
+        edgesToConsider.addAll(start.getOutgoingEdges());
                
         while (! edgesToConsider.isEmpty()) {
             Edge edgeToAdd = edgesToConsider.iterator().next();
@@ -52,7 +52,7 @@ public class Prim {
             
             matched.add(added);            
             
-            edgesToConsider.addAll(added.getAdjacentEdges());
+            edgesToConsider.addAll(added.getOutgoingEdges());
             
             Set<Edge> edgesToRemove = new TreeSet<>();
             for (Edge edge : edgesToConsider) {

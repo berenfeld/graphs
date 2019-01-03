@@ -71,6 +71,7 @@ public class Factory {
                 }
             }
         } catch (Exception ex) {
+            Utils.exception(ex);
             return null;
         }
         return graph;
@@ -134,7 +135,7 @@ public class Factory {
     }
 
     public static Graph copyVerticesFrom(Graph other) {
-        Graph result = new Graph("Copy of " + other.getName());
+        Graph result = new Graph("Copy of " + other.getName(), other.isDirected());
         try {
             for (Vertex v : other.getVertices()) {
                 Vertex added = result.addVertex(v.getName());
@@ -169,14 +170,14 @@ public class Factory {
                     if (v.equals(u)) {
                         continue;
                     }
-                    if ((!graph.hasEdge(v, u)) && (!result.hasEdge(u, v))) {
+                    if (!result.hasEdge(v, u)) {
                         result.addEdge(v.getName(), u.getName());
                     }
                 }
 
             }
         } catch (Exception ex) {
-            Logger.getLogger(Factory.class.getName()).log(Level.SEVERE, null, ex);
+            Utils.exception(ex);
             return null;
         }
         return result;
