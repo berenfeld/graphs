@@ -117,23 +117,23 @@ public class GraphTestDirected {
 
     @Test
     public void test_lineGraph() {
-        Graph g = Factory.buildLineGraph(100, true);
-        assertEquals(g.getVertices().size(), 100);
-        assertEquals(g.getEdges().size(), 99);
+        Graph g = Factory.buildLineGraph(10, true);
+        assertEquals(g.getVertices().size(), 10);
+        assertEquals(g.getEdges().size(), 9);
         
         assertEquals(false, g.isConnected());
-        assertEquals(100, g.getConnectedComponents().size());
+        assertEquals(10, g.getConnectedComponents().size());
     }
     
     @Test
-    public void test_connectivity_randomAddRemoveEdges() throws Exception {
-        Graph g = Factory.buildEmptyGraph(10, true);
+    public void notest_connectivity() throws Exception {
+        Graph g = Factory.buildEmptyGraph(100);
         Graph complete = Factory.complementOf(g);
 
         int numberOfConnectedComponentes = g.getNumberOfConnectedComponents();
         assertEquals(1, complete.getNumberOfConnectedComponents());
         assertEquals(1, complete.diameter());
-        assertEquals(10, numberOfConnectedComponentes);
+        assertEquals(100, numberOfConnectedComponentes);
 
         while (!g.isComplete()) {
             Edge randomEdge = complete.getRandomEdge();
@@ -149,7 +149,7 @@ public class GraphTestDirected {
             numberOfConnectedComponentes = g.getNumberOfConnectedComponents();
         }
 
-        assertEquals(10, numberOfConnectedComponentes);
+        assertEquals(100, numberOfConnectedComponentes);
     }
 
     @Test

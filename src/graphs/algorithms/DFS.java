@@ -104,8 +104,4 @@ public class DFS {
     public static Graph dfs(Graph g, Vertex v) {
         return DFS.dfs(g, v, true, true);
     }
-    
-    public static Graph dfs(Graph graph, Vertex initial, boolean copy) {
-        return DFS.dfs(graph,initial,copy,true);
-    }
 }

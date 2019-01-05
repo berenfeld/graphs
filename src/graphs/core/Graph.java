@@ -324,7 +324,7 @@ public class Graph extends BaseElement implements Serializable {
         Graph dfs = DFS.dfs(this, null, true, true);
         ArrayList<Vertex> visited = (ArrayList<Vertex>)dfs.getAttribute(DFS.DFS_VERTICES_VISIT_LIST);
         
-        Utils.debug("visited " + visited);
+        Utils.info("visited " + visited);
         Graph transpose = Factory.transposeOf(this);
         int index = getNumberOfVertices() - 1;
         while (! leftVertices.isEmpty())
@@ -336,7 +336,7 @@ public class Graph extends BaseElement implements Serializable {
                 
                 Graph dfsT = DFS.dfs(transpose, v, true, false );
                 ArrayList<Vertex> visitedT = (ArrayList<Vertex>)dfsT.getAttribute(DFS.DFS_VERTICES_VISIT_LIST);
-                Utils.debug("doing dfs from " + v + " visited " + visitedT);
+                Utils.info("doing dfs from " + v + " visited " + visitedT);
                 Map<String, Vertex> connectedComponent = new TreeMap<>();
                 for (Vertex connectedToV : visitedT)
                 {

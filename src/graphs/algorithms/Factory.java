@@ -178,7 +178,7 @@ public class Factory {
                     if (v.equals(u)) {
                         continue;
                     }
-                    if (( ! graph.hasEdge(v, u)) && (! result.hasEdge(v,u))) {
+                    if (!graph.hasEdge(v, u)) {
                         result.addEdge(v.getName(), u.getName());
                     }
                 }
