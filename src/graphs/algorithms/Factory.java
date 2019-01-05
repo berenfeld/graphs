@@ -178,8 +178,30 @@ public class Factory {
                     if (v.equals(u)) {
                         continue;
                     }
-                    if (!result.hasEdge(v, u)) {
+                    if (!graph.hasEdge(v, u)) {
                         result.addEdge(v.getName(), u.getName());
+                    }
+                }
+
+            }
+        } catch (Exception ex) {
+            Utils.exception(ex);
+            return null;
+        }
+        return result;
+    }
+
+    public static Graph transposeOf(Graph graph) {
+        Graph result = copyVerticesFrom(graph);
+        result.setName("Transpose of " + graph.getName());
+        try {
+            for (Vertex v : result.getVertices()) {
+                for (Vertex u : result.getVertices()) {
+                    if (v.equals(u)) {
+                        continue;
+                    }
+                    if (graph.hasEdge(v, u)) {
+                        result.addEdge(u.getName(), v.getName());
                     }
                 }
 

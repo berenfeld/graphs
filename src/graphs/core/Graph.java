@@ -6,6 +6,8 @@
 package graphs.core;
 
 import graphs.algorithms.BFS;
+import graphs.algorithms.DFS;
+import graphs.algorithms.Factory;
 import graphs.utils.Utils;
 import java.io.Serializable;
 import java.util.*;
@@ -306,10 +308,52 @@ public class Graph extends BaseElement implements Serializable {
         if (_connectivityCalculated) {
             return;
         }
-        if (_directed) {
-            // TODO calculate SCC
-            return;
+
+        if (_directed){
+            calculateConnectivityDirected();
+        } else {
+            calculateConnectivityUnDirected();
         }
+    }
+    
+    private void calculateConnectivityDirected()
+    {
+         _connectedComponents.clear();
+        _numberOfConnectedComponents = 0;
+        ArrayList<String> leftVertices = new ArrayList<>(_vertexNames);
+        Graph dfs = DFS.dfs(this, null, true, true);
+        ArrayList<Vertex> visited = (ArrayList<Vertex>)dfs.getAttribute(DFS.DFS_VERTICES_VISIT_LIST);
+        
+        Utils.info("visited " + visited);
+        Graph transpose = Factory.transposeOf(this);
+        int index = getNumberOfVertices() - 1;
+        while (! leftVertices.isEmpty())
+        {
+            Vertex v = visited.get(index);
+            index --;
+            if ( leftVertices.contains(v.getName()))
+            {
+                
+                Graph dfsT = DFS.dfs(transpose, v, true, false );
+                ArrayList<Vertex> visitedT = (ArrayList<Vertex>)dfsT.getAttribute(DFS.DFS_VERTICES_VISIT_LIST);
+                Utils.info("doing dfs from " + v + " visited " + visitedT);
+                Map<String, Vertex> connectedComponent = new TreeMap<>();
+                for (Vertex connectedToV : visitedT)
+                {
+                    if ( leftVertices.contains(connectedToV.getName())) {
+                        connectedComponent.put(connectedToV.getName(), getVertex(connectedToV.getName()));
+                        leftVertices.remove(connectedToV.getName());
+                    }                        
+                }
+                _connectedComponents.put(v, connectedComponent);
+                ++_numberOfConnectedComponents;
+            }
+        }
+        _connectivityCalculated = true;
+    }
+    
+    private void calculateConnectivityUnDirected()
+    {
         _connectedComponents.clear();
         _numberOfConnectedComponents = 0;
         ArrayList<String> leftVertices = new ArrayList<>(_vertexNames);

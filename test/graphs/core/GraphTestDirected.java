@@ -116,6 +116,16 @@ public class GraphTestDirected {
     }
 
     @Test
+    public void test_lineGraph() {
+        Graph g = Factory.buildLineGraph(10, true);
+        assertEquals(g.getVertices().size(), 10);
+        assertEquals(g.getEdges().size(), 9);
+        
+        assertEquals(false, g.isConnected());
+        assertEquals(10, g.getConnectedComponents().size());
+    }
+    
+    @Test
     public void notest_connectivity() throws Exception {
         Graph g = Factory.buildEmptyGraph(100);
         Graph complete = Factory.complementOf(g);
