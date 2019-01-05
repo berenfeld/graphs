@@ -37,7 +37,7 @@ public class DFS {
     private static void dfsVisit(Vertex v, DFSContext context) {
         v.setColor(DFS_COLOR_VISITING);
         context.timer++;
-       
+
         v.setAttribute(DFS_DISCOVERY_TIME, context.timer);
 
         Utils.debug("Visiting vertex " + v + " time " + context.timer);
@@ -103,5 +103,9 @@ public class DFS {
 
     public static Graph dfs(Graph g, Vertex v) {
         return DFS.dfs(g, v, true, true);
+    }
+
+    public static Graph dfs(Graph g, Vertex v, boolean copy) {
+        return DFS.dfs(g, v, copy, true);
     }
 }
