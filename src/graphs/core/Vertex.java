@@ -20,6 +20,7 @@ public class Vertex extends BaseElement implements Comparable, Serializable {
         super();
         _graph = graph;
         _index = index;
+        _name = name;
         setAttribute(VERTEX_ATTRIBUTE_NAME, name);
         setAttribute(VERTEX_ATTRIBUTE_COLOR, Utils.getColorNumber(Color.BLACK));
         setAttribute(VERTEX_ATTRIBUTE_WEIGHT, 0);
@@ -32,6 +33,7 @@ public class Vertex extends BaseElement implements Comparable, Serializable {
 
     private Graph _graph;
     private int _index;
+    private String _name;
     private Map<String, Vertex> _neighbors = new HashMap<String, Vertex>();
     private Map<String, Edge> _outgoingEdges = new HashMap<String, Edge>();
     private Map<String, Edge> _incomingEdges = new HashMap<String, Edge>();
@@ -45,11 +47,12 @@ public class Vertex extends BaseElement implements Comparable, Serializable {
     }
 
     public String getName() {
-        return (String) getAttribute(VERTEX_ATTRIBUTE_NAME);
+        return _name;
     }
 
     void setName(String name) {
         setAttribute(VERTEX_ATTRIBUTE_NAME, name);
+        _name = name;
     }
 
     void connectTo(Vertex other, Edge byEdge) throws Exception {
@@ -171,7 +174,7 @@ public class Vertex extends BaseElement implements Comparable, Serializable {
 
     @Override
     public String toString() {
-        return getName();
+        return _name;
     }
 
 }

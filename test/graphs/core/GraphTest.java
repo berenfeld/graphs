@@ -65,7 +65,7 @@ public class GraphTest {
 
     @Test
     public void test_connectivity() throws Exception {
-        Utils.info("test started");
+        Utils.debug("test started");
         Graph g = Factory.buildEmptyGraph(10);
         
         Graph complete = Factory.complementOf(g);
@@ -74,10 +74,10 @@ public class GraphTest {
         assertEquals(1, complete.diameter());
         assertEquals(10, numberOfConnectedComponentes);
 
-        Utils.info("complete graph ready");
+        Utils.debug("complete graph ready");
         while (!g.isComplete()) {
             Edge randomEdge = complete.getRandomEdge();
-            Utils.info("adding edge " + randomEdge);
+            Utils.debug("adding edge " + randomEdge);
             g.addEdge(randomEdge);
             complete.removeEdge(randomEdge);
             assertTrue(g.getNumberOfConnectedComponents() <= numberOfConnectedComponentes);

@@ -42,7 +42,7 @@ public class GraphFromDegreeSequence {
         int vertices = degreeSequence.size();
         Graph graph = Factory.buildEmptyGraph(vertices);
         graph.setName("From Degree Sequence : " + degreeSequence);
-        Utils.info("Create graph from sequence " + degreeSequence);
+        Utils.debug("Create graph from sequence " + degreeSequence);
            
         List<VertexInfo> verticesInfo = new ArrayList<>();
         for (int i=0;i<vertices;i++) {

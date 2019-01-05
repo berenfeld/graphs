@@ -67,6 +67,7 @@ public class NewGraphDialog extends JDialog implements ActionListener {
     private static final String EMPTY_GRAPH = "Empty graph";
     private static final String COMPLETE_GRAPH = "Complete graph";
     private static final String CYCLE_GRAPH = "Cycle graph";
+    private static final String LINE_GRAPH = "Line graph";
     private static final String RANDOM_GRAPH = "Random graph";
     private static final String BIPARTITE_GRAPH = "Bi-Partite graph";    
 
@@ -92,6 +93,7 @@ public class NewGraphDialog extends JDialog implements ActionListener {
         _graphTypeComboBox.addItem(EMPTY_GRAPH);
         _graphTypeComboBox.addItem(COMPLETE_GRAPH);
         _graphTypeComboBox.addItem(CYCLE_GRAPH);
+        _graphTypeComboBox.addItem(LINE_GRAPH);
         _graphTypeComboBox.addItem(RANDOM_GRAPH);
         _graphTypeComboBox.addItem(BIPARTITE_GRAPH);
         _graphTypeComboBox.addActionListener(this);
@@ -173,6 +175,12 @@ public class NewGraphDialog extends JDialog implements ActionListener {
         setVisible(false);
     }
 
+    void createLineGraph(int vertices, boolean directed) {
+        Graph graph = Factory.buildLineGraph(vertices, directed);
+        _mainWindow.addGraphFrame(graph, GraphPanel.VerticesLayout.Circle);
+        setVisible(false);
+    }
+    
     void createRandomGraph(int vertices) {
         String densityStr = (String) _randomGraphFullnessComboBox.getSelectedItem();
         int densityPercent = Integer.parseInt(densityStr.substring(0, densityStr.length() - 1));
@@ -225,6 +233,8 @@ public class NewGraphDialog extends JDialog implements ActionListener {
                 createCompleteGraph(vertices, directed);
             } else if (CYCLE_GRAPH.equals(graphType)) {
                 createCycleGraph(vertices, directed);
+            } else if (LINE_GRAPH.equals(graphType)) {
+                createLineGraph(vertices, directed);
             } else if (RANDOM_GRAPH.equals(graphType)) {
                 createRandomGraph(vertices);
             } else if (BIPARTITE_GRAPH.equals(graphType)) {
