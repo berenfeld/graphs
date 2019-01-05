@@ -73,7 +73,7 @@ public class GraphTest {
         assertEquals(1, complete.getNumberOfConnectedComponents());
         assertEquals(1, complete.diameter());
         assertEquals(10, numberOfConnectedComponentes);
-
+        
         Utils.debug("complete graph ready");
         while (!g.isComplete()) {
             Edge randomEdge = complete.getRandomEdge();
