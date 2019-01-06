@@ -10,6 +10,7 @@ import graphs.core.*;
 import graphs.utils.Utils;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -31,9 +32,18 @@ import javax.swing.event.InternalFrameListener;
  */
 public class MainWindow extends JFrame implements ActionListener, InternalFrameListener {
 
-    public MainWindow() {
+    private static MainWindow _mainWindow;
+
+    public static MainWindow instance() {
+        if (_mainWindow == null) {
+            _mainWindow  = new MainWindow();
+        }
+        return _mainWindow;
+    }
+
+    private MainWindow() {
         super("Graphs Theory");
-        setExtendedState(getExtendedState() | JFrame.MAXIMIZED_BOTH);
+
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
         initMenu();
@@ -41,7 +51,7 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
         _desktopPane.setDragMode(JDesktopPane.OUTLINE_DRAG_MODE);
         _desktopPane.setVisible(true);
 
-        getContentPane().add(_desktopPane, BorderLayout.CENTER);
+        getContentPane().add(_desktopPane, BorderLayout.CENTER);        
 
         _toolbar.add(_selectModeButton);
         _toolbar.add(_addVertexModeButton);
@@ -55,19 +65,29 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
         getContentPane().add(_toolbar, BorderLayout.NORTH);
 
         setResizable(false);
-
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        setLocation(0,0);
-        setSize(screenSize.width, screenSize.height);
         setVisible(true);
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        setBounds(0,0, screenSize.width, screenSize.height);
+
+        getContentPane().add(_messagesConsoleScroll, BorderLayout.SOUTH);
+        _messagesConsoleScroll.setPreferredSize(new Dimension(getWidth(), getHeight() / 5));
+        _messagesConsole.setText("Messages Console");
+        _messagesConsole.setEditable(false);
     }
 
+    public void addMessage(String text)
+    {
+        _messagesConsole.setText(_messagesConsole.getText() + "\n" + text);
+    }
+    
     public static enum SelectionMode {
         Normal,
         AddVertex,
         AddEdge
     };
 
+    private JTextPane _messagesConsole = new JTextPane();
+    private JScrollPane _messagesConsoleScroll = new JScrollPane(_messagesConsole);
     private SelectionMode _selectionMode = SelectionMode.Normal;
     private JToolBar _toolbar = new JToolBar();
     private JToggleButton _selectModeButton = new JToggleButton("Normal");
@@ -119,7 +139,7 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
         _bfsAlgorithm.addActionListener(this);
         _algorithms.add(_dfsAlgorithm);
         _dfsAlgorithm.addActionListener(this);
-        
+
         _windowsMenu.add(_cascadeWindows);
         _cascadeWindows.addActionListener(this);
 
@@ -369,19 +389,18 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
         }
     }
 
-    public int numberOfGraphFrames()
-    {
+    public int numberOfGraphFrames() {
         return _desktopPane.getComponentCount();
     }
-    
+
     public GraphFrame addGraphFrame(Graph g) {
-        return addGraphFrame(g, GraphPanel.VerticesLayout.Grid);
+        return addGraphFrame(g, GraphPanel.VerticesLayout.None);
     }
 
     public GraphFrame addGraphFrame(Graph g, GraphPanel.VerticesLayout layout) {
         return addGraphFrame(g, layout, null);
     }
-    
+
     public GraphFrame addGraphFrame(Graph g, GraphPanel.VerticesLayout layout, Vertex sourceVertex) {
         GraphFrame graphFrame = new GraphFrame(this, g);
         setVisible(true);
@@ -397,7 +416,7 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
         if (sourceVertex != null) {
             graphFrame.setSelectedVertex(sourceVertex);
         }
-        
+
         if (layout != GraphPanel.VerticesLayout.None) {
             graphFrame.setVerticesLayout(layout);
         }
@@ -421,8 +440,8 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
 
     public static void main(String[] args) {
         setLookAndFeel("Nimbus");
-        new MainWindow();
-
+        MainWindow.instance();
+        MessageListener.ENABLED = true;
     }
 
     /**

@@ -125,7 +125,7 @@ public class NewGraphDialog extends JDialog implements ActionListener {
         for (int i = 0; i < 20; i++) {
             _randomGraphFullnessComboBox.addItem((i * 5) + "%");
         }
-        _randomGraphFullnessComboBox.setSelectedItem("50%");
+        _randomGraphFullnessComboBox.setSelectedItem("20%");
         _extraInformationPanel.add(_randomGraphPanel, RANDOM_GRAPH);
        
     }
@@ -152,7 +152,7 @@ public class NewGraphDialog extends JDialog implements ActionListener {
         for (int i = 0; i < 20; i++) {
             _bipartiteGraphFullnessComboBox.addItem((i * 5) + "%");
         }
-        _bipartiteGraphFullnessComboBox.setSelectedItem("50%");
+        _bipartiteGraphFullnessComboBox.setSelectedItem("20%");
         _extraInformationPanel.add(_bipartiteGraphPanel, BIPARTITE_GRAPH);
         
     }
@@ -181,11 +181,11 @@ public class NewGraphDialog extends JDialog implements ActionListener {
         setVisible(false);
     }
     
-    void createRandomGraph(int vertices) {
+    void createRandomGraph(int vertices, boolean directed) {
         String densityStr = (String) _randomGraphFullnessComboBox.getSelectedItem();
         int densityPercent = Integer.parseInt(densityStr.substring(0, densityStr.length() - 1));
 
-        Graph graph = Factory.buildRandomGraph(vertices, (double) densityPercent / 100);
+        Graph graph = Factory.buildRandomGraph(vertices, directed, (double) densityPercent / 100);
         _mainWindow.addGraphFrame(graph, GraphPanel.VerticesLayout.Circle);
         setVisible(false);
     }
@@ -236,7 +236,7 @@ public class NewGraphDialog extends JDialog implements ActionListener {
             } else if (LINE_GRAPH.equals(graphType)) {
                 createLineGraph(vertices, directed);
             } else if (RANDOM_GRAPH.equals(graphType)) {
-                createRandomGraph(vertices);
+                createRandomGraph(vertices, directed);
             } else if (BIPARTITE_GRAPH.equals(graphType)) {
                 createBiPartiteGraph(vertices);
             } 

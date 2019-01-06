@@ -30,8 +30,8 @@ public class Factory {
         }
         return graph;
     }
-    
-    public static Graph buildEmptyGraph(int vertices ) {
+
+    public static Graph buildEmptyGraph(int vertices) {
         return buildEmptyGraph(vertices, false);
     }
 
@@ -55,11 +55,11 @@ public class Factory {
     }
 
     public static Graph buildCompleteGraph(int vertices) {
-        return buildCompleteGraph(vertices,false);
+        return buildCompleteGraph(vertices, false);
     }
-    
-    public static Graph buildRandomGraph(int vertices, double density) {
-        Graph graph = buildEmptyGraph(vertices);
+
+    public static Graph buildRandomGraph(int vertices, boolean directed, double density) {
+        Graph graph = buildEmptyGraph(vertices, directed);
         graph.setName("Random (" + vertices + ")");
         Random rand = new Random();
         try {
@@ -68,6 +68,11 @@ public class Factory {
                     if (rand.nextDouble() < density) {
                         graph.addEdge(graph.getVertex(i), graph.getVertex(j));
                     }
+                    if (directed) {
+                        if (rand.nextDouble() < density) {
+                            graph.addEdge(graph.getVertex(j), graph.getVertex(i));
+                        }
+                    }
                 }
             }
         } catch (Exception ex) {
@@ -75,6 +80,10 @@ public class Factory {
             return null;
         }
         return graph;
+    }
+
+    public static Graph buildRandomGraph(int vertices, double density) {
+        return buildRandomGraph(vertices, false, density);
     }
     
     public static Graph buildCycleGraph(int vertices, boolean directed) {
@@ -93,7 +102,7 @@ public class Factory {
     public static Graph buildCycleGraph(int vertices) {
         return buildCycleGraph(vertices, false);
     }
-    
+
     public static Graph buildLineGraph(int vertices, boolean directed) {
         Graph graph = buildEmptyGraph(vertices, directed);
         graph.setName("L" + vertices);
@@ -110,7 +119,7 @@ public class Factory {
     public static Graph buildLineGraph(int vertices) {
         return buildLineGraph(vertices, false);
     }
-    
+
     public static Graph buildCompleteBiPartiteGraph(int leftVertices, int rightVertices) {
         return buildRandomBiPartiteGraph(leftVertices, rightVertices, 1.0);
     }
@@ -178,7 +187,7 @@ public class Factory {
                     if (v.equals(u)) {
                         continue;
                     }
-                    if ((!graph.hasEdge(v, u)) && (! result.hasEdge(v,u) )) {
+                    if ((!graph.hasEdge(v, u)) && (!result.hasEdge(v, u))) {
                         result.addEdge(v.getName(), u.getName());
                     }
                 }

@@ -41,7 +41,7 @@ public class BFSTest {
      */
     @Test
     public void test_BFS_randomGraph() {
-        Graph g = Factory.buildRandomGraph(100, 0.8);
+        Graph g = Factory.buildRandomGraph(100, false, 0.8);
         Graph b1 = BFS.bfs(g, g.getVertex(1));
         Graph b2 = BFS.bfs(g, g.getVertex(1));
         assertEquals(b1, b2);

@@ -8,6 +8,7 @@ package graphs.core;
 import graphs.algorithms.BFS;
 import graphs.algorithms.DFS;
 import graphs.algorithms.Factory;
+import graphs.gui.MessageListener;
 import graphs.utils.Utils;
 import java.io.Serializable;
 import java.util.*;
@@ -21,6 +22,7 @@ public class Graph extends BaseElement implements Serializable {
     public Graph(String name, boolean directed) {
         _name = name;
         _directed = directed;
+        MessageListener.message("Graph '" + name + "' created.");
     }
 
     public Graph(String name) {
@@ -143,6 +145,7 @@ public class Graph extends BaseElement implements Serializable {
         _connectivityCalculated = false;
         _diameterCalculated = false;
         ++_vertexIndex;
+        MessageListener.message("Graph '" + _name + "' : Vertex '" + name + "' created.");
         return newVertex;
     }
 
@@ -166,6 +169,7 @@ public class Graph extends BaseElement implements Serializable {
         _vertexNames.remove(name);
         _connectivityCalculated = false;
         _diameterCalculated = false;
+        MessageListener.message("Graph '" + _name + "' : Vertex '" + name + "' removed.");
     }
 
     public void removeVertex(Vertex v) throws Exception {
@@ -203,6 +207,7 @@ public class Graph extends BaseElement implements Serializable {
 
         _connectivityCalculated = false;
         _diameterCalculated = false;
+        MessageListener.message("Graph '" + _name + "' : Edge '" + edgeName + "' created.");
         return newEdge;
     }
 
@@ -237,6 +242,7 @@ public class Graph extends BaseElement implements Serializable {
 
         _connectivityCalculated = false;
         _diameterCalculated = false;
+        MessageListener.message("Graph '" + _name + "' : Edge '" + edgeName + "' removed.");
     }
 
     public boolean hasEdge(Vertex from, Vertex to) {

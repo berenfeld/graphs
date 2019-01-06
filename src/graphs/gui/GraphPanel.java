@@ -217,7 +217,7 @@ public class GraphPanel extends JPanel implements ComponentListener {
 
     }
 
-    private int _fontSize = 20;
+    private int _fontSize = 16;
 
     private Font _regularFont = new Font("Arial", Font.PLAIN, _fontSize);
 

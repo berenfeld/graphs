@@ -5,6 +5,7 @@
  */
 package graphs.core;
 
+import graphs.gui.MessageListener;
 import graphs.utils.Utils;
 import java.awt.Color;
 import java.io.Serializable;
