@@ -66,8 +66,9 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
 
         setResizable(false);
         setVisible(true);
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        setBounds(0,0, screenSize.width, screenSize.height);
+        //Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        //setBounds(0,0, screenSize.width, screenSize.height);
+        setBounds(0,0, 1280, 720);
 
         getContentPane().add(_messagesConsoleScroll, BorderLayout.SOUTH);
         _messagesConsoleScroll.setPreferredSize(new Dimension(getWidth(), getHeight() / 5));

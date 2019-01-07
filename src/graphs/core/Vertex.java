@@ -25,12 +25,14 @@ public class Vertex extends BaseElement implements Comparable, Serializable {
         setAttribute(VERTEX_ATTRIBUTE_NAME, name);
         setAttribute(VERTEX_ATTRIBUTE_COLOR, Utils.getColorNumber(Color.BLACK));
         setAttribute(VERTEX_ATTRIBUTE_WEIGHT, 0);
+        setAttribute(VERTEX_ATTRIBUTE_DEGREE, 0);
     }
 
     public static String VERTEX_ATTRIBUTE_NAME = "name";
     public static String VERTEX_ATTRIBUTE_COLOR = "color";
     public static String VERTEX_ATTRIBUTE_WEIGHT = "weight";
     public static String VERTEX_ATTRIBUTE_SIDE = "side";
+    public static String VERTEX_ATTRIBUTE_DEGREE = "degree";
 
     private Graph _graph;
     private int _index;
@@ -78,6 +80,7 @@ public class Vertex extends BaseElement implements Comparable, Serializable {
         if (from || (! _graph.isDirected()) ) {
             _neighbors.put(other.getName(), other);
             _outgoingEdges.put(other.getName(), byEdge);
+            setAttribute(VERTEX_ATTRIBUTE_DEGREE, getOutgoingDegree());
         }
         else {        
             _incomingEdges.put(other.getName(), byEdge);
@@ -102,6 +105,7 @@ public class Vertex extends BaseElement implements Comparable, Serializable {
         if (from || (! _graph.isDirected()) ) {
             _neighbors.remove(other.getName());
             _outgoingEdges.remove(other.getName());
+            setAttribute(VERTEX_ATTRIBUTE_DEGREE, getOutgoingDegree());
         } else {
             _incomingEdges.remove(other.getName());                        
         }
