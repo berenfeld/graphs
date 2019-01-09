@@ -295,7 +295,7 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
         }
         if (source.equals(_addVertexModeButton)) {
             _selectionMode = SelectionMode.AddVertex;
-            Utils.info("Selected adding vertex selection mode");
+            Utils.debug("Selected adding vertex selection mode");
             updateSelectionMode();
             return;
         }

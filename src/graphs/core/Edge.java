@@ -5,10 +5,9 @@
  */
 package graphs.core;
 
-import graphs.gui.MessageListener;
 import graphs.utils.Utils;
 import java.io.Serializable;
-import java.util.*;
+import java.util.Objects;
 
 /**
  *
@@ -22,9 +21,9 @@ public class Edge extends BaseElement implements Comparable, Serializable {
         _to = v2;
     }
 
-    private Graph _graph;
-    private Vertex _from;
-    private Vertex _to;
+    private final Graph _graph;
+    private final Vertex _from;
+    private final Vertex _to;
 
     public Vertex getFromVertex() {
         return _from;
@@ -76,6 +75,9 @@ public class Edge extends BaseElement implements Comparable, Serializable {
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {
+            return false;
+        }
+        if ( ! (obj instanceof Edge)) {
             return false;
         }
         Edge other = (Edge) obj;

@@ -5,9 +5,7 @@
  */
 package graphs.core;
 
-import graphs.core.*;
 import graphs.utils.*;
-import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -128,6 +126,5 @@ public class Path {
         Path other = (Path)obj;
         return _edges.equals(other._edges);
     }
-    
-    
+        
 }

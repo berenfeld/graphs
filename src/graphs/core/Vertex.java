@@ -5,7 +5,6 @@
  */
 package graphs.core;
 
-import graphs.gui.MessageListener;
 import graphs.utils.Utils;
 import java.awt.Color;
 import java.io.Serializable;
@@ -26,6 +25,7 @@ public class Vertex extends BaseElement implements Comparable, Serializable {
         setAttribute(VERTEX_ATTRIBUTE_COLOR, Utils.getColorNumber(Color.BLACK));
         setAttribute(VERTEX_ATTRIBUTE_WEIGHT, 0);
         setAttribute(VERTEX_ATTRIBUTE_DEGREE, 0);
+        setAttribute(VERTEX_ATTRIBUTE_NEIGHBORS, new ArrayList<>());
     }
 
     public static String VERTEX_ATTRIBUTE_NAME = "name";
@@ -33,13 +33,14 @@ public class Vertex extends BaseElement implements Comparable, Serializable {
     public static String VERTEX_ATTRIBUTE_WEIGHT = "weight";
     public static String VERTEX_ATTRIBUTE_SIDE = "side";
     public static String VERTEX_ATTRIBUTE_DEGREE = "degree";
+    public static String VERTEX_ATTRIBUTE_NEIGHBORS = "neighbors";
 
-    private Graph _graph;
-    private int _index;
+    private final Graph _graph;
+    private final int _index;
     private String _name;
-    private Map<String, Vertex> _neighbors = new HashMap<String, Vertex>();
-    private Map<String, Edge> _outgoingEdges = new HashMap<String, Edge>();
-    private Map<String, Edge> _incomingEdges = new HashMap<String, Edge>();
+    private final Map<String, Vertex> _neighbors = new HashMap<>();
+    private final Map<String, Edge> _outgoingEdges = new HashMap<>();
+    private final Map<String, Edge> _incomingEdges = new HashMap<>();
 
     public Graph getGraph() {
         return _graph;
@@ -78,9 +79,13 @@ public class Vertex extends BaseElement implements Comparable, Serializable {
 
         boolean from = this.equals(byEdge.getFromVertex());
         if (from || (! _graph.isDirected()) ) {
-            _neighbors.put(other.getName(), other);
-            _outgoingEdges.put(other.getName(), byEdge);
-            setAttribute(VERTEX_ATTRIBUTE_DEGREE, getOutgoingDegree());
+            if ( ! _neighbors.containsKey(other.getName())) 
+            {
+                _neighbors.put(other.getName(), other);
+                _outgoingEdges.put(other.getName(), byEdge);
+                setAttribute(VERTEX_ATTRIBUTE_DEGREE, getOutgoingDegree());
+                ((ArrayList<Vertex>)getAttribute(VERTEX_ATTRIBUTE_NEIGHBORS)).add(other);
+            }
         }
         else {        
             _incomingEdges.put(other.getName(), byEdge);
@@ -103,9 +108,12 @@ public class Vertex extends BaseElement implements Comparable, Serializable {
         
         boolean from = this.equals(removedEdge.getFromVertex());
         if (from || (! _graph.isDirected()) ) {
-            _neighbors.remove(other.getName());
-            _outgoingEdges.remove(other.getName());
-            setAttribute(VERTEX_ATTRIBUTE_DEGREE, getOutgoingDegree());
+            if ( _neighbors.containsKey(other.getName())) {
+                _neighbors.remove(other.getName());
+                _outgoingEdges.remove(other.getName());
+                setAttribute(VERTEX_ATTRIBUTE_DEGREE, getOutgoingDegree());
+                ((ArrayList<Vertex>)getAttribute(VERTEX_ATTRIBUTE_NEIGHBORS)).remove(other);
+            }
         } else {
             _incomingEdges.remove(other.getName());                        
         }
@@ -173,8 +181,11 @@ public class Vertex extends BaseElement implements Comparable, Serializable {
         if (o == null) {
             return false;
         }
+        if (! (o instanceof Vertex)) {
+            return false;
+        }
         Vertex other = (Vertex) o;
-        return ((other != null) && (_index == other._index));
+        return (_index == other._index);
     }
 
     @Override

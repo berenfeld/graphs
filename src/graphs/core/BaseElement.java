@@ -23,7 +23,7 @@ public class BaseElement implements Serializable {
 
     private final List<AttributesListener> _attributeListeners = new ArrayList<>();
 
-    public void addAttributeListener(AttributesListener listener) {
+    public final void addAttributeListener(AttributesListener listener) {
         if (!_attributeListeners.contains(listener)) {
             _attributeListeners.add(listener);
         }
@@ -54,7 +54,7 @@ public class BaseElement implements Serializable {
         return _attributes.get(name);
     }
 
-    public void setAttribute(String name, Object value) {
+    public final void setAttribute(String name, Object value) {
         _attributes.put(name, value);
 
         for (AttributesListener listener : _attributeListeners) {

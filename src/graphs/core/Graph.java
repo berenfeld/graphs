@@ -41,7 +41,7 @@ public class Graph extends BaseElement implements Serializable {
 
     // connectivity
     private boolean _connectivityCalculated = false;
-    private Map<Vertex, Map<String, Vertex>> _connectedComponents = new TreeMap<Vertex, Map<String, Vertex>>();
+    private final Map<Vertex, Map<String, Vertex>> _connectedComponents = new TreeMap<>();
 
     private int _numberOfConnectedComponents = 0;
 
@@ -450,6 +450,9 @@ public class Graph extends BaseElement implements Serializable {
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {
+            return false;
+        }
+        if (! ( obj instanceof Graph)) {
             return false;
         }
         Graph other = (Graph) obj;
