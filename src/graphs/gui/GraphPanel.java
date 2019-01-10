@@ -58,7 +58,8 @@ public class GraphPanel extends JPanel implements ComponentListener {
     public static final String GUI_SELECTED_VERTEX = "_gui-selected-vertex";
     public static final String VERTEX_X = "_gui-vertex-x";
     public static final String VERTEX_Y = "_gui-vertex-y";
-
+    public static final String GUI_FONT_SIZE = "_gui-font-size";
+    
     public void setSelectedVertex(Vertex v) {
         _selectedVertex = v;
         _graph.setAttribute(GUI_SELECTED_VERTEX, v);
@@ -92,8 +93,7 @@ public class GraphPanel extends JPanel implements ComponentListener {
     }
 
     public void setFontSize(int size) {
-        _fontSize = size;
-        _regularFont = new Font("Arial", Font.PLAIN, _fontSize);
+        _graph.setAttribute(GUI_FONT_SIZE, size);
         repaint();
     }
 
@@ -242,10 +242,7 @@ public class GraphPanel extends JPanel implements ComponentListener {
             v.setAttribute(VERTEX_Y, Utils.RANDOM.nextDouble());
         }
     }
-    private int _fontSize = 16;
-
-    private Font _regularFont = new Font("Arial", Font.PLAIN, _fontSize);
-
+    
     private void repaintGraph(Graphics g) {
 
         Graphics2D g2 = (Graphics2D) g;
@@ -260,7 +257,8 @@ public class GraphPanel extends JPanel implements ComponentListener {
 
             g.setColor(Utils.VERTEX_COLORS.get(v.getColor()));
             
-            g.setFont(_regularFont);            
+            int fontSize = (int) _graph.getAttribute(GUI_FONT_SIZE, Utils.DEFAULT_FONT_SIZE);
+            g.setFont(new Font("Arial", Font.PLAIN, fontSize));            
 
             int height = g.getFontMetrics().getHeight();
             int line = 1;

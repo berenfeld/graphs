@@ -5,8 +5,6 @@
  */
 package graphs.gui;
 
-import com.sun.org.apache.bcel.internal.util.BCELifier;
-
 /**
  *
  * @author ranb

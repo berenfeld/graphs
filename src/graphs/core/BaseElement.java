@@ -5,7 +5,6 @@
  */
 package graphs.core;
 
-import graphs.utils.Utils;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,15 +21,21 @@ public class BaseElement implements Serializable {
     // attribtes
     protected Map<String, Object> _attributes = new HashMap<>();
 
-    private final List<AttributesListener> _attributeListeners = new ArrayList<>();
+    private transient List<AttributesListener> _attributeListeners;
 
     public final void addAttributeListener(AttributesListener listener) {
+        if (_attributeListeners == null) {
+            _attributeListeners = new ArrayList<>();
+        }
         if (!_attributeListeners.contains(listener)) {
             _attributeListeners.add(listener);
         }
     }
 
     public void removeAttributeListener(AttributesListener listener) {
+        if (_attributeListeners == null) {
+            _attributeListeners = new ArrayList<>();
+        }
         if (_attributeListeners.contains(listener)) {
             _attributeListeners.remove(listener);
         }
@@ -56,27 +61,28 @@ public class BaseElement implements Serializable {
     }
 
     public final void setAttribute(String name, Object value) {
-        if ( value != null) {
-            if (! (value instanceof Serializable)) {
-                Utils.warning("attribute " + name + " type " + value.getClass().getSimpleName());
+        if (value != null) {
+            if (!(value instanceof Serializable)) {
+                throw new IllegalArgumentException("Object of type " + value.getClass().getSimpleName() + " is not serializable");
             }
         }
         _attributes.put(name, value);
-
+        if (_attributeListeners == null) {
+            _attributeListeners = new ArrayList<>();
+        }
         for (AttributesListener listener : _attributeListeners) {
             listener.attributeValueChanged(name, value);
-        }       
+        }
     }
 
     public void delAttribute(String name) {
-        if ( ! _attributes.containsKey(name)) 
-        {
+        if (!_attributes.containsKey(name)) {
             return;
         }
         _attributes.remove(name);
         for (AttributesListener listener : _attributeListeners) {
             listener.attributeRemoved(name);
-        }                  
+        }
     }
 
     public void copyAttributesTo(BaseElement other) {

@@ -10,8 +10,6 @@ import graphs.core.*;
 import graphs.utils.Utils;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.GridLayout;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyVetoException;
@@ -36,7 +34,7 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
 
     public static MainWindow instance() {
         if (_mainWindow == null) {
-            _mainWindow  = new MainWindow();
+            _mainWindow = new MainWindow();
         }
         return _mainWindow;
     }
@@ -51,11 +49,19 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
         _desktopPane.setDragMode(JDesktopPane.OUTLINE_DRAG_MODE);
         _desktopPane.setVisible(true);
 
-        getContentPane().add(_desktopPane, BorderLayout.CENTER);        
+        getContentPane().add(_desktopPane, BorderLayout.CENTER);
 
         _toolbar.add(_selectModeButton);
         _toolbar.add(_addVertexModeButton);
         _toolbar.add(_addEdgeModeButton);
+        _toolbar.addSeparator();
+
+        _toolbar.add(_fontSizeIncrease);
+        _toolbar.add(_fontSizeDecrease);
+        _fontSizeIncrease.addActionListener(this);
+        _fontSizeDecrease.addActionListener(this);
+        _toolbar.addSeparator();
+
         _modeButtonGroup.add(_selectModeButton);
         _modeButtonGroup.add(_addVertexModeButton);
         _modeButtonGroup.add(_addEdgeModeButton);
@@ -66,42 +72,41 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
 
         setResizable(false);
         setVisible(true);
-        //Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        //setBounds(0,0, screenSize.width, screenSize.height);
-        setBounds(0,0, 1280, 720);
+        setBounds(0, 0, 1280, 720);
 
         getContentPane().add(_messagesConsoleScroll, BorderLayout.SOUTH);
         _messagesConsoleScroll.setPreferredSize(new Dimension(getWidth(), getHeight() / 5));
         _messagesConsole.setText("Messages Console");
         _messagesConsole.setEditable(false);
     }
-    
-    public void addMessage(String text)
-    {
+
+    public void addMessage(String text) {
         _messagesConsole.setText(_messagesConsole.getText() + "\n" + text);
     }
-    
+
     public static enum SelectionMode {
         Normal,
         AddVertex,
         AddEdge
     };
 
-    private JTextPane _messagesConsole = new JTextPane();
-    private JScrollPane _messagesConsoleScroll = new JScrollPane(_messagesConsole);
+    private final JTextPane _messagesConsole = new JTextPane();
+    private final JScrollPane _messagesConsoleScroll = new JScrollPane(_messagesConsole);
     private SelectionMode _selectionMode = SelectionMode.Normal;
-    private JToolBar _toolbar = new JToolBar();
-    private JToggleButton _selectModeButton = new JToggleButton("Normal");
-    private JToggleButton _addVertexModeButton = new JToggleButton("Add Vertex");
-    private JToggleButton _addEdgeModeButton = new JToggleButton("Add Edge");
-    private ButtonGroup _modeButtonGroup = new ButtonGroup();
-    private JDesktopPane _desktopPane = new JDesktopPane();
-    private JMenuBar _menuBar = new JMenuBar();
-    private JMenu _graphsMenu = new JMenu("Graphs");
+    private final JToolBar _toolbar = new JToolBar();
+    private final JToggleButton _selectModeButton = new JToggleButton("Normal");
+    private final JToggleButton _addVertexModeButton = new JToggleButton("Add Vertex");
+    private final JToggleButton _addEdgeModeButton = new JToggleButton("Add Edge");
+    private final JButton _fontSizeIncrease = new JButton("Font Size +");
+    private final JButton _fontSizeDecrease = new JButton("Font Size -");
+    private final ButtonGroup _modeButtonGroup = new ButtonGroup();
+    private final JDesktopPane _desktopPane = new JDesktopPane();
+    private final JMenuBar _menuBar = new JMenuBar();
+    private final JMenu _graphsMenu = new JMenu("Graphs");
 
-    private JMenu _newGraphMenu = new JMenu("New Graph");
-    private JMenuItem _newGraph = new JMenuItem("New Graph Dialog");
-    private JMenuItem _fromDegreesList = new JMenuItem("From Degrees Sequence");
+    private final JMenu _newGraphMenu = new JMenu("New Graph");
+    private final JMenuItem _newGraph = new JMenuItem("New Graph Dialog");
+    private final JMenuItem _fromDegreesList = new JMenuItem("From Degrees Sequence");
 
     private final JMenuItem _saveGraphMenu = new JMenuItem("Save To File");
     private final JMenuItem _loadGraphMenu = new JMenuItem("Load From File");
@@ -112,9 +117,9 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
     private final JMenuItem _dfsAlgorithm = new JMenuItem("DFS");
 
     private final JMenu _windowsMenu = new JMenu("Windows");
-    private JMenuItem _cascadeWindows = new JMenuItem("Cascade");
-    private JMenuItem _tileWindows = new JMenuItem("Tile");
-    private Map<GraphFrame, JMenuItem> _windowGraphMenus = new HashMap<>();
+    private final JMenuItem _cascadeWindows = new JMenuItem("Cascade");
+    private final JMenuItem _tileWindows = new JMenuItem("Tile");
+    private final Map<GraphFrame, JMenuItem> _windowGraphMenus = new HashMap<>();
     private final BFSDialog _bfsDialog = new BFSDialog(this);
     private final DFSDialog _dfsDialog = new DFSDialog(this);
     private final NewGraphDialog _newGraphDialog = new NewGraphDialog(this);
@@ -177,79 +182,7 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
             newGraph();
             return;
         }
-        if (source.equals(_fromDegreesList)) {
-            String degreesListStr = null;
-            try {
-                degreesListStr = JOptionPane.showInputDialog(this, "Please enter degrees list, seperated by comma", "3,3,3,3,3,3");
-                createGraphFromDegreesList(degreesListStr);
-            } catch (Exception ex) {
-                JOptionPane.showMessageDialog(this, "Failed to create a graph from degrees list : " + degreesListStr);
-            }
-            return;
-        }
-        if (source.equals(_colorGraphAlgorithm)) {
-            GraphFrame graphFrame = (GraphFrame) _desktopPane.getSelectedFrame();
-            if (graphFrame == null) {
-                JOptionPane.showMessageDialog(this, "Please select a graph");
-                return;
-            }
-            Coloring.colorGraph_Greedy(graphFrame.getGraph());
-            graphFrame.repaint();
-            return;
-        }
-        if (source.equals(_colorGraphAlgorithm)) {
-            GraphFrame graphFrame = (GraphFrame) _desktopPane.getSelectedFrame();
-            if (graphFrame == null) {
-                JOptionPane.showMessageDialog(this, "Please select a graph");
-                return;
-            }
-            Coloring.colorGraph_Greedy(graphFrame.getGraph());
-            graphFrame.repaint();
-            return;
-        }
-        if (source.equals(_bfsAlgorithm)) {
-            GraphFrame graphFrame = (GraphFrame) _desktopPane.getSelectedFrame();
-            if (graphFrame == null) {
-                JOptionPane.showMessageDialog(this, "Please select a graph");
-                return;
-            }
-            _bfsDialog.setGraphFrame(graphFrame);
-            _bfsDialog.setVisible(true);
-            return;
-        }
-        if (source.equals(_dfsAlgorithm)) {
-            GraphFrame graphFrame = (GraphFrame) _desktopPane.getSelectedFrame();
-            if (graphFrame == null) {
-                JOptionPane.showMessageDialog(this, "Please select a graph");
-                return;
-            }
-            _dfsDialog.setGraphFrame(graphFrame);
-            _dfsDialog.setVisible(true);
-            return;
-        }
-        if (source.equals(_saveGraphMenu)) {
-            GraphFrame graphFrame = (GraphFrame) _desktopPane.getSelectedFrame();
-            if (graphFrame == null) {
-                JOptionPane.showMessageDialog(this, "Please select a graph");
-                return;
-            }
-            final JFileChooser fc = new JFileChooser("/home/me/new_site/graphs");
-            int returnVal = fc.showSaveDialog(this);
-            if (returnVal == JFileChooser.APPROVE_OPTION) {
-                File file = fc.getSelectedFile();
-                try {
-                    FileOutputStream fos = new FileOutputStream(file);
-                    ObjectOutputStream oos = new ObjectOutputStream(fos);
-                    oos.writeObject(graphFrame.getGraph());
-                    oos.close();
-                } catch (IOException ex) {
-                    Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
-                    JOptionPane.showMessageDialog(this, "Graph Save Failed");
-                    return;
-                }
-            }
-            return;
-        }
+
         if (source.equals(_loadGraphMenu)) {
 
             final JFileChooser fc = new JFileChooser("/home/me/new_site/graphs");
@@ -271,6 +204,7 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
             }
             return;
         }
+
         if (source.equals(_cascadeWindows)) {
             cascadeWindows();
             return;
@@ -302,6 +236,76 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
         if (source.equals(_addEdgeModeButton)) {
             _selectionMode = SelectionMode.AddEdge;
             updateSelectionMode();
+            return;
+        }
+
+        GraphFrame graphFrame = getSelcetedFrame();
+
+        if (graphFrame == null) {
+            JOptionPane.showMessageDialog(this, "Please select a graph");
+            return;
+        }
+
+        if (source.equals(_fromDegreesList)) {
+            String degreesListStr = null;
+            try {
+                degreesListStr = JOptionPane.showInputDialog(this, "Please enter degrees list, seperated by comma", "3,3,3,3,3,3");
+                createGraphFromDegreesList(degreesListStr);
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Failed to create a graph from degrees list : " + degreesListStr);
+            }
+            return;
+        }
+        if (source.equals(_colorGraphAlgorithm)) {
+
+            Coloring.colorGraph_Greedy(graphFrame.getGraph());
+            graphFrame.repaint();
+            return;
+        }
+        if (source.equals(_colorGraphAlgorithm)) {
+            Coloring.colorGraph_Greedy(graphFrame.getGraph());
+            graphFrame.repaint();
+            return;
+        }
+        if (source.equals(_bfsAlgorithm)) {
+            _bfsDialog.setGraphFrame(graphFrame);
+            _bfsDialog.setVisible(true);
+            return;
+        }
+        if (source.equals(_dfsAlgorithm)) {
+            _dfsDialog.setGraphFrame(graphFrame);
+            _dfsDialog.setVisible(true);
+            return;
+        }
+        
+        if (source.equals(_saveGraphMenu)) {
+            final JFileChooser fc = new JFileChooser("/home/me/new_site/graphs");
+            int returnVal = fc.showSaveDialog(this);
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                File file = fc.getSelectedFile();
+                try {
+                    FileOutputStream fos = new FileOutputStream(file);
+                    ObjectOutputStream oos = new ObjectOutputStream(fos);
+                    oos.writeObject(graphFrame.getGraph());
+                    oos.close();
+                } catch (IOException ex) {
+                    Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+                    JOptionPane.showMessageDialog(this, "Graph Save Failed");
+                    return;
+                }
+            }
+            return;
+        }
+
+        if (source.equals(_fontSizeIncrease)) {
+            graphFrame.increaseFontSize();
+            graphFrame.repaint();
+            return;
+        }
+
+        if (source.equals(_fontSizeDecrease)) {
+            graphFrame.decreaseFontSize();
+            graphFrame.repaint();
             return;
         }
     }
@@ -404,7 +408,6 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
 
     public GraphFrame addGraphFrame(Graph g, GraphPanel.VerticesLayout layout, Vertex sourceVertex) {
         GraphFrame graphFrame = new GraphFrame(this, g);
-        graphFrame.init();
         setVisible(true);
 
         graphFrame.setLocation(0, 0);
@@ -434,7 +437,7 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
                     break;
                 }
             }
-        } catch (Exception e) {
+        } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | UnsupportedLookAndFeelException e) {
             // If Nimbus is not available, you can set the GUI to another look and feel.
         }
 
@@ -446,58 +449,33 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
         MessageListener.ENABLED = true;
     }
 
-    /**
-     * Invoked when a internal frame has been opened.
-     *
-     * @see javax.swing.JInternalFrame#show
-     */
+    @Override
     public void internalFrameOpened(InternalFrameEvent e) {
 
     }
 
-    /**
-     * Invoked when an internal frame is in the process of being closed. The
-     * close operation can be overridden at this point.
-     *
-     * @see javax.swing.JInternalFrame#setDefaultCloseOperation
-     */
+    @Override
     public void internalFrameClosing(InternalFrameEvent e) {
 
     }
 
-    /**
-     * Invoked when an internal frame has been closed.
-     *
-     * @see javax.swing.JInternalFrame#setClosed
-     */
+    @Override
     public void internalFrameClosed(InternalFrameEvent e) {
         GraphFrame graphFrame = (GraphFrame) e.getSource();
         JMenuItem windowMenuItem = _windowGraphMenus.get(graphFrame);
         _windowsMenu.remove(windowMenuItem);
     }
 
-    /**
-     * Invoked when an internal frame is iconified.
-     *
-     * @see javax.swing.JInternalFrame#setIcon
-     */
+    @Override
     public void internalFrameIconified(InternalFrameEvent e) {
 
     }
 
-    /**
-     * Invoked when an internal frame is de-iconified.
-     *
-     * @see javax.swing.JInternalFrame#setIcon
-     */
+    @Override
     public void internalFrameDeiconified(InternalFrameEvent e) {
     }
 
-    /**
-     * Invoked when an internal frame is activated.
-     *
-     * @see javax.swing.JInternalFrame#setSelected
-     */
+    @Override
     public void internalFrameActivated(InternalFrameEvent e) {
 
         GraphFrame graphFrame = (GraphFrame) e.getSource();
@@ -510,11 +488,7 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
         graphFrame.setSelectionMode(_selectionMode);
     }
 
-    /**
-     * Invoked when an internal frame is de-activated.
-     *
-     * @see javax.swing.JInternalFrame#setSelected
-     */
+    @Override
     public void internalFrameDeactivated(InternalFrameEvent e) {
 
     }

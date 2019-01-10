@@ -40,6 +40,9 @@ public class Utils {
         VERTEX_COLORS.put(9, Color.YELLOW);
     }
 
+    public static final List<Integer> FONT_SIZES = Arrays.asList(new Integer[]{10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30});
+    public static final int DEFAULT_FONT_SIZE = 12;
+    
     public static final String VI = "\u2713";
     
     public static final int getColorNumber(Color color) {
