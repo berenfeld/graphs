@@ -429,14 +429,6 @@ public class Graph extends BaseElement implements Serializable {
         return _diameterPath;
     }
 
-    class IntComparator implements Comparator<Integer> {
-
-        @Override
-        public int compare(Integer o1, Integer o2) {
-            return o2 - o1;
-        }
-    }
-
     public ArrayList<Integer> gradeSequence() {
         ArrayList<Integer> result = new ArrayList<>(_vertices.size());
         for (Vertex v : _vertices.values()) {

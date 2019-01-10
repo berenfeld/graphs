@@ -15,12 +15,10 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
@@ -103,9 +101,9 @@ public class BFSDialog extends JDialog implements ActionListener {
             if ( _layoutTreeCheckBox.isSelected()) {
                 graphFrame.setVerticesLayout(GraphPanel.VerticesLayout.Tree, source);
             }
-            graphFrame.showVertexattribute(BFS.BFS_VERTEX_DEPTH);
-            graphFrame.showVertexattribute(BFS.BFS_VERTEX_PATH_FROM_ROOT);
-            graphFrame.showVertexattribute(BFS.BFS_PREDECESSOR);
+            graphFrame.showVerticesAttributes(BFS.BFS_VERTEX_DEPTH);
+            graphFrame.showVerticesAttributes(BFS.BFS_VERTEX_PATH_FROM_ROOT);
+            graphFrame.showVerticesAttributes(BFS.BFS_PREDECESSOR);
             setVisible(false);
         }
     }

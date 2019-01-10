@@ -5,12 +5,8 @@
  */
 package graphs.gui;
 
-import graphs.algorithms.BFS;
 import graphs.algorithms.Factory;
-import graphs.algorithms.GraphFromDegreeSequence;
 import graphs.core.Graph;
-import graphs.core.Vertex;
-import graphs.utils.Utils;
 import java.awt.CardLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -18,20 +14,13 @@ import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
@@ -45,15 +34,14 @@ public class NewGraphDialog extends JDialog implements ActionListener {
 
     public NewGraphDialog(MainWindow mainWindow) {
         super(mainWindow, "New graph", true);
-        _mainWindow = mainWindow;
+        _mainWindow = mainWindow;        
         setMinimumSize(new Dimension(640, 480));
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         this.setLocation(dim.width / 2 - this.getSize().width / 2, dim.height / 2 - this.getSize().height / 2);
         setLayout(new GridLayout(6, 1));
-
         initComponents();
     }
-
+    
     private void initComponents() {
         initGeneralInformationPanel();
         initButtonsPanel();
@@ -186,7 +174,7 @@ public class NewGraphDialog extends JDialog implements ActionListener {
         int densityPercent = Integer.parseInt(densityStr.substring(0, densityStr.length() - 1));
 
         Graph graph = Factory.buildRandomGraph(vertices, directed, (double) densityPercent / 100);
-        _mainWindow.addGraphFrame(graph, GraphPanel.VerticesLayout.Circle);
+        _mainWindow.addGraphFrame(graph, GraphPanel.VerticesLayout.Random);
         setVisible(false);
     }
 

@@ -40,6 +40,8 @@ public class Utils {
         VERTEX_COLORS.put(9, Color.YELLOW);
     }
 
+    public static final String VI = "\u2713";
+    
     public static final int getColorNumber(Color color) {
         for (int colorNumber : VERTEX_COLORS.keySet()) {
             if (VERTEX_COLORS.get(colorNumber).equals(color)) {

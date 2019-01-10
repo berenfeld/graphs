@@ -5,6 +5,7 @@
  */
 package graphs.core;
 
+import graphs.utils.Utils;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -55,6 +56,11 @@ public class BaseElement implements Serializable {
     }
 
     public final void setAttribute(String name, Object value) {
+        if ( value != null) {
+            if (! (value instanceof Serializable)) {
+                Utils.warning("attribute " + name + " type " + value.getClass().getSimpleName());
+            }
+        }
         _attributes.put(name, value);
 
         for (AttributesListener listener : _attributeListeners) {

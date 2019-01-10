@@ -75,7 +75,7 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
         _messagesConsole.setText("Messages Console");
         _messagesConsole.setEditable(false);
     }
-
+    
     public void addMessage(String text)
     {
         _messagesConsole.setText(_messagesConsole.getText() + "\n" + text);
@@ -103,22 +103,22 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
     private JMenuItem _newGraph = new JMenuItem("New Graph Dialog");
     private JMenuItem _fromDegreesList = new JMenuItem("From Degrees Sequence");
 
-    private JMenuItem _saveGraphMenu = new JMenuItem("Save To File");
-    private JMenuItem _loadGraphMenu = new JMenuItem("Load From File");
+    private final JMenuItem _saveGraphMenu = new JMenuItem("Save To File");
+    private final JMenuItem _loadGraphMenu = new JMenuItem("Load From File");
 
-    private JMenu _algorithms = new JMenu("Algorithms");
-    private JMenuItem _colorGraphAlgorithm = new JMenuItem("Color Graph");
-    private JMenuItem _bfsAlgorithm = new JMenuItem("BFS");
-    private JMenuItem _dfsAlgorithm = new JMenuItem("DFS");
+    private final JMenu _algorithms = new JMenu("Algorithms");
+    private final JMenuItem _colorGraphAlgorithm = new JMenuItem("Color Graph");
+    private final JMenuItem _bfsAlgorithm = new JMenuItem("BFS");
+    private final JMenuItem _dfsAlgorithm = new JMenuItem("DFS");
 
-    private JMenu _windowsMenu = new JMenu("Windows");
+    private final JMenu _windowsMenu = new JMenu("Windows");
     private JMenuItem _cascadeWindows = new JMenuItem("Cascade");
     private JMenuItem _tileWindows = new JMenuItem("Tile");
     private Map<GraphFrame, JMenuItem> _windowGraphMenus = new HashMap<>();
-    private BFSDialog _bfsDialog = new BFSDialog(this);
-    private DFSDialog _dfsDialog = new DFSDialog(this);
-    private NewGraphDialog _newGraphDialog = new NewGraphDialog(this);
-    private GraphPropertiesDialog _graphPropertiesDialog = new GraphPropertiesDialog(this);
+    private final BFSDialog _bfsDialog = new BFSDialog(this);
+    private final DFSDialog _dfsDialog = new DFSDialog(this);
+    private final NewGraphDialog _newGraphDialog = new NewGraphDialog(this);
+    private final GraphPropertiesDialog _graphPropertiesDialog = new GraphPropertiesDialog(this);
 
     private void initMenu() {
         _newGraph.addActionListener(this);
@@ -242,7 +242,7 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
                     ObjectOutputStream oos = new ObjectOutputStream(fos);
                     oos.writeObject(graphFrame.getGraph());
                     oos.close();
-                } catch (Exception ex) {
+                } catch (IOException ex) {
                     Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
                     JOptionPane.showMessageDialog(this, "Graph Save Failed");
                     return;
@@ -256,13 +256,13 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
             int returnVal = fc.showOpenDialog(this);
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 File file = fc.getSelectedFile();
-                Graph graph = null;
+                Graph graph;
                 try {
                     FileInputStream fis = new FileInputStream(fc.getSelectedFile());
                     ObjectInputStream ois = new ObjectInputStream(fis);
                     graph = (Graph) ois.readObject();
                     ois.close();
-                } catch (Exception ex) {
+                } catch (IOException | ClassNotFoundException ex) {
                     Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
                     JOptionPane.showMessageDialog(this, "Graph Open Failed");
                     return;
@@ -404,6 +404,7 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
 
     public GraphFrame addGraphFrame(Graph g, GraphPanel.VerticesLayout layout, Vertex sourceVertex) {
         GraphFrame graphFrame = new GraphFrame(this, g);
+        graphFrame.init();
         setVisible(true);
 
         graphFrame.setLocation(0, 0);

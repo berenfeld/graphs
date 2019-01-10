@@ -6,10 +6,10 @@
 package graphs.gui;
 
 import graphs.algorithms.BFS;
-import graphs.algorithms.BiPartite;
 import graphs.algorithms.MaximumCut;
 import graphs.core.*;
 import graphs.utils.Utils;
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -17,8 +17,7 @@ import java.awt.Graphics2D;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.geom.Ellipse2D;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
+import java.io.Serializable;
 import java.util.*;
 import javax.swing.*;
 
@@ -31,28 +30,34 @@ public class GraphPanel extends JPanel implements ComponentListener {
     public GraphPanel(Graph graph) {
         super();
         _graph = graph;
-        addComponentListener(this);
+        
     }
 
-    public enum VerticesLayout {
+    public enum VerticesLayout implements Serializable {
         None,
         Grid,
         Circle,
         BiPartite,
-        Tree
+        Tree,
+        Random,
     };
+    
+    public void init()
+    {
+        addComponentListener(this);
+    }
 
-    private Graph _graph;
+    private final Graph _graph;
     private Vertex _selectedVertex;
 
-    private List<String> _showVertexAttributes = new ArrayList<String>();
+    private final List<String> _showVertexAttributes = new ArrayList<>();
+    private int _edgesSize = 2;
+    private int _verticesSize = 12;
 
-    private int _verticesSize = 10;
-
-    public static final String GUI_LAYOUT = "_gui-Vertices-Layout";
-    public static final String GUI_SELECTED_VERTEX = "_gui-Selected-Vertex";
-    public static final String VERTEX_X = "_gui-Vertex-X";
-    public static final String VERTEX_Y = "_gui-Vertex-Y";
+    public static final String GUI_LAYOUT = "_gui-vertices-layout";
+    public static final String GUI_SELECTED_VERTEX = "_gui-selected-vertex";
+    public static final String VERTEX_X = "_gui-vertex-x";
+    public static final String VERTEX_Y = "_gui-vertex-y";
 
     public void setSelectedVertex(Vertex v) {
         _selectedVertex = v;
@@ -73,6 +78,9 @@ public class GraphPanel extends JPanel implements ComponentListener {
             case Tree:
                 layoutVerticesTree();
                 break;
+                case Random:
+                layoutVerticesRandom();
+                break;
         }
         _graph.setAttribute(GUI_LAYOUT, layout);
         repaint();
@@ -89,6 +97,12 @@ public class GraphPanel extends JPanel implements ComponentListener {
         repaint();
     }
 
+    public void setEdgesSize(int size)
+    {
+        _edgesSize = size;
+        repaint();
+    }
+    
     public void showVertexAttribute(String attribute) {
         _showVertexAttributes.add(attribute);
     }
@@ -97,12 +111,17 @@ public class GraphPanel extends JPanel implements ComponentListener {
         _showVertexAttributes.remove(attribute);
     }
 
-    public void toggleShowVertexAttribute(String attribute) {
+    public boolean vertexAttributesShown(String attribute) {
+        return _showVertexAttributes.contains(attribute);
+    }
+    
+    public boolean toggleShowVertexAttribute(String attribute) {
         if (_showVertexAttributes.contains(attribute)) {
             hideVertexAttribute(attribute);
-        } else {
-            showVertexAttribute(attribute);
-        }
+            return false;
+        } 
+        showVertexAttribute(attribute);
+        return true;        
     }
 
     private void layoutVerticesGrid() {
@@ -217,6 +236,12 @@ public class GraphPanel extends JPanel implements ComponentListener {
 
     }
 
+    private void layoutVerticesRandom() {
+        for (Vertex v : _graph.getVertices()) {
+            v.setAttribute(VERTEX_X, Utils.RANDOM.nextDouble());
+            v.setAttribute(VERTEX_Y, Utils.RANDOM.nextDouble());
+        }
+    }
     private int _fontSize = 16;
 
     private Font _regularFont = new Font("Arial", Font.PLAIN, _fontSize);
@@ -225,36 +250,33 @@ public class GraphPanel extends JPanel implements ComponentListener {
 
         Graphics2D g2 = (Graphics2D) g;
 
+        g2.setStroke(new BasicStroke(_edgesSize));
         double panelWidth = getSize().getWidth();
         double panelHeight = getSize().getHeight();
 
-        double vertices = _graph.getNumberOfVertices();
-        int gridWidth = (int) Math.max(1, Math.sqrt(vertices * 2));
-        int gridHeight = (int) Math.ceil(vertices / gridWidth);
-
-        int cellWidth = (int) (panelWidth / (gridWidth + 1));
-        int cellHeight = (int) (panelHeight / (gridHeight + 1));
-
-        int i = 0;
         for (Vertex v : _graph.getVertices()) {
             int vertexX = (int) ((double) v.getAttribute(VERTEX_X) * panelWidth);
             int vertexY = (int) ((double) v.getAttribute(VERTEX_Y) * panelHeight);
 
             g.setColor(Utils.VERTEX_COLORS.get(v.getColor()));
+            
             g.setFont(_regularFont);            
 
             int height = g.getFontMetrics().getHeight();
-            //Rectangle2D textRectAngle = g.getFontMetrics().getStringBounds(v.getName(), g);
-
-            //int startX = vertexX - (int) textRectAngle.getWidth() / 2;
             int line = 1;
             if (_showVertexAttributes.contains(Vertex.VERTEX_ATTRIBUTE_NAME)) {
                 g.drawString(v.getName(), vertexX, vertexY + (line * height));
                 line ++;
             }
+            if (_showVertexAttributes.contains(Vertex.VERTEX_ATTRIBUTE_COLOR)) {
+                g.setColor(Utils.VERTEX_COLORS.get(v.getColor()));
+            }
 
             for (String attribute : v.attributeNames()) {
                 if (Vertex.VERTEX_ATTRIBUTE_NAME.equals(attribute)) {
+                    continue;
+                }
+                if (Vertex.VERTEX_ATTRIBUTE_COLOR.equals(attribute)) {
                     continue;
                 }
                 if (!_showVertexAttributes.contains(attribute)) {
@@ -267,8 +289,6 @@ public class GraphPanel extends JPanel implements ComponentListener {
                 line++;
             }
             g2.fill(new Ellipse2D.Double(vertexX - (_verticesSize / 2), vertexY - (_verticesSize / 2), _verticesSize, _verticesSize));
-
-            i++;
         }
 
         g.setColor(Color.BLACK);

@@ -151,8 +151,8 @@ public class Factory {
         return graph;
     }
 
-    public static Graph copyVerticesFrom(Graph other) {
-        Graph result = new Graph("Copy of " + other.getName(), other.isDirected());
+    public static Graph copyVerticesFrom(Graph other, String name) {
+        Graph result = new Graph(name, other.isDirected());
         try {
             for (Vertex v : other.getVertices()) {
                 Vertex added = result.addVertex(v.getName());
@@ -164,8 +164,12 @@ public class Factory {
         return result;
     }
 
-    public static Graph copyOf(Graph other) {
-        Graph result = copyVerticesFrom(other);
+    public static Graph copyVerticesFrom(Graph other) {
+        return copyVerticesFrom(other, "Copy of " + other.getName());
+    }
+    
+    public static Graph copyOf(Graph other, String name) {
+        Graph result = copyVerticesFrom(other, name);
         try {
 
             for (Edge edge : other.getEdges()) {
@@ -178,6 +182,10 @@ public class Factory {
         return result;
     }
 
+    public static Graph copyOf(Graph other) {
+        return copyOf(other, "Copy of " + other.getName());
+    }
+    
     public static Graph complementOf(Graph graph) {
         Graph result = copyVerticesFrom(graph);
         result.setName("Complement of " + graph.getName());

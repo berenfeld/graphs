@@ -34,53 +34,56 @@ public final class GraphFrame extends JInternalFrame implements MouseListener, A
         super(graph.getName(), true, true, true, true);
         _mainWindow = mainWindow;
         _graph = graph;
+        _canvas = new GraphPanel(_graph);
+    }
 
-        for (Vertex v : graph.getVertices()) {
+    public void init() {
+        setLocation(0, 0);
+        for (Vertex v : _graph.getVertices()) {
             v.addAttributeListener(this);
         }
-        setLocation(0, 0);
 
-        _canvas = new GraphPanel(graph);
-        getContentPane().add(_canvas, BorderLayout.CENTER);
-
+        _canvas.init();
         _canvas.addMouseListener(this);
         _canvas.addMouseMotionListener(this);
+        getContentPane().add(_canvas, BorderLayout.CENTER);
         initMenus();
-
-        _canvas.showVertexAttribute(Vertex.VERTEX_ATTRIBUTE_NAME);
-
+        showVerticesAttributes(Vertex.VERTEX_ATTRIBUTE_NAME);
     }
+
     private final MainWindow _mainWindow;
     private MainWindow.SelectionMode _selectionMode = MainWindow.SelectionMode.Normal;
-    private Graph _graph;
-    private JPopupMenu _graphMenu = new JPopupMenu();
-    private JPopupMenu _vertexMenu = new JPopupMenu();
-    private JPopupMenu _edgeMenu = new JPopupMenu();
-    private JMenuItem _graphNameMenu = new JMenuItem();
-    private JMenuItem _vertexNameMenu = new JMenuItem();
-    private JMenuItem _edgeNameMenu = new JMenuItem();
+    private final Graph _graph;
+    private final JPopupMenu _graphMenu = new JPopupMenu();
+    private final JPopupMenu _vertexMenu = new JPopupMenu();
+    private final JPopupMenu _edgeMenu = new JPopupMenu();
+    private final JMenuItem _graphNameMenu = new JMenuItem();
+    private final JMenuItem _vertexNameMenu = new JMenuItem();
+    private final JMenuItem _edgeNameMenu = new JMenuItem();
     private Vertex _selectedVertex;
     private Edge _selectedEdge;
     private final JMenuItem _changeGraphNameMenu = new JMenuItem("Change Name");
     private final JMenuItem _graphPropertiesMenu = new JMenuItem("Properties");
     private final JMenuItem _addVertexMenu = new JMenuItem("Add Vertex");
     private final JMenuItem _createComplementGraph = new JMenuItem("Create Complement Graph");
-    private JMenuItem _changeVertexNameMenu = new JMenuItem("Change Name");
-    private JMenuItem _removeVertexMenu = new JMenuItem("Remove");
-    private JMenu _showVerticesAttributes2 = new JMenu("Show Attributes");
-    private JMenuItem _removeEdgeMenu = new JMenuItem("Remove");
-    private JMenu _verticesSizeMenu = new JMenu("Vertices Size");
-    private JMenu _fontSizeMenu = new JMenu("Font Size");
-    private JMenu _verticesLayoutMenu = new JMenu("Vertices Layout");
-    private JMenu _showVerticesAttributes = new JMenu("Show Vertices Attributes");
-    private Map<String, List< JMenuItem>> _verticesAttributesMenu = new HashMap<>();
-    private JMenuItem _verticesLayoutGridMenu = new JMenuItem("Grid");
-    private JMenuItem _verticesLayoutCircleMenu = new JMenuItem("Circle");
-    private JMenuItem _verticesLayoutBiPartiteMenu = new JMenuItem("Bi-Partite");
-    private JMenuItem _verticesLayoutTreeMenu = new JMenuItem("Tree");
-    private List<JMenuItem> _verticesSizeMenus = new ArrayList<JMenuItem>();
-    private List<JMenuItem> _fontSizeMenus = new ArrayList<JMenuItem>();
-    private GraphPanel _canvas;
+    private final JMenuItem _changeVertexNameMenu = new JMenuItem("Change Name");
+    private final JMenuItem _removeVertexMenu = new JMenuItem("Remove");
+    private final JMenu _showVerticesAttributes2 = new JMenu("Show Attributes");
+    private final JMenuItem _removeEdgeMenu = new JMenuItem("Remove");
+    private final JMenu _verticesSizeMenu = new JMenu("Vertices Size");
+    private final JMenu _edgesSizeMenu = new JMenu("Edges Size");
+    private final JMenu _fontSizeMenu = new JMenu("Font Size");
+    private final JMenu _showVerticesAttributes = new JMenu("Show Vertices Attributes");
+    private final JMenu _verticesLayoutMenu = new JMenu("Vertices Layout");    
+    private final Map<String, List< JMenuItem>> _verticesAttributesMenu = new HashMap<>();
+    private final JMenuItem _verticesLayoutGridMenu = new JMenuItem("Grid");
+    private final JMenuItem _verticesLayoutCircleMenu = new JMenuItem("Circle");
+    private final JMenuItem _verticesLayoutBiPartiteMenu = new JMenuItem("Bi-Partite");
+    private final JMenuItem _verticesLayoutTreeMenu = new JMenuItem("Tree");
+    private final List<JMenuItem> _verticesSizeMenus = new ArrayList<>();
+    private final List<JMenuItem> _edgesSizeMenus = new ArrayList<>();
+    private final List<JMenuItem> _fontSizeMenus = new ArrayList<>();
+    private final GraphPanel _canvas;
     private int _clickX, _clickY;
     private double _panelWidth, _panelHeight;
     private Vertex _draggedVertex;
@@ -111,11 +114,20 @@ public final class GraphFrame extends JInternalFrame implements MouseListener, A
         _graphMenu.add(_createComplementGraph);
         _createComplementGraph.addActionListener(this);
         _graphMenu.add(_verticesSizeMenu);
+        _graphMenu.add(_edgesSizeMenu);
+
         for (int i = 3; i <= 15; i++) {
-            JMenuItem verticesSizeMenuItem = new JMenuItem(i + " Points");
+            JMenuItem verticesSizeMenuItem = new JMenuItem(i + " Point");
             _verticesSizeMenus.add(verticesSizeMenuItem);
             verticesSizeMenuItem.addActionListener(this);
             _verticesSizeMenu.add(verticesSizeMenuItem);
+        }
+        
+        for (int i = 1; i <= 5; i++) {
+            JMenuItem edgesSizeMenuItem = new JMenuItem(i + " Point");
+            _edgesSizeMenus.add(edgesSizeMenuItem);
+            edgesSizeMenuItem.addActionListener(this);
+            _edgesSizeMenu.add(edgesSizeMenuItem);
         }
         _graphMenu.add(_fontSizeMenu);
         for (int i = 10; i <= 30; i += 2) {
@@ -136,7 +148,7 @@ public final class GraphFrame extends JInternalFrame implements MouseListener, A
 
         _graphMenu.add(_showVerticesAttributes);
         Vertex v = _graph.getFirstVertex();
-        updateVerticesAttributesMenu();
+        createVerticesAttributesMenu();
 
         _vertexNameMenu.setEnabled(false);
         _vertexMenu.add(_vertexNameMenu);
@@ -206,7 +218,6 @@ public final class GraphFrame extends JInternalFrame implements MouseListener, A
             }
             if (SwingUtilities.isRightMouseButton(e)) {
                 handleRightMouseClicked(e);
-                return;
             }
         } catch (Exception ex) {
             Utils.exception(ex);
@@ -236,8 +247,6 @@ public final class GraphFrame extends JInternalFrame implements MouseListener, A
             }
         }
         _graphMenu.show(_canvas, e.getX(), e.getY());
-        return;
-
     }
 
     @Override
@@ -275,7 +284,6 @@ public final class GraphFrame extends JInternalFrame implements MouseListener, A
             _newEdgeToVertex.setAttribute(GraphPanel.VERTEX_Y, (double) _clickY / _panelHeight);
             _newEdge = _graph.addEdge(_newEdgeFromVertex, _newEdgeToVertex);
             repaint();
-            return;
         }
 
     }
@@ -361,7 +369,6 @@ public final class GraphFrame extends JInternalFrame implements MouseListener, A
             _newEdgeToVertex.setAttribute(GraphPanel.VERTEX_X, (double) _clickX / _panelWidth);
             _newEdgeToVertex.setAttribute(GraphPanel.VERTEX_Y, (double) _clickY / _panelHeight);
             repaint();
-            return;
         }
     }
 
@@ -379,10 +386,6 @@ public final class GraphFrame extends JInternalFrame implements MouseListener, A
 
     public void setVerticesLayout(GraphPanel.VerticesLayout layout) {
         setVerticesLayout(layout, null);
-    }
-
-    public void showVertexattribute(String attribute) {
-        _canvas.showVertexAttribute(attribute);
     }
 
     private void handleEvent(ActionEvent e) throws Exception {
@@ -458,7 +461,13 @@ public final class GraphFrame extends JInternalFrame implements MouseListener, A
         for (List<JMenuItem> showVerticesAttributeMenuItems : _verticesAttributesMenu.values()) {
             for (JMenuItem showVerticesAttributeMenuItem : showVerticesAttributeMenuItems) {
                 if (source.equals(showVerticesAttributeMenuItem)) {
-                    _canvas.toggleShowVertexAttribute(showVerticesAttributeMenuItem.getText());
+                    String attribute = showVerticesAttributeMenuItem.getToolTipText();
+                    boolean shown = _canvas.toggleShowVertexAttribute(attribute);
+                    if (shown) {
+                        showVerticesAttributes(attribute);
+                    } else {
+                        hideVerticesAttributes(attribute);
+                    }
                     repaint();
                     return;
                 }
@@ -472,6 +481,15 @@ public final class GraphFrame extends JInternalFrame implements MouseListener, A
                 return;
             }
         }
+
+        for (JMenuItem edgesSizeMenuItem : _edgesSizeMenus) {
+            if (source.equals(edgesSizeMenuItem)) {
+                int pointSize = new Scanner(new StringReader(edgesSizeMenuItem.getText())).nextInt();
+                _canvas.setEdgesSize(pointSize);
+                return;
+            }
+        }
+
         for (JMenuItem fontSizeMenuItem : _fontSizeMenus) {
             if (source.equals(fontSizeMenuItem)) {
                 int fontSize = new Scanner(new StringReader(fontSizeMenuItem.getText())).nextInt();
@@ -510,14 +528,17 @@ public final class GraphFrame extends JInternalFrame implements MouseListener, A
         if (name.startsWith("_")) {
             return;
         }
+
         List<JMenuItem> menuItems = new ArrayList<>();
 
         JMenuItem showAttributeMenuItem = new JMenuItem(name);
+        showAttributeMenuItem.setToolTipText(name);
         showAttributeMenuItem.addActionListener(this);
         _showVerticesAttributes.add(showAttributeMenuItem);
         menuItems.add(showAttributeMenuItem);
 
         JMenuItem showAttributeMenuItem2 = new JMenuItem(name);
+        showAttributeMenuItem2.setToolTipText(name);
         showAttributeMenuItem2.addActionListener(this);
         _showVerticesAttributes2.add(showAttributeMenuItem2);
         menuItems.add(showAttributeMenuItem2);
@@ -525,7 +546,7 @@ public final class GraphFrame extends JInternalFrame implements MouseListener, A
         _verticesAttributesMenu.put(name, menuItems);
     }
 
-    private void updateVerticesAttributesMenu() {
+    private void createVerticesAttributesMenu() {
         for (Vertex v : _graph.getVertices()) {
             for (String attribute : v.attributeNames()) {
                 if (attribute.startsWith("_")) {
@@ -537,5 +558,20 @@ public final class GraphFrame extends JInternalFrame implements MouseListener, A
                 addVerticesAttribute(attribute);
             }
         }
+    }
+
+    public void showVerticesAttributes(String attribute) {
+        _canvas.showVertexAttribute(attribute);
+        for (JMenuItem showVerticesAttributeMenuItem : _verticesAttributesMenu.get(attribute)) {
+            showVerticesAttributeMenuItem.setText(attribute + " " + Utils.VI);
+        }
+    }
+
+    public void hideVerticesAttributes(String attribute) {
+        _canvas.hideVertexAttribute(attribute);
+        for (JMenuItem showVerticesAttributeMenuItem : _verticesAttributesMenu.get(attribute)) {
+            showVerticesAttributeMenuItem.setText(attribute);
+        }
+
     }
 }

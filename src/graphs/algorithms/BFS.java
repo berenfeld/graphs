@@ -22,7 +22,7 @@ public class BFS {
    
     public static final String BFS_INITIAL_VERTEX = "bfs-Initial-Vertex";
     public static final String BFS_MAXIMUM_DEPTH = "bfs-Maximum-Depth";
-    public static final String BFS_VERTEX_DEPTH = "bfs-septh";
+    public static final String BFS_VERTEX_DEPTH = "bfs-depth";
     public static final String BFS_VERTEX_PATH_FROM_ROOT = "bfs-path";
     public static final String BFS_PREDECESSOR = "bfs-predecesor";
     public static final String BFS_MAXIMUM_DEPTH_VERTEX = "bfs-Maximum-Depth-Vertex";
@@ -38,8 +38,7 @@ public class BFS {
     public static final int BFS_EDGE_COLOR_TRAVERESED = Utils.getColorNumber(Color.BLACK);
 
     public static Graph bfs(Graph graph, Vertex initial, boolean copy) {
-        Graph bfsGraph = Factory.copyOf(graph);
-        bfsGraph.setName("BFS on " + graph.getName());
+        Graph bfsGraph = Factory.copyOf(graph, "BFS on " + graph.getName());
         Graph resultGraph = graph;
         if (copy) {
             resultGraph = bfsGraph;
@@ -57,7 +56,7 @@ public class BFS {
             start.setAttribute(BFS_VERTEX_DEPTH, 0);
 
             resultGraph.setAttribute(BFS_INITIAL_VERTEX, start.getName());
-            Map<Integer, Integer> verticesPerLevel = new HashMap<Integer, Integer>();
+            Map<Integer, Integer> verticesPerLevel = new HashMap<>();
             verticesPerLevel.put(0, 1);           
 
             start.setColor(BFS_COLOR_VISITING);
