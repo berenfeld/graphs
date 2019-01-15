@@ -209,8 +209,12 @@ public class Factory {
     }
 
     public static Graph transposeOf(Graph graph) {
+        if (! graph.isDirected()) {
+            return copyOf(graph, "Transpose of " + graph.getName());
+        }
         Graph result = copyVerticesFrom(graph);
         result.setName("Transpose of " + graph.getName());
+        
         try {
             for (Vertex v : result.getVertices()) {
                 for (Vertex u : result.getVertices()) {

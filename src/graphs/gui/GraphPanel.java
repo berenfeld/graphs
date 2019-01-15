@@ -50,7 +50,7 @@ public class GraphPanel extends JPanel implements ComponentListener {
     private final Graph _graph;
     private Vertex _selectedVertex;
 
-    private final List<String> _showVertexAttributes = new ArrayList<>();
+    //private final List<String> _showVertexAttributes = new ArrayList<>();
     private int _edgesSize = 2;
     private int _verticesSize = 12;
 
@@ -59,6 +59,7 @@ public class GraphPanel extends JPanel implements ComponentListener {
     public static final String VERTEX_X = "_gui-vertex-x";
     public static final String VERTEX_Y = "_gui-vertex-y";
     public static final String GUI_FONT_SIZE = "_gui-font-size";
+    public static final String GUI_VERTICES_ATTRIBUTES = "_gui-vertices-attributes";
 
     public void setSelectedVertex(Vertex v) {
         _selectedVertex = v;
@@ -103,19 +104,27 @@ public class GraphPanel extends JPanel implements ComponentListener {
     }
 
     public void showVertexAttribute(String attribute) {
-        _showVertexAttributes.add(attribute);
+        ArrayList<String> showVertexAttributes = (ArrayList<String>) _graph.getAttribute(GUI_VERTICES_ATTRIBUTES, new ArrayList<>());
+        if ( ! showVertexAttributes.contains(attribute)) {
+            showVertexAttributes.add(attribute);
+            _graph.setAttribute(GUI_VERTICES_ATTRIBUTES, showVertexAttributes);
+        }
     }
 
     public void hideVertexAttribute(String attribute) {
-        _showVertexAttributes.remove(attribute);
+        ArrayList<String> showVertexAttributes = (ArrayList<String>) _graph.getAttribute(GUI_VERTICES_ATTRIBUTES, new ArrayList<>());
+        showVertexAttributes.remove(attribute);
+        _graph.setAttribute(GUI_VERTICES_ATTRIBUTES, showVertexAttributes);
     }
 
     public boolean vertexAttributesShown(String attribute) {
-        return _showVertexAttributes.contains(attribute);
+        ArrayList<String> showVertexAttributes = (ArrayList<String>) _graph.getAttribute(GUI_VERTICES_ATTRIBUTES, new ArrayList<>());
+        return showVertexAttributes.contains(attribute);
     }
 
     public boolean toggleShowVertexAttribute(String attribute) {
-        if (_showVertexAttributes.contains(attribute)) {
+        ArrayList<String> showVertexAttributes = (ArrayList<String>) _graph.getAttribute(GUI_VERTICES_ATTRIBUTES, new ArrayList<>());
+        if (showVertexAttributes.contains(attribute)) {
             hideVertexAttribute(attribute);
             return false;
         }
@@ -259,6 +268,11 @@ public class GraphPanel extends JPanel implements ComponentListener {
         }
     }
 
+    public List<String> shownVerticesAttribtes()
+    {
+        return (ArrayList<String>) _graph.getAttribute(GUI_VERTICES_ATTRIBUTES, new ArrayList<>());
+    }
+    
     private void repaintGraph(Graphics g) {
 
         Graphics2D g2 = (Graphics2D) g;
@@ -267,6 +281,8 @@ public class GraphPanel extends JPanel implements ComponentListener {
         double panelWidth = getSize().getWidth();
         double panelHeight = getSize().getHeight();
 
+        ArrayList<String> showVertexAttributes = (ArrayList<String>) _graph.getAttribute(GUI_VERTICES_ATTRIBUTES, new ArrayList<>());
+        
         for (Vertex v : _graph.getVertices()) {
             int vertexX = (int) ((double) v.getAttribute(VERTEX_X) * panelWidth);
             int vertexY = (int) ((double) v.getAttribute(VERTEX_Y) * panelHeight);
@@ -278,11 +294,11 @@ public class GraphPanel extends JPanel implements ComponentListener {
 
             int height = g.getFontMetrics().getHeight();
             int line = 1;
-            if (_showVertexAttributes.contains(Vertex.VERTEX_ATTRIBUTE_NAME)) {
+            if (showVertexAttributes.contains(Vertex.VERTEX_ATTRIBUTE_NAME)) {
                 g.drawString(v.getName(), vertexX, vertexY + (line * height));
                 line++;
             }
-            if (_showVertexAttributes.contains(Vertex.VERTEX_ATTRIBUTE_COLOR)) {
+            if (showVertexAttributes.contains(Vertex.VERTEX_ATTRIBUTE_COLOR)) {
                 g.setColor(Utils.VERTEX_COLORS.get(v.getColor()));
             }
 
@@ -293,7 +309,7 @@ public class GraphPanel extends JPanel implements ComponentListener {
                 if (Vertex.VERTEX_ATTRIBUTE_COLOR.equals(attribute)) {
                     continue;
                 }
-                if (!_showVertexAttributes.contains(attribute)) {
+                if (!showVertexAttributes.contains(attribute)) {
                     continue;
                 }
 

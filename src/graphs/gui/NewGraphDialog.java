@@ -147,25 +147,29 @@ public class NewGraphDialog extends JDialog implements ActionListener {
 
     void createEmptyGraph(int vertices, boolean directed) {
         Graph graph = Factory.buildEmptyGraph(vertices, directed);
-        _mainWindow.addGraphFrame(graph, GraphPanel.VerticesLayout.Circle);
+        GraphFrame graphFrame = _mainWindow.addGraphFrame(graph);
+        graphFrame.setVerticesLayout(GraphPanel.VerticesLayout.Random);
         setVisible(false);
     }
 
     void createCompleteGraph(int vertices, boolean directed) {
         Graph graph = Factory.buildCompleteGraph(vertices, directed);
-        _mainWindow.addGraphFrame(graph, GraphPanel.VerticesLayout.Circle);
+        GraphFrame graphFrame = _mainWindow.addGraphFrame(graph);
+        graphFrame.setVerticesLayout(GraphPanel.VerticesLayout.Circle);
         setVisible(false);
     }
 
     void createCycleGraph(int vertices, boolean directed) {
         Graph graph = Factory.buildCycleGraph(vertices, directed);
-        _mainWindow.addGraphFrame(graph, GraphPanel.VerticesLayout.Circle);
+        GraphFrame graphFrame = _mainWindow.addGraphFrame(graph);
+        graphFrame.setVerticesLayout(GraphPanel.VerticesLayout.Circle);
         setVisible(false);
     }
 
     void createLineGraph(int vertices, boolean directed) {
         Graph graph = Factory.buildLineGraph(vertices, directed);
-        _mainWindow.addGraphFrame(graph, GraphPanel.VerticesLayout.Circle);
+        GraphFrame graphFrame = _mainWindow.addGraphFrame(graph);
+        graphFrame.setVerticesLayout(GraphPanel.VerticesLayout.Circle);
         setVisible(false);
     }
     
@@ -174,7 +178,8 @@ public class NewGraphDialog extends JDialog implements ActionListener {
         int densityPercent = Integer.parseInt(densityStr.substring(0, densityStr.length() - 1));
 
         Graph graph = Factory.buildRandomGraph(vertices, directed, (double) densityPercent / 100);
-        _mainWindow.addGraphFrame(graph, GraphPanel.VerticesLayout.Random);
+        GraphFrame graphFrame = _mainWindow.addGraphFrame(graph);
+        graphFrame.setVerticesLayout(GraphPanel.VerticesLayout.Random);
         setVisible(false);
     }
 
@@ -184,12 +189,11 @@ public class NewGraphDialog extends JDialog implements ActionListener {
         int verticesSideA = (Integer) _bipartiteGraphSideAVerticesComboBox.getSelectedItem();
         verticesSideA = Math.min(verticesSideA, vertices);
         Graph graph = Factory.buildRandomBiPartiteGraph(verticesSideA, vertices - verticesSideA, (double) densityPercent / 100);
-        _mainWindow.addGraphFrame(graph, GraphPanel.VerticesLayout.BiPartite);
+        GraphFrame graphFrame = _mainWindow.addGraphFrame(graph);
+        graphFrame.setVerticesLayout(GraphPanel.VerticesLayout.BiPartite);
         setVisible(false);
     }
-
-    
-      
+         
     public void showDialog()
     {
         

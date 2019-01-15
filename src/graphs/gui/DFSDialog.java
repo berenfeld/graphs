@@ -91,7 +91,7 @@ public class DFSDialog extends JDialog implements ActionListener {
             boolean copy = _copyGraphCheckBox.isSelected();
             Graph dfsGraph = DFS.dfs(_graph, source, copy);
             if ( copy ) {
-                GraphFrame graphFrame = _mainWindow.addGraphFrame(dfsGraph, GraphPanel.VerticesLayout.None);
+                GraphFrame graphFrame = _mainWindow.addGraphFrame(dfsGraph);
                 graphFrame.showVerticesAttributes(DFS.DFS_DISCOVERY_TIME);
                 graphFrame.showVerticesAttributes(DFS.DFS_FINISH_TIME);
                 

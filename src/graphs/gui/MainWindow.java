@@ -72,7 +72,7 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
 
         setResizable(false);
         setVisible(true);
-        setBounds(0, 0, 1280, 720);
+        setBounds(0, 0, 1440, 1080);
 
         getContentPane().add(_messagesConsoleScroll, BorderLayout.SOUTH);
         _messagesConsoleScroll.setPreferredSize(new Dimension(getWidth(), getHeight() / 5));
@@ -172,7 +172,7 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
         List<Integer> degreesSequence = Utils.parseList(degreesList);
         Utils.debug("parse degrees list " + degreesSequence);
         Graph graph = GraphFromDegreeSequence.fromDegreeSequence(degreesSequence);
-        addGraphFrame(graph, GraphPanel.VerticesLayout.Circle);
+        addGraphFrame(graph);
     }
 
     @Override
@@ -399,14 +399,6 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
     }
 
     public GraphFrame addGraphFrame(Graph g) {
-        return addGraphFrame(g, GraphPanel.VerticesLayout.None);
-    }
-
-    public GraphFrame addGraphFrame(Graph g, GraphPanel.VerticesLayout layout) {
-        return addGraphFrame(g, layout, null);
-    }
-
-    public GraphFrame addGraphFrame(Graph g, GraphPanel.VerticesLayout layout, Vertex sourceVertex) {
         GraphFrame graphFrame = new GraphFrame(this, g);
         setVisible(true);
 
@@ -417,13 +409,9 @@ public class MainWindow extends JFrame implements ActionListener, InternalFrameL
         graphFrame.addInternalFrameListener(this);
         _desktopPane.add(graphFrame);
         selectGraphFrame(graphFrame);
-
-        if (sourceVertex != null) {
-            graphFrame.setSelectedVertex(sourceVertex);
-        }
-
-        if (layout != GraphPanel.VerticesLayout.None) {
-            graphFrame.setVerticesLayout(layout);
+       
+        if (_desktopPane.getAllFrames().length == 2) {
+            tileWindows();
         }
         return graphFrame;
     }
