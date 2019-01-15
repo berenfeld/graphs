@@ -20,14 +20,14 @@ import java.util.logging.*;
  */
 public class BFS {
    
-    public static final String BFS_INITIAL_VERTEX = "bfs-Initial-Vertex";
-    public static final String BFS_MAXIMUM_DEPTH = "bfs-Maximum-Depth";
+    public static final String BFS_INITIAL_VERTEX = "bfs-initial-vertex";
+    public static final String BFS_MAXIMUM_DEPTH = "bfs-maximum-depth";
     public static final String BFS_VERTEX_DEPTH = "bfs-depth";
     public static final String BFS_VERTEX_PATH_FROM_ROOT = "bfs-path";
     public static final String BFS_PREDECESSOR = "bfs-predecesor";
-    public static final String BFS_MAXIMUM_DEPTH_VERTEX = "bfs-Maximum-Depth-Vertex";
+    public static final String BFS_MAXIMUM_DEPTH_VERTEX = "bfs-maximum-depth-vertex";
     public static final String BFS_VERTEX_NUMBER_IN_LEVEL = "bfs-vertex-number-in-level";    
-    public static final String BFS_NUMBER_OF_VERTICES_IN_EACH_LEVEL = "bfs-Number-Of-Vertices-In-Each-Level";
+    public static final String BFS_NUMBER_OF_VERTICES_IN_EACH_LEVEL = "bfs-number-of-vertices-in-each-level";
     
     
     public static final int BFS_COLOR_NOT_VISITED = Utils.getColorNumber(Color.WHITE);
@@ -115,7 +115,7 @@ public class BFS {
             }
 
             
-
+/*
             for (Vertex vertex : resultGraph.getVertices()) {
                 if (vertex.getColor() != BFS_COLOR_VISITED) {
                     bfsGraph.removeVertex(vertex);
@@ -127,6 +127,7 @@ public class BFS {
                     bfsGraph.removeEdge(edge.getFromVertex().getName(), edge.getToVertex().getName());
                 }
             }
+*/
 
             resultGraph.setAttribute(BFS_MAXIMUM_DEPTH, maxDepth);
             resultGraph.setAttribute(BFS_NUMBER_OF_VERTICES_IN_EACH_LEVEL, verticesPerLevel);

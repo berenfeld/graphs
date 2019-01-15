@@ -24,30 +24,34 @@ import java.util.logging.Logger;
  * @author ranb
  */
 public class Utils {
-    public static final Map<Integer, Color> VERTEX_COLORS = new TreeMap<>();
 
+    public static final Map<Integer, Color> COLORS = new TreeMap<>();
+    public static final Color DEFAULT_COLOR = Color.BLACK;
     public static final Random RANDOM = new Random();
+
     static {
-        VERTEX_COLORS.put(0, Color.BLACK);
-        VERTEX_COLORS.put(1, Color.WHITE);
-        VERTEX_COLORS.put(2, Color.GRAY);
-        VERTEX_COLORS.put(3, Color.RED);
-        VERTEX_COLORS.put(4, Color.BLUE);
-        VERTEX_COLORS.put(5, Color.GREEN);
-        VERTEX_COLORS.put(6, Color.ORANGE);
-        VERTEX_COLORS.put(7, Color.MAGENTA);
-        VERTEX_COLORS.put(8, Color.CYAN);
-        VERTEX_COLORS.put(9, Color.YELLOW);
+        COLORS.put(0, Color.BLACK);
+        COLORS.put(1, Color.WHITE);
+        COLORS.put(2, Color.GRAY);
+        COLORS.put(3, Color.RED);
+        COLORS.put(4, Color.BLUE);
+        COLORS.put(5, Color.GREEN);
+        COLORS.put(6, Color.ORANGE);
+        COLORS.put(7, Color.MAGENTA);
+        COLORS.put(8, Color.CYAN);
+        COLORS.put(9, Color.YELLOW);
     }
 
     public static final List<Integer> FONT_SIZES = Arrays.asList(new Integer[]{10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30});
     public static final int DEFAULT_FONT_SIZE = 14;
-    
+    public static final ArrayList<String> DEFAULT_VERTICES_ATTRIBUTES_SHOWN = new ArrayList(Arrays.asList(new String[]{Vertex.VERTEX_ATTRIBUTE_NAME, Vertex.VERTEX_ATTRIBUTE_COLOR}));
+    public static final ArrayList<String> DEFAULT_EDGES_ATTRIBUTES_SHOWN = new ArrayList(Arrays.asList(new String[]{Edge.EDGE_ATTRIBUTE_COLOR}));
+
     public static final String VI = "\u2713";
-    
+
     public static final int getColorNumber(Color color) {
-        for (int colorNumber : VERTEX_COLORS.keySet()) {
-            if (VERTEX_COLORS.get(colorNumber).equals(color)) {
+        for (int colorNumber : COLORS.keySet()) {
+            if (COLORS.get(colorNumber).equals(color)) {
                 return colorNumber;
             }
         }
@@ -58,6 +62,7 @@ public class Utils {
         StackTraceElement caller = Thread.currentThread().getStackTrace()[2];
         Logger.getLogger(caller.getClass().getName()).log(Level.WARNING, "{0}:{1} {2} {3}", new Object[]{caller.getFileName(), caller.getLineNumber(), caller.getMethodName(), message});
     }
+
     public static void info(String message) {
         StackTraceElement caller = Thread.currentThread().getStackTrace()[2];
         Logger.getLogger(caller.getClass().getName()).log(Level.INFO, "{0}:{1} {2} {3}", new Object[]{caller.getFileName(), caller.getLineNumber(), caller.getMethodName(), message});
@@ -67,7 +72,7 @@ public class Utils {
         StackTraceElement caller = Thread.currentThread().getStackTrace()[2];
         Logger.getLogger(caller.getClass().getName()).log(Level.FINE, "{0}:{1} {2} {3}", new Object[]{caller.getFileName(), caller.getLineNumber(), caller.getMethodName(), message});
     }
-    
+
     public static void exception(Throwable ex) {
         ex.printStackTrace();
     }
@@ -93,7 +98,7 @@ public class Utils {
     }
 
     public static String edgeName(String from, String to, boolean sort) {
-        if ( ! sort ) {
+        if (!sort) {
             return (from + "->" + to);
         }
         return from.compareTo(to) < 0 ? (from + "-" + to) : (to + "-" + from);
@@ -110,19 +115,17 @@ public class Utils {
 
         return (fromDist + toDist) < (fullDistance + 1);
     }
-    
-    public static List<Integer> parseList(String listStr)
-    {
+
+    public static List<Integer> parseList(String listStr) {
         List<String> tokens = Arrays.asList(listStr.split("\\s*,\\s*"));
         List<Integer> result = new ArrayList();
-        for (String token : tokens){
+        for (String token : tokens) {
             result.add(0, Integer.valueOf(token));
         }
         return result;
     }
-    
-    public static String join(List list)
-    {
-        return String.join(",", list);        
+
+    public static String join(List list) {
+        return String.join(",", list);
     }
 }

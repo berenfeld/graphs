@@ -104,6 +104,7 @@ public class BFSDialog extends JDialog implements ActionListener {
             graphFrame.showVerticesAttributes(BFS.BFS_VERTEX_DEPTH);
             graphFrame.showVerticesAttributes(BFS.BFS_VERTEX_PATH_FROM_ROOT);
             graphFrame.showVerticesAttributes(BFS.BFS_PREDECESSOR);
+            graphFrame.showVerticesAttributes(Vertex.VERTEX_ATTRIBUTE_COLOR);
             setVisible(false);
         }
     }
