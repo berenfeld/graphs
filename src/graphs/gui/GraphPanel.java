@@ -8,6 +8,7 @@ package graphs.gui;
 import graphs.algorithms.BFS;
 import graphs.algorithms.MaximumCut;
 import graphs.core.*;
+import graphs.utils.Pair;
 import graphs.utils.Utils;
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -30,7 +31,7 @@ public class GraphPanel extends JPanel implements ComponentListener {
     public GraphPanel(Graph graph) {
         super();
         _graph = graph;
-        
+
     }
 
     public enum VerticesLayout implements Serializable {
@@ -41,9 +42,8 @@ public class GraphPanel extends JPanel implements ComponentListener {
         Tree,
         Random,
     };
-    
-    public void init()
-    {
+
+    public void init() {
         addComponentListener(this);
     }
 
@@ -59,7 +59,7 @@ public class GraphPanel extends JPanel implements ComponentListener {
     public static final String VERTEX_X = "_gui-vertex-x";
     public static final String VERTEX_Y = "_gui-vertex-y";
     public static final String GUI_FONT_SIZE = "_gui-font-size";
-    
+
     public void setSelectedVertex(Vertex v) {
         _selectedVertex = v;
         _graph.setAttribute(GUI_SELECTED_VERTEX, v);
@@ -79,7 +79,7 @@ public class GraphPanel extends JPanel implements ComponentListener {
             case Tree:
                 layoutVerticesTree();
                 break;
-                case Random:
+            case Random:
                 layoutVerticesRandom();
                 break;
         }
@@ -97,12 +97,11 @@ public class GraphPanel extends JPanel implements ComponentListener {
         repaint();
     }
 
-    public void setEdgesSize(int size)
-    {
+    public void setEdgesSize(int size) {
         _edgesSize = size;
         repaint();
     }
-    
+
     public void showVertexAttribute(String attribute) {
         _showVertexAttributes.add(attribute);
     }
@@ -114,14 +113,14 @@ public class GraphPanel extends JPanel implements ComponentListener {
     public boolean vertexAttributesShown(String attribute) {
         return _showVertexAttributes.contains(attribute);
     }
-    
+
     public boolean toggleShowVertexAttribute(String attribute) {
         if (_showVertexAttributes.contains(attribute)) {
             hideVertexAttribute(attribute);
             return false;
-        } 
+        }
         showVertexAttribute(attribute);
-        return true;        
+        return true;
     }
 
     private void layoutVerticesGrid() {
@@ -235,14 +234,31 @@ public class GraphPanel extends JPanel implements ComponentListener {
         }
 
     }
-
+    
     private void layoutVerticesRandom() {
-        for (Vertex v : _graph.getVertices()) {
-            v.setAttribute(VERTEX_X, Utils.RANDOM.nextDouble());
-            v.setAttribute(VERTEX_Y, Utils.RANDOM.nextDouble());
+        int N = _graph.getNumberOfVertices();
+        int gridWidth = (int)Math.sqrt(N) * 2;
+        
+        Set<Pair<Integer>> locations = new HashSet<>();
+        do {
+            Pair<Integer> location = new Pair<>();
+            location.first = Utils.RANDOM.nextInt(gridWidth);
+            location.second = Utils.RANDOM.nextInt(gridWidth);
+            if (! locations.contains(location)) {
+                locations.add(location);
+            }
+        } while ( locations.size() < N);
+        
+        int index = 1;
+        double gridUnit = 0.8 / gridWidth;
+        for (Pair<Integer> location : locations) {
+            Vertex v = _graph.getVertex(index);
+            v.setAttribute(VERTEX_X, 0.1 + (gridUnit * location.first));
+            v.setAttribute(VERTEX_Y, 0.1 + (gridUnit * location.second));
+            index ++;
         }
     }
-    
+
     private void repaintGraph(Graphics g) {
 
         Graphics2D g2 = (Graphics2D) g;
@@ -256,15 +272,15 @@ public class GraphPanel extends JPanel implements ComponentListener {
             int vertexY = (int) ((double) v.getAttribute(VERTEX_Y) * panelHeight);
 
             g.setColor(Utils.VERTEX_COLORS.get(v.getColor()));
-            
+
             int fontSize = (int) _graph.getAttribute(GUI_FONT_SIZE, Utils.DEFAULT_FONT_SIZE);
-            g.setFont(new Font("Arial", Font.PLAIN, fontSize));            
+            g.setFont(new Font("Arial", Font.PLAIN, fontSize));
 
             int height = g.getFontMetrics().getHeight();
             int line = 1;
             if (_showVertexAttributes.contains(Vertex.VERTEX_ATTRIBUTE_NAME)) {
                 g.drawString(v.getName(), vertexX, vertexY + (line * height));
-                line ++;
+                line++;
             }
             if (_showVertexAttributes.contains(Vertex.VERTEX_ATTRIBUTE_COLOR)) {
                 g.setColor(Utils.VERTEX_COLORS.get(v.getColor()));
@@ -280,7 +296,7 @@ public class GraphPanel extends JPanel implements ComponentListener {
                 if (!_showVertexAttributes.contains(attribute)) {
                     continue;
                 }
-                
+
                 String text = attribute + " : " + v.getAttribute(attribute);
 
                 g.drawString(text, vertexX, vertexY + (line * height));
@@ -304,21 +320,21 @@ public class GraphPanel extends JPanel implements ComponentListener {
             if (_graph.isDirected()) {
                 int y = toY - fromY;
                 int x = toX - fromX;
-                if ( x == 0 ) {
+                if (x == 0) {
                     x = 1;
-                }                
-                double angle = Math.atan((float)y/x);
-                if ( x > 0) {
+                }
+                double angle = Math.atan((float) y / x);
+                if (x > 0) {
                     angle += Math.PI;
-                }               
-                double angle1 = angle - (Math.PI / 8);                
+                }
+                double angle1 = angle - (Math.PI / 8);
                 double angle2 = angle + (Math.PI / 8);
                 double arrowLength = 30;
-                                
-                g.drawLine(toX, toY, toX + (int)( arrowLength * Math.cos(angle1) ), toY + (int)( arrowLength * Math.sin(angle1)));
-                g.drawLine(toX, toY, toX + (int)( arrowLength * Math.cos(angle2) ), toY + (int)( arrowLength * Math.sin(angle2)));
-                
-            } 
+
+                g.drawLine(toX, toY, toX + (int) (arrowLength * Math.cos(angle1)), toY + (int) (arrowLength * Math.sin(angle1)));
+                g.drawLine(toX, toY, toX + (int) (arrowLength * Math.cos(angle2)), toY + (int) (arrowLength * Math.sin(angle2)));
+
+            }
         }
     }
 

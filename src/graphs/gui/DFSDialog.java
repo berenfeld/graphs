@@ -15,12 +15,10 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
@@ -69,6 +67,7 @@ public class DFSDialog extends JDialog implements ActionListener {
         _sourceVertexPanel.add(_vertexSelectLabel);
         _sourceVertexPanel.add(_vertexSelectComboBox);
         _sourceVertexPanel.add(_copyGraphCheckBox);
+        _sourceVertexPanel.add(_deleteNonTreeEdges);
         _copyGraphCheckBox.setSelected(true);
         add(_sourceVertexPanel);
     }
@@ -84,6 +83,7 @@ public class DFSDialog extends JDialog implements ActionListener {
         add(_buttonsPanel);
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         Object o = e.getSource();
         if (o.equals(_startButton)) {
@@ -105,13 +105,14 @@ public class DFSDialog extends JDialog implements ActionListener {
         }
     }
     
-    private MainWindow _mainWindow;
+    private final MainWindow _mainWindow;
     private Graph _graph;
     private GraphFrame _graphFrame;
-    private JPanel _buttonsPanel = new JPanel();
-    private JButton _startButton = new JButton("Start");
-    private JPanel _sourceVertexPanel = new JPanel();
-    private JLabel _vertexSelectLabel = new JLabel("Select source vertex : ");
-    private JCheckBox _copyGraphCheckBox = new JCheckBox("Put result in new graph ?");
-    private JComboBox _vertexSelectComboBox = new JComboBox();
+    private final JPanel _buttonsPanel = new JPanel();
+    private final JButton _startButton = new JButton("Start");
+    private final JPanel _sourceVertexPanel = new JPanel();
+    private final JLabel _vertexSelectLabel = new JLabel("Select source vertex : ");
+    private final JCheckBox _copyGraphCheckBox = new JCheckBox("Put result in new graph ?");
+    private final JCheckBox _deleteNonTreeEdges = new JCheckBox("Delete Non-Tree Edges ?");
+    private final JComboBox _vertexSelectComboBox = new JComboBox();
 }

@@ -27,14 +27,19 @@ public class DFS {
     public static final int DFS_COLOR_NOT_VISITED = Utils.getColorNumber(Color.WHITE);
     public static final int DFS_COLOR_VISITING = Utils.getColorNumber(Color.GRAY);
     public static final int DFS_COLOR_VISITED = Utils.getColorNumber(Color.BLACK);
-
+    
+    public static final int DFS_COLOR_NOT_TRAVERESED = Utils.getColorNumber(Color.WHITE);
+    public static final int DFS_COLOR_TRAVERESED = Utils.getColorNumber(Color.BLACK);
+    
     private static class DFSContext {
 
         public int timer;
         public ArrayList<Vertex> visited = new ArrayList<>();
+        public boolean copy;
+        public Graph result;
     }
 
-    private static void dfsVisit(Vertex v, DFSContext context) {
+    private static void dfsVisit(Vertex v, DFSContext context) throws Exception {
         v.setColor(DFS_COLOR_VISITING);
         context.timer++;
 
@@ -45,6 +50,8 @@ public class DFS {
 
             Vertex adjacent = adjacentEdge.getOtherVertex(v);
             if (adjacent.getColor() == DFS_COLOR_NOT_VISITED) {
+                adjacent.setColor(DFS_COLOR_VISITING);
+                adjacentEdge.setColor(DFS_COLOR_TRAVERESED);
                 dfsVisit(adjacent, context);
             }
         }
@@ -56,21 +63,24 @@ public class DFS {
     }
 
     public static Graph dfs(Graph graph, Vertex initial, boolean copy, boolean forest) {
-        Graph dfsGraph = Factory.copyOf(graph);
-        dfsGraph.setName("DFS on " + graph.getName());
         Graph resultGraph = graph;
         if (copy) {
-            resultGraph = dfsGraph;
-        }
-
+            resultGraph = Factory.copyOf(graph);
+            resultGraph.setName("DFS on " + graph.getName());
+        } 
+        
         try {
             for (Vertex vertex : resultGraph.getVertices()) {
                 vertex.setColor(DFS_COLOR_NOT_VISITED);
-
+            }
+            for (Edge edge : resultGraph.getEdges()) {
+                edge.setColor(DFS_COLOR_NOT_TRAVERESED);
             }
 
             DFSContext context = new DFSContext();
             context.timer = 0;
+            context.copy = copy;
+            context.result = resultGraph;
 
             Vertex start = resultGraph.getRandomVertex();
             if (initial != null) {
@@ -90,7 +100,7 @@ public class DFS {
             Logger.getLogger(Factory.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         }
-        return dfsGraph;
+        return resultGraph;
     }
 
     public static Graph dfs(Graph g) {

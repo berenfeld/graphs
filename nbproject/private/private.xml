@@ -6,8 +6,12 @@
             <file>file:/home/ranb/NetBeansProjects/graphs/src/graphs/core/BaseElement.java</file>
             <file>file:/home/ranb/NetBeansProjects/graphs/src/graphs/gui/GraphFrame.java</file>
             <file>file:/home/ranb/NetBeansProjects/graphs/src/graphs/core/AttributesListener.java</file>
+            <file>file:/home/ranb/NetBeansProjects/graphs/src/graphs/gui/GraphPanel.java</file>
             <file>file:/home/ranb/NetBeansProjects/graphs/src/graphs/gui/MainWindow.java</file>
+            <file>file:/home/ranb/NetBeansProjects/graphs/src/graphs/core/Graph.java</file>
+            <file>file:/home/ranb/NetBeansProjects/graphs/src/graphs/gui/DFSDialog.java</file>
             <file>file:/home/ranb/NetBeansProjects/graphs/src/graphs/core/Vertex.java</file>
+            <file>file:/home/ranb/NetBeansProjects/graphs/src/graphs/algorithms/DFS.java</file>
         </group>
     </open-files>
 </project-private>

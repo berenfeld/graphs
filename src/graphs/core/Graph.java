@@ -231,7 +231,7 @@ public class Graph extends BaseElement implements Serializable {
         String edgeName = Utils.edgeName(fromVertex, toVertex, !_directed);
         Edge removedEdge = _edges.get(edgeName);
         if (removedEdge == null) {
-            throw new Exception("Edge '" + removedEdge + "' does not exist");
+            return;
         }
 
         fromVertex.disconnectFrom(toVertex, removedEdge);

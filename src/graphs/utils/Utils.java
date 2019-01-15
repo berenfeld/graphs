@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 import java.util.TreeMap;
 import java.util.logging.Level;
@@ -23,7 +24,6 @@ import java.util.logging.Logger;
  * @author ranb
  */
 public class Utils {
-
     public static final Map<Integer, Color> VERTEX_COLORS = new TreeMap<>();
 
     public static final Random RANDOM = new Random();
