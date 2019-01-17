@@ -106,7 +106,7 @@ public class GraphPanel extends JPanel implements ComponentListener {
 
     public void showVertexAttribute(String attribute) {
         ArrayList<String> showVertexAttributes = (ArrayList<String>) _graph.getAttribute(GUI_VERTICES_ATTRIBUTES, Utils.DEFAULT_VERTICES_ATTRIBUTES_SHOWN);
-        if ( ! showVertexAttributes.contains(attribute)) {
+        if (!showVertexAttributes.contains(attribute)) {
             showVertexAttributes.add(attribute);
             _graph.setAttribute(GUI_VERTICES_ATTRIBUTES, showVertexAttributes);
         }
@@ -223,8 +223,11 @@ public class GraphPanel extends JPanel implements ComponentListener {
     }
 
     private void layoutVerticesTree() {
-
-        Graph bfs = BFS.bfs(_graph, _selectedVertex, true);
+        BFS.Configuration configuration = new BFS.Configuration();
+        configuration.putResultsInNewGraph = true;
+        configuration.initialVertex = _selectedVertex;
+        configuration.createBFSForest = true;
+        Graph bfs = BFS.bfs(_graph, configuration);
 
         int levels = (int) bfs.getAttribute(BFS.BFS_MAXIMUM_DEPTH) + 1;
         double levelHeight = 1.0 / (double) (levels + 1);
@@ -244,36 +247,35 @@ public class GraphPanel extends JPanel implements ComponentListener {
         }
 
     }
-    
+
     private void layoutVerticesRandom() {
         int N = _graph.getNumberOfVertices();
-        int gridWidth = (int)Math.sqrt(N) * 2;
-        
+        int gridWidth = (int) Math.sqrt(N) * 2;
+
         Set<Pair<Integer>> locations = new HashSet<>();
         do {
             Pair<Integer> location = new Pair<>();
             location.first = Utils.RANDOM.nextInt(gridWidth);
             location.second = Utils.RANDOM.nextInt(gridWidth);
-            if (! locations.contains(location)) {
+            if (!locations.contains(location)) {
                 locations.add(location);
             }
-        } while ( locations.size() < N);
-        
+        } while (locations.size() < N);
+
         int index = 1;
         double gridUnit = 0.8 / gridWidth;
         for (Pair<Integer> location : locations) {
             Vertex v = _graph.getVertex(index);
             v.setAttribute(VERTEX_X, 0.1 + (gridUnit * location.first));
             v.setAttribute(VERTEX_Y, 0.1 + (gridUnit * location.second));
-            index ++;
+            index++;
         }
     }
 
-    public List<String> shownVerticesAttribtes()
-    {
+    public List<String> shownVerticesAttribtes() {
         return (ArrayList<String>) _graph.getAttribute(GUI_VERTICES_ATTRIBUTES, Utils.DEFAULT_VERTICES_ATTRIBUTES_SHOWN);
     }
-    
+
     private void repaintGraph(Graphics g) {
 
         Graphics2D g2 = (Graphics2D) g;
@@ -282,9 +284,9 @@ public class GraphPanel extends JPanel implements ComponentListener {
         double panelWidth = getSize().getWidth();
         double panelHeight = getSize().getHeight();
 
-        ArrayList<String> showVertexAttributes = (ArrayList<String>) _graph.getAttribute(GUI_VERTICES_ATTRIBUTES, Utils.DEFAULT_VERTICES_ATTRIBUTES_SHOWN);        
+        ArrayList<String> showVertexAttributes = (ArrayList<String>) _graph.getAttribute(GUI_VERTICES_ATTRIBUTES, Utils.DEFAULT_VERTICES_ATTRIBUTES_SHOWN);
         boolean showVerticesColors = showVertexAttributes.contains(Vertex.VERTEX_ATTRIBUTE_COLOR);
-        
+
         for (Vertex v : _graph.getVertices()) {
             int vertexX = (int) ((double) v.getAttribute(VERTEX_X) * panelWidth);
             int vertexY = (int) ((double) v.getAttribute(VERTEX_Y) * panelHeight);
@@ -302,7 +304,7 @@ public class GraphPanel extends JPanel implements ComponentListener {
                 g.drawString(v.getName(), vertexX, vertexY + (line * height));
                 line++;
             }
-            g.setColor(Utils.COLORS.get(v.getColor())); 
+            g.setColor(Utils.COLORS.get(v.getColor()));
 
             for (String attribute : v.attributeNames()) {
                 if (Vertex.VERTEX_ATTRIBUTE_NAME.equals(attribute)) {
@@ -324,10 +326,10 @@ public class GraphPanel extends JPanel implements ComponentListener {
         }
 
         g.setColor(Utils.DEFAULT_COLOR);
-        
+
         ArrayList<String> showEdgesAttributes = (ArrayList<String>) _graph.getAttribute(GUI_EDGES_ATTRIBUTES, Utils.DEFAULT_EDGES_ATTRIBUTES_SHOWN);
         boolean showEdgesColor = showEdgesAttributes.contains(Edge.EDGE_ATTRIBUTE_COLOR);
-        
+
         for (Edge edge : _graph.getEdges()) {
             if (showEdgesColor) {
                 g.setColor(Utils.COLORS.get(edge.getColor()));

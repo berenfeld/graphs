@@ -67,6 +67,8 @@ public class BFSDialog extends JDialog implements ActionListener {
         _sourceVertexPanel.add(_vertexSelectLabel);
         _sourceVertexPanel.add(_vertexSelectComboBox);
         _sourceVertexPanel.add(_copyGraphCheckBox);
+        _sourceVertexPanel.add(_leaveBFSTressCheckBox);
+        _sourceVertexPanel.add(_createBFSForest);
         _sourceVertexPanel.add(_layoutTreeCheckBox);
         _copyGraphCheckBox.setSelected(true);
         add(_sourceVertexPanel);
@@ -86,11 +88,14 @@ public class BFSDialog extends JDialog implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         Object o = e.getSource();
         if (o.equals(_startButton)) {
-            Vertex source = _graph.getVertex((String) _vertexSelectComboBox.getSelectedItem());
-            boolean copy = _copyGraphCheckBox.isSelected();
-            Graph bfsGraph = BFS.bfs(_graph, source, copy);
+            BFS.Configuration configuration = new BFS.Configuration();
+            configuration.putResultsInNewGraph = _copyGraphCheckBox.isSelected();
+            configuration.initialVertex = _graph.getVertex((String) _vertexSelectComboBox.getSelectedItem());
+            configuration.returnBFSTree = _leaveBFSTressCheckBox.isSelected();
+            configuration.createBFSForest = _createBFSForest.isSelected();
+            Graph bfsGraph = BFS.bfs(_graph, configuration);
             GraphFrame graphFrame = _graphFrame;
-            if (copy) {
+            if (configuration.putResultsInNewGraph) {
                 graphFrame = _mainWindow.addGraphFrame(bfsGraph);
                 if (_mainWindow.numberOfGraphFrames() == 2) {
                     _mainWindow.tileWindows();
@@ -98,8 +103,8 @@ public class BFSDialog extends JDialog implements ActionListener {
             } else {
                 _graphFrame.repaint();
             }
-            if ( _layoutTreeCheckBox.isSelected()) {
-                graphFrame.setVerticesLayout(GraphPanel.VerticesLayout.Tree, source);
+            if (_layoutTreeCheckBox.isSelected()) {
+                graphFrame.setVerticesLayout(GraphPanel.VerticesLayout.Tree, configuration.initialVertex);
             }
             graphFrame.showVerticesAttributes(BFS.BFS_VERTEX_DEPTH);
             graphFrame.showVerticesAttributes(BFS.BFS_VERTEX_PATH_FROM_ROOT);
@@ -109,14 +114,16 @@ public class BFSDialog extends JDialog implements ActionListener {
         }
     }
 
-    private MainWindow _mainWindow;
+    private final MainWindow _mainWindow;
     private Graph _graph;
     private GraphFrame _graphFrame;
-    private JPanel _buttonsPanel = new JPanel();
-    private JButton _startButton = new JButton("Start");
-    private JPanel _sourceVertexPanel = new JPanel();
-    private JLabel _vertexSelectLabel = new JLabel("Select source vertex : ");
-    private JCheckBox _copyGraphCheckBox = new JCheckBox("Put result in new graph ?");
-    private JCheckBox _layoutTreeCheckBox = new JCheckBox("Layout result graph as tree ?");
-    private JComboBox _vertexSelectComboBox = new JComboBox();
+    private final JPanel _buttonsPanel = new JPanel();
+    private final JButton _startButton = new JButton("Start");
+    private final JPanel _sourceVertexPanel = new JPanel();
+    private final JLabel _vertexSelectLabel = new JLabel("Select source vertex : ");
+    private final JCheckBox _copyGraphCheckBox = new JCheckBox("Put result in new graph");
+    private final JCheckBox _leaveBFSTressCheckBox = new JCheckBox("Leave only BFS forest");
+    private final JCheckBox _createBFSForest = new JCheckBox("Create BFS forest");
+    private final JCheckBox _layoutTreeCheckBox = new JCheckBox("Layout result graph as tree ?");
+    private final JComboBox _vertexSelectComboBox = new JComboBox();
 }

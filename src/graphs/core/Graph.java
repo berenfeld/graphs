@@ -365,7 +365,10 @@ public class Graph extends BaseElement implements Serializable {
         ArrayList<String> leftVertices = new ArrayList<>(_vertexNames);
         while (!leftVertices.isEmpty()) {
             Vertex v = getVertex(leftVertices.get(0));
-            Graph bfs = BFS.bfs(this, v, true);
+            BFS.Configuration configuration = new BFS.Configuration();
+            configuration.putResultsInNewGraph = true;
+            configuration.initialVertex = v;
+            Graph bfs = BFS.bfs(this, configuration);
  
             Map<String, Vertex> connectedComponent = new TreeMap<>();
             for (String vertexName : bfs.getVerticesNames()) {
@@ -407,7 +410,10 @@ public class Graph extends BaseElement implements Serializable {
 
         int maximumBfsDepth = 0;
         for (Vertex v : _vertices.values()) {
-            Graph bfsOfV = BFS.bfs(this, v, true);
+            BFS.Configuration configuration = new BFS.Configuration();
+            configuration.putResultsInNewGraph = true;
+            configuration.initialVertex = v;
+            Graph bfsOfV = BFS.bfs(this, configuration);
             int vertexDepth = (int) bfsOfV.getAttribute(BFS.BFS_MAXIMUM_DEPTH);
             if (vertexDepth > maximumBfsDepth) {
                 maximumBfsDepth = vertexDepth;

@@ -15,26 +15,29 @@ import java.util.List;
  * @author ranb
  */
 public class BiPartite {
-     public static final String BIPARTITE_SIDE_A = "_BIPARTITE_SIDE_A";
-     public static final String BIPARTITE_SIDE_B = "_BIPARTITE_SIDE_B";
-     
-     public static Graph bipartite(Graph g) {
-         Graph bfs = BFS.bfs(g, true);
-         List<Vertex> sideA = new ArrayList();
-         List<Vertex> sideB = new ArrayList();
-         
-         for (Vertex v : bfs.getVertices()) {
-             int depth = (Integer)v.getAttribute(BFS.BFS_VERTEX_DEPTH);
-             if ( (depth % 2) == 0 ) {
-                 sideA.add(v);
-             } else {
-                 sideB.add(v);
-             }
-         }
-         
-         Graph biPartite = Factory.copyOf(g);
-         biPartite.setAttribute(BIPARTITE_SIDE_A, sideA);
-         biPartite.setAttribute(BIPARTITE_SIDE_B, sideB);
-         return biPartite;
-     }
+
+    public static final String BIPARTITE_SIDE_A = "_BIPARTITE_SIDE_A";
+    public static final String BIPARTITE_SIDE_B = "_BIPARTITE_SIDE_B";
+
+    public static Graph bipartite(Graph g) {
+        BFS.Configuration configuration = new BFS.Configuration();
+        configuration.putResultsInNewGraph = true;
+        Graph bfs = BFS.bfs(g, configuration);
+        List<Vertex> sideA = new ArrayList();
+        List<Vertex> sideB = new ArrayList();
+
+        for (Vertex v : bfs.getVertices()) {
+            int depth = (Integer) v.getAttribute(BFS.BFS_VERTEX_DEPTH);
+            if ((depth % 2) == 0) {
+                sideA.add(v);
+            } else {
+                sideB.add(v);
+            }
+        }
+
+        Graph biPartite = Factory.copyOf(g);
+        biPartite.setAttribute(BIPARTITE_SIDE_A, sideA);
+        biPartite.setAttribute(BIPARTITE_SIDE_B, sideB);
+        return biPartite;
+    }
 }
