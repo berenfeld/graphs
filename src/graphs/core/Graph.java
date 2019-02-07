@@ -330,7 +330,6 @@ public class Graph extends BaseElement implements Serializable {
         Graph dfs = DFS.dfs(this, null, true, true);
         ArrayList<Vertex> visited = (ArrayList<Vertex>)dfs.getAttribute(DFS.DFS_VERTICES_VISIT_LIST);
         
-        Utils.info("visited " + visited);
         Graph transpose = Factory.transposeOf(this);
         int index = getNumberOfVertices() - 1;
         while (! leftVertices.isEmpty())
@@ -341,8 +340,7 @@ public class Graph extends BaseElement implements Serializable {
             {
                 
                 Graph dfsT = DFS.dfs(transpose, v, true, false );
-                ArrayList<Vertex> visitedT = (ArrayList<Vertex>)dfsT.getAttribute(DFS.DFS_VERTICES_VISIT_LIST);
-                Utils.info("doing dfs from " + v + " visited " + visitedT);
+                ArrayList<Vertex> visitedT = (ArrayList<Vertex>)dfsT.getAttribute(DFS.DFS_VERTICES_VISIT_LIST);                
                 Map<String, Vertex> connectedComponent = new TreeMap<>();
                 for (Vertex connectedToV : visitedT)
                 {
@@ -368,6 +366,7 @@ public class Graph extends BaseElement implements Serializable {
             BFS.Configuration configuration = new BFS.Configuration();
             configuration.putResultsInNewGraph = true;
             configuration.initialVertex = v;
+            configuration.returnBFSTree = true;
             Graph bfs = BFS.bfs(this, configuration);
  
             Map<String, Vertex> connectedComponent = new TreeMap<>();

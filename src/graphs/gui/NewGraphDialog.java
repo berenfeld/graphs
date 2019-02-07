@@ -177,7 +177,7 @@ public class NewGraphDialog extends JDialog implements ActionListener {
         String densityStr = (String) _randomGraphFullnessComboBox.getSelectedItem();
         int densityPercent = Integer.parseInt(densityStr.substring(0, densityStr.length() - 1));
 
-        Graph graph = Factory.buildRandomGraph(vertices, directed, (double) densityPercent / 100);
+        Graph graph = Factory.buildRandomGraph(vertices, directed, (float) densityPercent / 100);
         GraphFrame graphFrame = _mainWindow.addGraphFrame(graph);
         graphFrame.setVerticesLayout(GraphPanel.VerticesLayout.Random);
         setVisible(false);
@@ -188,7 +188,7 @@ public class NewGraphDialog extends JDialog implements ActionListener {
         int densityPercent = Integer.parseInt(densityStr.substring(0, densityStr.length() - 1));
         int verticesSideA = (Integer) _bipartiteGraphSideAVerticesComboBox.getSelectedItem();
         verticesSideA = Math.min(verticesSideA, vertices);
-        Graph graph = Factory.buildRandomBiPartiteGraph(verticesSideA, vertices - verticesSideA, (double) densityPercent / 100);
+        Graph graph = Factory.buildRandomBiPartiteGraph(verticesSideA, vertices - verticesSideA, (float) densityPercent / 100);
         GraphFrame graphFrame = _mainWindow.addGraphFrame(graph);
         graphFrame.setVerticesLayout(GraphPanel.VerticesLayout.BiPartite);
         setVisible(false);

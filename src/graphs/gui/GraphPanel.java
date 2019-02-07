@@ -134,14 +134,14 @@ public class GraphPanel extends JPanel implements ComponentListener {
     }
 
     private void layoutVerticesGrid() {
-        double panelWidth = getSize().getWidth();
-        double panelHeight = getSize().getHeight();
+        float panelWidth = (float) getSize().getWidth();
+        float panelHeight = (float) getSize().getHeight();
         if ((panelWidth == 0) || (panelHeight == 0)) {
             return;
         }
 
-        double ratio = panelWidth / panelHeight;
-        double vertices = _graph.getNumberOfVertices();
+        float ratio = panelWidth / panelHeight;
+        float vertices = _graph.getNumberOfVertices();
         int gridWidth = (int) Math.ceil(Math.sqrt(vertices) * ratio);
         int gridHeight = (int) Math.ceil(vertices / gridWidth) + 1;
 
@@ -156,8 +156,8 @@ public class GraphPanel extends JPanel implements ComponentListener {
             int vertexX = x * cellWidth;
             int vertexY = y * cellHeight;
 
-            v.setAttribute(VERTEX_X, (double) vertexX / panelWidth);
-            v.setAttribute(VERTEX_Y, (double) vertexY / panelHeight);
+            v.setAttribute(VERTEX_X, (float) vertexX / panelWidth);
+            v.setAttribute(VERTEX_Y, (float) vertexY / panelHeight);
             i++;
         }
     }
@@ -171,8 +171,8 @@ public class GraphPanel extends JPanel implements ComponentListener {
         int vertices = _graph.getNumberOfVertices();
 
         for (Vertex v : _graph.getVertices()) {
-            double vertexX = 0.5 + 0.4 * Math.sin((i * Math.PI * 2) / vertices);
-            double vertexY = 0.5 - 0.4 * Math.cos((i * Math.PI * 2) / vertices);
+            float vertexX = (float) (0.5 + 0.4 * Math.sin((i * Math.PI * 2) / vertices));
+            float vertexY = (float) (0.5 - 0.4 * Math.cos((i * Math.PI * 2) / vertices));
 
             v.setAttribute(VERTEX_X, vertexX);
             v.setAttribute(VERTEX_Y, vertexY);
@@ -206,14 +206,14 @@ public class GraphPanel extends JPanel implements ComponentListener {
 
         int aPosition = 0, bPosition = 0;
         for (Vertex v : _graph.getVertices()) {
-            double vertexX, vertexY;
+            float vertexX, vertexY;
             if (v.getAttribute(Vertex.VERTEX_ATTRIBUTE_SIDE).equals(1)) {
-                vertexX = 0.1;
-                vertexY = 0.1 + (aPosition * 0.8 / (sideA.size()));
+                vertexX = 0.1f;
+                vertexY = 0.1f + (aPosition * 0.8f / (sideA.size()));
                 aPosition++;
             } else {
-                vertexX = 0.9;
-                vertexY = 0.1 + (bPosition * 0.8 / (sideB.size()));
+                vertexX = 0.9f;
+                vertexY = 0.1f + (bPosition * 0.8f / (sideB.size()));
                 bPosition++;
             }
 
@@ -230,7 +230,7 @@ public class GraphPanel extends JPanel implements ComponentListener {
         Graph bfs = BFS.bfs(_graph, configuration);
 
         int levels = (int) bfs.getAttribute(BFS.BFS_MAXIMUM_DEPTH) + 1;
-        double levelHeight = 1.0 / (double) (levels + 1);
+        float levelHeight = 1.0f / (float) (levels + 1);
 
         Map<Integer, Integer> verticesInEachLevel = (Map<Integer, Integer>) bfs.getAttribute(BFS.BFS_NUMBER_OF_VERTICES_IN_EACH_LEVEL);
 
@@ -239,7 +239,7 @@ public class GraphPanel extends JPanel implements ComponentListener {
             int verticesInLevel = verticesInEachLevel.get(depth);
             int indexInLevel = (int) v.getAttribute(BFS.BFS_VERTEX_NUMBER_IN_LEVEL);
 
-            double space = 1.0 / (verticesInLevel + 1);
+            float space = 1.0f / (verticesInLevel + 1);
 
             Vertex vInGraph = _graph.getVertex(v.getName());
             vInGraph.setAttribute(VERTEX_X, space * indexInLevel);
@@ -263,11 +263,11 @@ public class GraphPanel extends JPanel implements ComponentListener {
         } while (locations.size() < N);
 
         int index = 1;
-        double gridUnit = 0.8 / gridWidth;
+        float gridUnit = 0.8f / gridWidth;
         for (Pair<Integer> location : locations) {
             Vertex v = _graph.getVertex(index);
-            v.setAttribute(VERTEX_X, 0.1 + (gridUnit * location.first));
-            v.setAttribute(VERTEX_Y, 0.1 + (gridUnit * location.second));
+            v.setAttribute(VERTEX_X, 0.1f + (gridUnit * location.first));
+            v.setAttribute(VERTEX_Y, 0.1f + (gridUnit * location.second));
             index++;
         }
     }
@@ -281,15 +281,15 @@ public class GraphPanel extends JPanel implements ComponentListener {
         Graphics2D g2 = (Graphics2D) g;
         g.setColor(Utils.DEFAULT_COLOR);
         g2.setStroke(new BasicStroke(_edgesSize));
-        double panelWidth = getSize().getWidth();
-        double panelHeight = getSize().getHeight();
+        float panelWidth = (float) getSize().getWidth();
+        float panelHeight = (float) getSize().getHeight();
 
         ArrayList<String> showVertexAttributes = (ArrayList<String>) _graph.getAttribute(GUI_VERTICES_ATTRIBUTES, Utils.DEFAULT_VERTICES_ATTRIBUTES_SHOWN);
         boolean showVerticesColors = showVertexAttributes.contains(Vertex.VERTEX_ATTRIBUTE_COLOR);
 
         for (Vertex v : _graph.getVertices()) {
-            int vertexX = (int) ((double) v.getAttribute(VERTEX_X) * panelWidth);
-            int vertexY = (int) ((double) v.getAttribute(VERTEX_Y) * panelHeight);
+            int vertexX = (int) ((float) v.getAttribute(VERTEX_X) * panelWidth);
+            int vertexY = (int) ((float) v.getAttribute(VERTEX_Y) * panelHeight);
 
             if (showVerticesColors) {
                 g.setColor(Utils.COLORS.get(v.getColor()));
@@ -322,7 +322,7 @@ public class GraphPanel extends JPanel implements ComponentListener {
                 g.drawString(text, vertexX, vertexY + (line * height));
                 line++;
             }
-            g2.fill(new Ellipse2D.Double(vertexX - (_verticesSize / 2), vertexY - (_verticesSize / 2), _verticesSize, _verticesSize));
+            g2.fill(new Ellipse2D.Float(vertexX - (_verticesSize / 2), vertexY - (_verticesSize / 2), _verticesSize, _verticesSize));
         }
 
         g.setColor(Utils.DEFAULT_COLOR);
@@ -337,28 +337,30 @@ public class GraphPanel extends JPanel implements ComponentListener {
             Vertex from = edge.getFromVertex();
             Vertex to = edge.getToVertex();
 
-            int fromX = (int) ((double) from.getAttribute(VERTEX_X) * panelWidth);
-            int fromY = (int) ((double) from.getAttribute(VERTEX_Y) * panelHeight);
-            int toX = (int) ((double) to.getAttribute(VERTEX_X) * panelWidth);
-            int toY = (int) ((double) to.getAttribute(VERTEX_Y) * panelHeight);
+            int fromX = (int) ((float) from.getAttribute(VERTEX_X) * panelWidth);
+            int fromY = (int) ((float) from.getAttribute(VERTEX_Y) * panelHeight);
+            int toX = (int) ((float) to.getAttribute(VERTEX_X) * panelWidth);
+            int toY = (int) ((float) to.getAttribute(VERTEX_Y) * panelHeight);
 
             g.drawLine(fromX, fromY, toX, toY);
             if (_graph.isDirected()) {
+                int middleX = (fromX + toX)/2;
+                int middleY = (fromY + toY)/2;
                 int y = toY - fromY;
                 int x = toX - fromX;
                 if (x == 0) {
                     x = 1;
                 }
-                double angle = Math.atan((float) y / x);
+                float angle = (float)Math.atan((float) y / x);
                 if (x > 0) {
                     angle += Math.PI;
                 }
-                double angle1 = angle - (Math.PI / 8);
-                double angle2 = angle + (Math.PI / 8);
-                double arrowLength = 30;
+                float angle1 = (float) (angle - (Math.PI / 8));
+                float angle2 = (float) (angle + (Math.PI / 8));
+                float arrowLength = 30;
 
-                g.drawLine(toX, toY, toX + (int) (arrowLength * Math.cos(angle1)), toY + (int) (arrowLength * Math.sin(angle1)));
-                g.drawLine(toX, toY, toX + (int) (arrowLength * Math.cos(angle2)), toY + (int) (arrowLength * Math.sin(angle2)));
+                g.drawLine(middleX, middleY, middleX + (int) (arrowLength * Math.cos(angle1)), middleY + (int) (arrowLength * Math.sin(angle1)));
+                g.drawLine(middleX, middleY, middleX + (int) (arrowLength * Math.cos(angle2)), middleY + (int) (arrowLength * Math.sin(angle2)));
 
             }
         }

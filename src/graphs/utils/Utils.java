@@ -7,13 +7,11 @@ package graphs.utils;
 
 import graphs.core.Edge;
 import graphs.core.Vertex;
-import graphs.gui.MainWindow;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Random;
 import java.util.TreeMap;
 import java.util.logging.Level;
@@ -74,7 +72,8 @@ public class Utils {
     }
 
     public static void exception(Throwable ex) {
-        ex.printStackTrace();
+        StackTraceElement caller = ex.getStackTrace()[2];        
+        Logger.getLogger(caller.getClass().getName()).log(Level.SEVERE, "{0}:{1} {2} {3} {4}", new Object[]{caller.getFileName(), caller.getLineNumber(), caller.getMethodName(), ex.getMessage(), ex.getStackTrace()});
     }
 
     public static <T> T getFirst(List<T> list) {
@@ -104,14 +103,14 @@ public class Utils {
         return from.compareTo(to) < 0 ? (from + "-" + to) : (to + "-" + from);
     }
 
-    public static double distance(double fromX, double fromY, double toX, double toY) {
-        return Math.sqrt(Math.pow(toY - fromY, 2) + Math.pow(toX - fromX, 2));
+    public static float distance(float fromX, float fromY, float toX, float toY) {
+        return (float) Math.sqrt(Math.pow(toY - fromY, 2) + Math.pow(toX - fromX, 2));
     }
 
-    public static boolean inLine(double x, double y, double fromX, double fromY, double toX, double toY) {
-        double fullDistance = distance(fromX, fromY, toX, toY);
-        double fromDist = distance(x, y, fromX, fromY);
-        double toDist = distance(x, y, toX, toY);
+    public static boolean inLine(float x, float y, float fromX, float fromY, float toX, float toY) {
+        float fullDistance = distance(fromX, fromY, toX, toY);
+        float fromDist = distance(x, y, fromX, fromY);
+        float toDist = distance(x, y, toX, toY);
 
         return (fromDist + toDist) < (fullDistance + 1);
     }

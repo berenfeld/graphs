@@ -18,7 +18,6 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -86,7 +85,7 @@ public final class GraphFrame extends JInternalFrame implements MouseListener, A
     private final List<JMenuItem> _fontSizeMenus = new ArrayList<>();
     private final GraphPanel _canvas;
     private int _clickX, _clickY;
-    private double _panelWidth, _panelHeight;
+    private float _panelWidth, _panelHeight;
     private Vertex _draggedVertex;
     private Vertex _newEdgeFromVertex;
     private Vertex _newEdgeToVertex;
@@ -193,8 +192,8 @@ public final class GraphFrame extends JInternalFrame implements MouseListener, A
 
     private void addVertex(MouseEvent e) throws Exception {
         Vertex v = _graph.addVertex();
-        v.setAttribute(VERTEX_X, (double) _clickX / _panelWidth);
-        v.setAttribute(VERTEX_Y, (double) _clickY / _panelHeight);
+        v.setAttribute(VERTEX_X, (float) _clickX / _panelWidth);
+        v.setAttribute(VERTEX_Y, (float) _clickY / _panelHeight);
         v.addAttributeListener(this);
         repaint();
     }
@@ -202,8 +201,8 @@ public final class GraphFrame extends JInternalFrame implements MouseListener, A
     private void updateSelectdVertex() {
 
         for (Vertex v : _graph.getVertices()) {
-            int vertexX = (int) ((double) v.getAttribute(GraphPanel.VERTEX_X) * _panelWidth);
-            int vertexY = (int) ((double) v.getAttribute(GraphPanel.VERTEX_Y) * _panelHeight);
+            int vertexX = (int) ((float) v.getAttribute(GraphPanel.VERTEX_X) * _panelWidth);
+            int vertexY = (int) ((float) v.getAttribute(GraphPanel.VERTEX_Y) * _panelHeight);
 
             if (Utils.distance(vertexX, vertexY, _clickX, _clickY) < CLOSE_DISTANCE) {
                 _selectedVertex = v;
@@ -243,10 +242,10 @@ public final class GraphFrame extends JInternalFrame implements MouseListener, A
         for (Edge edge : _graph.getEdges()) {
             Vertex v1 = edge.getFromVertex();
             Vertex v2 = edge.getToVertex();
-            int vertex1X = (int) ((double) v1.getAttribute(GraphPanel.VERTEX_X) * _panelWidth);
-            int vertex1Y = (int) ((double) v1.getAttribute(GraphPanel.VERTEX_Y) * _panelHeight);
-            int vertex2X = (int) ((double) v2.getAttribute(GraphPanel.VERTEX_X) * _panelWidth);
-            int vertex2Y = (int) ((double) v2.getAttribute(GraphPanel.VERTEX_Y) * _panelHeight);
+            int vertex1X = (int) ((float) v1.getAttribute(GraphPanel.VERTEX_X) * _panelWidth);
+            int vertex1Y = (int) ((float) v1.getAttribute(GraphPanel.VERTEX_Y) * _panelHeight);
+            int vertex2X = (int) ((float) v2.getAttribute(GraphPanel.VERTEX_X) * _panelWidth);
+            int vertex2Y = (int) ((float) v2.getAttribute(GraphPanel.VERTEX_Y) * _panelHeight);
 
             if (Utils.inLine(_clickX, _clickY, vertex1X, vertex1Y, vertex2X, vertex2Y)) {
                 _edgeNameMenu.setText("Edge " + edge.getName());
@@ -268,8 +267,8 @@ public final class GraphFrame extends JInternalFrame implements MouseListener, A
     }
 
     public void mousePressedInternal(MouseEvent e) throws Exception {
-        _panelWidth = _canvas.getSize().getWidth();
-        _panelHeight = _canvas.getSize().getHeight();
+        _panelWidth = (float) _canvas.getSize().getWidth();
+        _panelHeight = (float) _canvas.getSize().getHeight();
 
         _clickX = e.getX();
         _clickY = e.getY();
@@ -289,8 +288,8 @@ public final class GraphFrame extends JInternalFrame implements MouseListener, A
         if (_selectionMode == MainWindow.SelectionMode.AddEdge) {
             _newEdgeFromVertex = _selectedVertex;
             _newEdgeToVertex = _graph.addVertex();
-            _newEdgeToVertex.setAttribute(GraphPanel.VERTEX_X, (double) _clickX / _panelWidth);
-            _newEdgeToVertex.setAttribute(GraphPanel.VERTEX_Y, (double) _clickY / _panelHeight);
+            _newEdgeToVertex.setAttribute(GraphPanel.VERTEX_X, (float) _clickX / _panelWidth);
+            _newEdgeToVertex.setAttribute(GraphPanel.VERTEX_Y, (float) _clickY / _panelHeight);
             _newEdge = _graph.addEdge(_newEdgeFromVertex, _newEdgeToVertex);
             repaint();
         }
@@ -316,8 +315,8 @@ public final class GraphFrame extends JInternalFrame implements MouseListener, A
 
         if (_newEdge != null) {
             for (Vertex v : _graph.getVertices()) {
-                int vertexX = (int) ((double) v.getAttribute(GraphPanel.VERTEX_X) * _panelWidth);
-                int vertexY = (int) ((double) v.getAttribute(GraphPanel.VERTEX_Y) * _panelHeight);
+                int vertexX = (int) ((float) v.getAttribute(GraphPanel.VERTEX_X) * _panelWidth);
+                int vertexY = (int) ((float) v.getAttribute(GraphPanel.VERTEX_Y) * _panelHeight);
 
                 if (Utils.distance(vertexX, vertexY, _clickX, _clickY) < CLOSE_DISTANCE) {
                     if (!v.equals(_newEdgeToVertex)) {
@@ -367,16 +366,16 @@ public final class GraphFrame extends JInternalFrame implements MouseListener, A
         _clickY = e.getY();
 
         if (_draggedVertex != null) {
-            _draggedVertex.setAttribute(GraphPanel.VERTEX_X, (double) _clickX / _panelWidth);
-            _draggedVertex.setAttribute(GraphPanel.VERTEX_Y, (double) _clickY / _panelHeight);
+            _draggedVertex.setAttribute(GraphPanel.VERTEX_X, (float) _clickX / _panelWidth);
+            _draggedVertex.setAttribute(GraphPanel.VERTEX_Y, (float) _clickY / _panelHeight);
             repaint();
             return;
         }
 
         if (_newEdgeToVertex != null) {
 
-            _newEdgeToVertex.setAttribute(GraphPanel.VERTEX_X, (double) _clickX / _panelWidth);
-            _newEdgeToVertex.setAttribute(GraphPanel.VERTEX_Y, (double) _clickY / _panelHeight);
+            _newEdgeToVertex.setAttribute(GraphPanel.VERTEX_X, (float) _clickX / _panelWidth);
+            _newEdgeToVertex.setAttribute(GraphPanel.VERTEX_Y, (float) _clickY / _panelHeight);
             repaint();
         }
     }
@@ -398,8 +397,8 @@ public final class GraphFrame extends JInternalFrame implements MouseListener, A
     }
 
     private void handleEvent(ActionEvent e) throws Exception {
-        double panelWidth = _canvas.getSize().getWidth();
-        double panelHeight = _canvas.getSize().getHeight();
+        float panelWidth = (float) _canvas.getSize().getWidth();
+        float panelHeight = (float) _canvas.getSize().getHeight();
         Object source = e.getSource();
         if (source.equals(_changeVertexNameMenu)) {
             String newName = JOptionPane.showInputDialog("Replace Name '" + _selectedVertex.getName() + "' With :", _selectedVertex.getName());
@@ -434,8 +433,8 @@ public final class GraphFrame extends JInternalFrame implements MouseListener, A
         }
         if (source.equals(_addVertexMenu)) {
             Vertex newVertex = _graph.addVertex();
-            newVertex.setAttribute(GraphPanel.VERTEX_X, (double) _clickX / panelWidth);
-            newVertex.setAttribute(GraphPanel.VERTEX_Y, (double) _clickY / panelHeight);
+            newVertex.setAttribute(GraphPanel.VERTEX_X, (float) _clickX / panelWidth);
+            newVertex.setAttribute(GraphPanel.VERTEX_Y, (float) _clickY / panelHeight);
             newVertex.addAttributeListener(this);
             repaint();
             return;

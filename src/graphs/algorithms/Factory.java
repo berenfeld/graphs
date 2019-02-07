@@ -65,11 +65,11 @@ public class Factory {
         try {
             for (int i = 1; i <= vertices; i++) {
                 for (int j = i + 1; j <= vertices; j++) {
-                    if (rand.nextDouble() < density) {
+                    if (rand.nextFloat() < density) {
                         graph.addEdge(graph.getVertex(i), graph.getVertex(j));
                     }
                     if (directed) {
-                        if (rand.nextDouble() < density) {
+                        if (rand.nextFloat()< density) {
                             graph.addEdge(graph.getVertex(j), graph.getVertex(i));
                         }
                     }
@@ -138,7 +138,7 @@ public class Factory {
             }
             for (int i = 1; i <= leftVertices; i++) {
                 for (int j = 1; j <= rightVertices; j++) {
-                    if (rand.nextDouble() < density) {
+                    if (rand.nextFloat() < density) {
                         graph.addEdge(graph.getVertex(i), graph.getVertex(leftVertices + j));
                     }
                 }

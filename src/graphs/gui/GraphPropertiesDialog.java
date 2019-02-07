@@ -5,27 +5,18 @@
  */
 package graphs.gui;
 
-import graphs.algorithms.BFS;
 import graphs.core.Graph;
 import graphs.core.Vertex;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
@@ -126,8 +117,15 @@ public class GraphPropertiesDialog extends JDialog {
         }
         components += " } ";
         _connectedComponents.setText("Connected components : " + components);
-        _diameter.setText("Diameter : " + _graph.diameter());
-        _diameterPath.setText("Diameter Path: " + _graph.diameterPath());
+        if (_graph.diameter() != Integer.MAX_VALUE)
+        {
+            _diameter.setText("Diameter : " + _graph.diameter());
+            _diameterPath.setText("Diameter Path: " + _graph.diameterPath());
+        } else
+        {
+            _diameter.setText("Diameter : INFINITY");
+            _diameterPath.setText("");
+        }
         
         _maxDegree.setText("Maximum Degree : " + _graph.getMaximumDegree());        
         _minDegree.setText("Minimum Degree : " + _graph.getMinimumDegree());
@@ -137,13 +135,13 @@ public class GraphPropertiesDialog extends JDialog {
         repaint();
     }
 
-    private MainWindow _mainWindow;
+    private final MainWindow _mainWindow;
     private Graph _graph;
     private GraphFrame _graphFrame;
-    private JPanel _generalInformationPanel = new JPanel();
-    private JLabel _numberOfVertices = new JLabel();
-    private JLabel _numberOfEdges = new JLabel();    
-    private JPanel _connectivityPanel = new JPanel();    
+    private final JPanel _generalInformationPanel = new JPanel();
+    private final JLabel _numberOfVertices = new JLabel();
+    private final JLabel _numberOfEdges = new JLabel();    
+    private final JPanel _connectivityPanel = new JPanel();    
     private JCheckBox _isConnected = new JCheckBox("Connected ?");
     private JCheckBox _isTree = new JCheckBox("Tree ?");
     private JLabel _numberOfConnectedComponents = new JLabel("Connected ?");
